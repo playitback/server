@@ -1,0 +1,19 @@
+doctype html
+html(lang="en")
+	head
+		title Playback Media Server
+		link(rel="stylesheet", href="/css/style.css")
+		script(type="text/javascript", src="/js/lib/require.js", data-main="/js/bootstrap.js")
+	body
+		div#media
+			ul.main
+				li.logo
+				li.home
+					a(href="/#")
+				li.tvshows
+					a(href="/#media/tvshows")
+				li.movies
+					a(href="/#media/movies")
+				li.settings
+					a(href="/#settings")
+			block content

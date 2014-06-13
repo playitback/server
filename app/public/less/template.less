@@ -1,0 +1,64 @@
+body {
+	background: #2B2B2B;
+	
+	ul.main {
+		position: fixed;
+		left: 0;
+		top: 0;
+		bottom: 0;
+		width: 116px;
+		background: rgba(255, 255, 255, 0.07);
+		z-index: 100;
+		list-style: none;
+		
+		li {
+			width: 100%;
+			height: 100px;
+			background-position: center center;
+			background-repeat: no-repeat;
+			cursor: pointer;
+			
+			a {
+				display: block;
+				height: 100px;
+			}
+			
+			&.logo {
+				.at2x('/img/template/logo.png', 34px, 44px);
+			}
+			
+			&.home {
+				.at2x('/img/template/menu/home_icon.png', 46px, 46px);
+			}
+			
+			&.tvshows {
+				.at2x('/img/template/menu/tv_icon.png', 48px, 48px);
+			}
+			
+			&.movies {
+				.at2x('/img/template/menu/movie_icon.png', 49px, 34px);
+			}
+			
+			&.settings {
+				.at2x('/img/template/menu/settings_icon.png', 48px, 48px);
+			}
+			
+			&.current {
+				border-right: 3px solid #3BA2FF;
+			}
+			
+			&:hover {
+				background-color: rgba(255, 255, 255, 0.05);
+			}
+		}
+	}
+	
+	section#content {
+		position: absolute;
+		left: 0;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		padding-left: 116px;
+	}
+}
