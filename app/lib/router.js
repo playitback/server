@@ -40,8 +40,8 @@ module.exports = function(routes) {
 	};
 	
 	for(var uri in routes) {
-		this.app.get(uri, function(req, res) {
-			var route = routes[uri],
+		this.app.all(uri, function(req, res) {
+			var route = routes[req.route.path],
 				parts = route.split('@');
 				
 			self.req = req;
