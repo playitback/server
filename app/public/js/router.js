@@ -1,5 +1,10 @@
 define('router', ['backbone', 'view/home', 'view/media', 'view/settings'], function(Backbone, HomeView, MediaView, SettingsView) {
 	
+	this.setCurrentSection = function(section) {
+		$('ul.main li').removeClass('current');
+		$('ul.main li.' + section).addClass('current');
+	}
+	
 	return Backbone.Router.extend({
 		
 		routes: {
