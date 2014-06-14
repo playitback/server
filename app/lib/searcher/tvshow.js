@@ -25,7 +25,7 @@ module.exports = TVShowHelper = {
 					return;
 				}
 				
-				TVShowHelper.mirror = mirrors[0].url;
+				TVShowHelper.mirror = mirrors[0].url.replace('http://', '');
 				
 				TVShowHelper.tvdb().setMirror(TVShowHelper.mirror);
 				
@@ -42,6 +42,7 @@ module.exports = TVShowHelper = {
 		
 		TVShowHelper.getMirrors(function(err) {
 			if(err) {
+				// @TODO: log error
 				callback([]);
 				
 				return;
@@ -49,6 +50,7 @@ module.exports = TVShowHelper = {
 		
 			TVShowHelper.tvdb().findTvShow(query, function(err, tvShows) {
 				if(err) {
+					// @TODO: log error
 					callback([]);
 					
 					return;
