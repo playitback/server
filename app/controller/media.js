@@ -6,13 +6,14 @@ module.exports = {
 	
 	getSearch: function() {	
 		var query,
-			type;
+			type,
+			self = this;
 	
 		if(!(query = this.input('query')) || !(type = this.input('type'))) {
 			throw 'missing_required_param';
 		}
-	
-		require(this.req.param.type).search.call(this, this.req.param.query, function(_results) {
+			
+		require('../lib/searcher/' + type).search.call(this, query, function(results) {
 			self.response({ results: results });
 		});
 	},
