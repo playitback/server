@@ -30,13 +30,23 @@ module.exports = function(routes) {
 		if(typeof status === 'undefined') {
 			status = 400;
 		}
-		
+				
 		if(this.req.header('Accept').indexOf('text/html') > -1) {
 			this.view('400');
 		}
 		else {
 			this.response({ error: error }, status);
 		}
+	};
+	
+	this.input = function(key) {
+		var query = this.req.query;
+				
+		if(typeof query[key] != 'undefined') {
+			return query[key];
+		}
+		
+		return null;
 	};
 	
 	for(var uri in routes) {
@@ -49,7 +59,7 @@ module.exports = function(routes) {
 			
 			var controllerName 	= parts.length > 0 ? parts[0] : null,
 				actionName		= parts.length > 1 ? parts[1] : 'index';
-				
+								
 			if(!controllerName) {
 				handle404();
 				
