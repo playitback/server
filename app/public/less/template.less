@@ -1,3 +1,7 @@
+* {
+	background-repeat: no-repeat !important;
+}
+
 body {
 	background: #2B2B2B;
 	
@@ -22,11 +26,7 @@ body {
 				display: block;
 				height: 100px;
 			}
-			
-			&.logo {
-				.at2x('/img/template/logo.png', 34px, 44px);
-			}
-			
+						
 			&.home {
 				.at2x('/img/template/menu/home_icon.png', 46px, 46px);
 			}
@@ -49,6 +49,15 @@ body {
 			
 			&:hover {
 				background-color: rgba(255, 255, 255, 0.05);
+			}
+			
+			&.logo {
+				.at2x('/img/template/logo.png', 34px, 44px);
+				cursor: default;
+				
+				&:hover {
+					background-color: none !important;
+				}
 			}
 		}
 	}
