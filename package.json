@@ -15,6 +15,7 @@
 		"tvdb": "0.0.13",
 		"cron": "1.0.4",
 		"moment": "2.6.0",
-		"express-less": "0.0.3"
+		"express-less": "0.0.3",
+		"sqlite3": "2.2.3"
 	}
 }
