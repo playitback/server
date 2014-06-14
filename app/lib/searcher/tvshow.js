@@ -25,6 +25,7 @@ module.exports = TVShowHelper = {
 					return;
 				}
 				
+				// Set TVDB mirror URL locally. Remove protocol as it's not used by Node's HTTP library
 				TVShowHelper.mirror = mirrors[0].url.replace('http://', '');
 				
 				TVShowHelper.tvdb().setMirror(TVShowHelper.mirror);
@@ -39,7 +40,7 @@ module.exports = TVShowHelper = {
 
 	search: function(query, callback) {
 		var self = this;
-		
+						
 		TVShowHelper.getMirrors(function(err) {
 			if(err) {
 				// @TODO: log error
@@ -55,7 +56,7 @@ module.exports = TVShowHelper = {
 					
 					return;
 				}
-				
+								
 				self.model.Show.buildWithTvDbResults(tvShows, function(shows) {
 					callback(shows);
 				});
