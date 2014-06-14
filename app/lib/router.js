@@ -76,13 +76,13 @@ module.exports = function(routes) {
 				
 				return;
 			}
-			
+						
 			var action = controller[actionName + 'Action'];
 			
 			if(typeof action != 'function') {
-				action = controller[req.method + ucFirst(actionName)];
+				action = controller[req.method.toLowerCase() + ucFirst(actionName)];
 			}
-			
+						
 			if(typeof action != 'function') {
 				handle404();
 				
