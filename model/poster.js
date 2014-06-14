@@ -1,8 +1,8 @@
 var Sequelize = require('sequelize');
 
-module.exports = function(sequelize) {
+module.exports = function() {
 
-	return sequelize.define('Poster', {
+	return this.sequelize.define('Poster', {
 		url: {
 			type: Sequelize.STRING
 		}

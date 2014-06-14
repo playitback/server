@@ -1,8 +1,8 @@
 var Sequelize = require('sequelize');
 
-module.exports = function(sequelize) {
+module.exports = function() {
 	
-	var Media = sequelize.define('Media', {
+	var Media = this.sequelize.define('Media', {
 		type: {
 			type:			Sequelize.ENUM('movie', 'tv'),
 			allowNull: 		false

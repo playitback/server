@@ -6,6 +6,10 @@ module.exports = function() {
 	
 	var self = this,
 		Show = this.sequelize.define('Show', {
+		tvDbId: {
+			type: Sequelize.INTEGER,
+			allowNull: false
+		},
 		title: {
 			type: Sequelize.STRING,
 			allowNull: false
@@ -41,7 +45,7 @@ module.exports = function() {
 				}
 			},
 			buildWithTvDbResult: function(result, callback) {
-				var show = Show.build(this.mapWithTvDbResilt(result));
+				var show = Show.build(this.mapWithTvDbResult(result));
 				
 				show.setPoster(self.model.Poster.build({
 					url: result.banner
@@ -51,7 +55,8 @@ module.exports = function() {
 			},
 			mapWithTvDbResult: function(result) {
 				return {
-					title: 			result.SeriesName,
+					tvDbId:			result.id,
+					title: 			result.name,
 					firstAired: 	moment(result.FirstAired).toDate()
 				};
 			}
