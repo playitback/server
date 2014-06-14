@@ -4,8 +4,11 @@ module.exports = {
 		this.view('media/index');
 	},
 	
-	getSearch: function() {
-		if(typeof this.req.param.query === 'undefined' || typeof this.req.param.type === 'undefined') {
+	getSearch: function() {	
+		var query,
+			type;
+	
+		if(!(query = this.input('query')) || !(type = this.input('type'))) {
 			throw 'missing_required_param';
 		}
 	
