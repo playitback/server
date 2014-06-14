@@ -93,7 +93,7 @@ module.exports = function(routes) {
 				action.call(self);
 			}
 			catch(e) {
-				self.errorResponse.call(self, e.message, 400);
+				self.errorResponse.call(self, e);
 			}
 		});
 	}
