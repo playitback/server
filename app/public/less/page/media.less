@@ -5,7 +5,7 @@ div#media {
 			left: 136px;
 			top: 20px;
 			right: 20px;
-			background: #494949;
+			background: rgba(255, 255, 255, 0.07);
 			height: 68px;
 			
 			input[type=text] {
@@ -37,6 +37,26 @@ div#media {
 					}
 				}
 			}
+		}
+	}
+	
+	ul.items {
+		
+	}
+	
+	.no-items {
+		padding-top: 300px;
+		text-align: center;
+		color: #484848;
+		font-size: 26px;
+		font-weight: 500;
+	}
+	
+	&.tvshows {
+		.no-items {
+			.at2x('/img/content/media/tv_icon_large.png', 129px, 129px);
+			
+			background-position: 50% 150px;
 		}
 	}
 }
