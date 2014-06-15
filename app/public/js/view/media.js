@@ -65,6 +65,8 @@ define('view/media', ['backbone', 'view/media/header', 'collection/show', 'colle
 		
 		fetchMedia: function() {
 			var self = this;
+			
+			console.log(this.collection);
 		
 			this.collection.fetch({
 				success: function() {

@@ -1,6 +1,7 @@
 module.exports = {
 
-	'/': 					'media@index',
-	'/media/search':		'media@search'
+	'/': 					'default@index',
+	'/media/:type':			'media@index',
+	'/media/:type/search':	'media@search'
 	
 }

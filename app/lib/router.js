@@ -53,7 +53,7 @@ module.exports = function(routes) {
 		this.app.all(uri, function(req, res) {
 			var route = routes[req.route.path],
 				parts = route.split('@');
-				
+								
 			self.req = req;
 			self.res = res;
 			
@@ -93,6 +93,8 @@ module.exports = function(routes) {
 				action.call(self);
 			}
 			catch(e) {
+				console.log('error: ' + e);
+			
 				self.errorResponse.call(self, e);
 			}
 		});

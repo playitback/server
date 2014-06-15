@@ -2,28 +2,31 @@ define('collection/movie', ['backbone', 'model/movie'], function(Backbone, Movie
 	
 	return Backbone.Collection.extend({
 		
-		search: false,
+		searchMode: false,
 		
 		model: MovieModel,
 		
 		initialize: function(options) {
-			this.search = options && options.search || this.search;
+			this.searchMode = options && options.search || this.searchMode;
 		},
 		
 		search: function(options) {
-			this.search = true;
+			this.searchMode = true;
 						
 			return this.fetch(options);
 		},
 		
 		url: function() {
-			if(this.search) {
-				return 'media/search?type=movie';
+			if(this.searchMode) {
+				return '/media/movies/search';
+			}
+			else {
+				return '/media/movies';
 			}
 		},
 		
 		parse: function(response) {
-			if(this.search) {
+			if(this.searchMode) {
 				return response.results || response;
 			}
 			else {

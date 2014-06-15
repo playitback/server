@@ -2,28 +2,31 @@ define('collection/show', ['backbone', 'model/show'], function(Backbone, ShowMod
 	
 	return Backbone.Collection.extend({
 	
-		search: false,
+		searchMode: false,
 		
 		model: ShowModel,
 		
 		initialize: function(options) {
-			this.search = options && options.search || this.search;
+			this.searchMode = options && options.search || this.searchMode;
 		},
 		
 		search: function(options) {
-			this.search = true;
+			this.searchMode = true;
 						
 			return this.fetch(options);
 		},
 		
 		url: function() {
-			if(this.search) {
-				return '/media/search?type=tvshow';
+			if(this.searchMode) {
+				return '/media/tvshow/search';
+			}
+			else {
+				return '/media/tvshow';
 			}
 		},
 		
 		parse: function(response) {
-			if(this.search) {
+			if(this.searchMode) {
 				return response.results || response;
 			}
 			else {
