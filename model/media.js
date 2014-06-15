@@ -44,6 +44,18 @@ module.exports = function() {
 			createWithTvDbResult: function(result, callback) {
 				
 			}
+		},
+		instanceMethods: {
+			download: function(torrent) {
+				if(typeof torrent === 'undefined' || !torrent) {
+					torrent = this.loadBestTorrent();
+				}
+				
+				torrent.download();
+			},
+			loadBestTorrent: function() {
+				
+			}
 		}
 	});
 	

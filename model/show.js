@@ -20,6 +20,7 @@ module.exports = function() {
 		}
 	}, {
 		classMethods: {
+		
 			buildWithTvDbResults: function(results, callback) {
 				if(typeof results != 'object' && typeof results.length === 'undefined')
 					throw 'Show.buildWithTvDbResults: Invalid results parameter';
@@ -44,15 +45,25 @@ module.exports = function() {
 					});
 				}
 			},
+			
 			buildWithTvDbResult: function(result, callback) {
 				var show = Show.build(this.mapWithTvDbResult(result));
 				
 				show.setPoster(self.model.Poster.build({
 					url: result.banner
 				}));
-			
+				
+				/*
+				this.model.Season.buildWithTvDbResults(result.seasons, function(seasons) {
+					show.setSeasons(seasons).success(function() {
+						callback(show);
+					});
+				});
+				*/
+				
 				callback(show);
 			},
+			
 			mapWithTvDbResult: function(result) {
 				return {
 					tvDbId:			result.id,

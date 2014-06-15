@@ -12,12 +12,14 @@ module.exports = function() {
 	this.Media 		= require('./media').call(this);
 	this.Season 	= require('./season').call(this);
 	this.Show		= require('./show').call(this);
+	this.Torrent	= require('./torrent').call(this);
 		
 	this.Show.hasMany(this.Season);
-	this.Season.hasMany(this.Media);
+	this.Season.hasMany(this.Media, { as: 'Episodes' });
 	this.Show.hasOne(this.Poster);
 	this.Season.hasOne(this.Poster);
 	this.Media.hasOne(this.Poster);
+	this.Media.hasMany(this.Torrent);
 	
 	this.sequelize.sync();
 	
