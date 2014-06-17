@@ -14,6 +14,9 @@ define('view/media/header/search', ['backbone', 'collection/show', 'collection/m
 			else if(this.mediaView.type == 'movies') {
 				this.collection = new MovieCollection({ search: true });
 			}
+			else {
+				throw 'invalid_mediaView_type';
+			}
 		},
 		
 		render: function() {
@@ -28,6 +31,12 @@ define('view/media/header/search', ['backbone', 'collection/show', 'collection/m
 				model: this.collection,
 				onSelect: function(selected) {
 					
+				},
+				onShow: function() {
+					$('section#content #media .header').addClass('search-visible');
+				},
+				onHide: function() {
+					$('section#content #media .header').removeClass('search-visible');
 				}
 			}).render();
 		}

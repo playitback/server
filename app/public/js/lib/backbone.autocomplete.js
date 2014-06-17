@@ -149,16 +149,20 @@ define('backbone.autocomplete', [], function() {
 	
 	    hide: function () {
 	        this.$el.hide();
+	        this.onHide();
 	        return this;
 	    },
 	
 	    show: function () {
 	        this.$el.show();
+	        this.onShow();
 	        return this;
 	    },
 	
 	    // callback definitions
-	    onSelect: function () {}
+	    onSelect: function () {},
+	    onShow: function () {},
+	    onHide: function () {}
 	
 	});
 	
