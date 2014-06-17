@@ -1,14 +1,17 @@
-define('view/media', ['backbone', 'view/media/header', 'collection/show', 'collection/movie'], function(Backbone, HeaderView, ShowCollection, MovieCollection) {
+define('view/media', ['backbone', 'view/media/header', 'collection/show', 'collection/movie', 'view/media/item'], function(Backbone, HeaderView, ShowCollection, MovieCollection, ItemView) {
 	
 	return Backbone.View.extend({
 		
 		id: 'media',
 		
 		initialize: function(options) {
-			this.type = options && options.type || null;
+			this.type 					= options && options.type || null;
 		
-			this.header 		= new HeaderView({ mediaView: this });
-			this.collection 	= this.collection();
+			this.header 				= new HeaderView({ mediaView: this });
+			this.collection 			= this.collection();
+			
+			this.bindedMediaAdded 		= this.mediaAdded.bind(this);
+			this.bindedMediaRemoved 	= this.mediaRemoved.bind(this);
 		},
 		
 		render: function() {
@@ -59,15 +62,18 @@ define('view/media', ['backbone', 'view/media/header', 'collection/show', 'colle
 		},
 		
 		createEvents: function() {
-			this.bindedMediaAdded 		= this.mediaAdded.bind(this);
-			this.bindedMediaRemoved 	= this.mediaRemoved.bind(this);
+			this.collection
+				.off('add', this.bindedMediaAdded)
+				.on('add', this.bindedMediaAdded);
+				
+			this.collection
+				.off('remove', this.bindedMediaRemoved)
+				.on('remove', this.bindedMediaRemoved);
 		},
 		
 		fetchMedia: function() {
 			var self = this;
-			
-			console.log(this.collection);
-		
+					
 			this.collection.fetch({
 				success: function() {
 					self.showNoMedia();
@@ -76,18 +82,27 @@ define('view/media', ['backbone', 'view/media/header', 'collection/show', 'colle
 		},
 		
 		showNoMedia: function() {
-			this.$el.find('.no-items').toggle(this.collection.length > 0);
+			this.$el.find('.no-items').toggle(this.collection.length == 0);
+		},
+		
+		addMedia: function(media) {
+			this.collection.add(media);
+			this.showNoMedia();
 		},
 		
 		
 		// !Event Handlers
 		
 		mediaAdded: function(media) {
+			media.itemView = new ItemView({ model: media });
 			
+			media.itemView.render();
 		},
 		
 		mediaRemoved: function(media) {
-			
+			if(typeof media.itemView != 'undefined') {
+				media.itemView.remove();
+			}
 		}
 		
 	});

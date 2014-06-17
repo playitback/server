@@ -1,11 +1,11 @@
 var Sequelize 	= require('sequelize'),
 	moment		= require('moment'),
-	tvdb		= require('tvdb');
+	TV			= require('../app/lib/provider/data/tvshow');
 
 module.exports = function() {
 	
-	var self = this,
-		Show = this.sequelize.define('Show', {
+	var self = this;
+	var Show = this.sequelize.define('Show', {
 		tvDbId: {
 			type: Sequelize.INTEGER,
 			allowNull: false
@@ -21,7 +21,13 @@ module.exports = function() {
 	}, {
 		classMethods: {
 		
-			buildWithTvDbResults: function(results, callback) {
+			createWithTvDbResults: function(results, callback) {
+				if(results.length === 0) {
+					callback([]);
+					
+					return;
+				}
+			
 				if(typeof results != 'object' && typeof results.length === 'undefined')
 					throw 'Show.buildWithTvDbResults: Invalid results parameter';
 					
@@ -29,30 +35,41 @@ module.exports = function() {
 					throw 'Show.buildWithTvDbResults: Invalid callback parameter';
 					
 				var response = [];
-					
-				for(var r in results) {
-					Show.buildWithTvDbResult(results[r], function(show) {
-						if(!show) {
-							results.splice(r, 1);
+									
+				results.forEach(function(result) {
+					Show.find({ where: { tvDbId: result.id }}).success(function(show) {
+						if(show) {
+							response.push(show);
+							
+							if(response.length === results.length) {
+								callback(response);
+							}
 						}
 						else {
-							response.push(show);
-						}
-						
-						if(response.length === results.length) {
-							callback(response);
+							Show.createWithTvDbResult(result, function(show) {
+								if(!show) {
+									results.splice(r, 1);
+								}
+								else {
+									response.push(show);
+								}
+														
+								if(response.length === results.length) {
+									callback(response);
+								}
+							});
 						}
 					});
-				}
+				});
 			},
 			
-			buildWithTvDbResult: function(result, callback) {
+			createWithTvDbResult: function(result, callback) {
 				var show = Show.build(this.mapWithTvDbResult(result));
-				
+								
 				show.setPoster(self.model.Poster.build({
-					url: result.banner
+					url: TV.posterUrl(result.banner)
 				}));
-				
+								
 				/*
 				this.model.Season.buildWithTvDbResults(result.seasons, function(seasons) {
 					show.setSeasons(seasons).success(function() {
@@ -61,7 +78,9 @@ module.exports = function() {
 				});
 				*/
 				
-				callback(show);
+				show.save().success(function() {
+					callback(show);
+				});
 			},
 			
 			mapWithTvDbResult: function(result) {

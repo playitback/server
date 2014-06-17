@@ -72,7 +72,41 @@ div#media {
 	}
 	
 	ul.items {
-		margin: 0;
+		position: absolute;
+		top: 110px;
+		left: 20px;
+		right: 20px;
+		bottom: 0;
+		
+		li {
+			float: left;
+			width: 164px;
+			margin-right: 20px;
+			
+			img {
+				height: 241px;
+				background: #dbdbdb;
+				display: block;
+				width: 100%;
+			}
+			
+			.attr {
+				position: relative;
+				
+				label {
+					margin-right: 50px;
+					color: #A9A9A9;
+				}
+			
+				span {
+					width: 50px;
+					color: #5F5F5F;
+					position: absolute;
+					right: 0;
+					text-align: right;
+				}
+			}
+		}
 	}
 	
 	.no-items {

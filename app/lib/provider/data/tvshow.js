@@ -48,7 +48,7 @@ module.exports = TVShowHelper = {
 				
 				return;
 			}
-		
+					
 			TVShowHelper.tvdb().findTvShow(query, function(err, tvShows) {
 				if(err) {
 					// @TODO: log error
@@ -56,8 +56,8 @@ module.exports = TVShowHelper = {
 					
 					return;
 				}
-								
-				self.model.Show.buildWithTvDbResults(tvShows, function(shows) {
+
+				self.model.Show.createWithTvDbResults(tvShows, function(shows) {
 					callback(shows);
 				});
 			})
@@ -65,7 +65,7 @@ module.exports = TVShowHelper = {
 	},
 	
 	posterUrl: function(uri) {
-		return TVShowHelper.tvdb().geturi;
+		return 'http://thetvdb.com/banners/' + uri;
 	}
 	
 };

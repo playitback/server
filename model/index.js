@@ -22,6 +22,7 @@ module.exports = function() {
 	this.Media.hasMany(this.Torrent);
 	
 	this.sequelize.sync();
+	//this.sequelize.sync({ force: true });
 	
 	return this;
 

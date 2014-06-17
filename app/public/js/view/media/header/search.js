@@ -20,6 +20,8 @@ define('view/media/header/search', ['backbone', 'collection/show', 'collection/m
 		},
 		
 		render: function() {
+			var self = this;
+		
 			this.$el.append(
 				$('<input />', { type: 'text', placeholder: 'Add ' + this.mediaView.typeTitle() + '...' })
 			);
@@ -30,7 +32,9 @@ define('view/media/header/search', ['backbone', 'collection/show', 'collection/m
 				input: this.$el.find('input'),
 				model: this.collection,
 				onSelect: function(selected) {
-					
+					self.$el.find('input').val('');
+				
+					self.mediaView.addMedia(selected);
 				},
 				onShow: function() {
 					$('section#content #media .header').addClass('search-visible');
