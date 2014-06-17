@@ -25,7 +25,7 @@ module.exports = {
 			throw 'missing_required_param';
 		}
 			
-		require('../lib/provider/' + this.req.params.type).search.call(this, query, function(results) {
+		require('../lib/provider/data/' + this.req.params.type).search.call(this, query, function(results) {
 			self.response({ results: results });
 		});
 	}
