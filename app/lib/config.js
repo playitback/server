@@ -1,5 +1,6 @@
 var express 		= require('express'),
-	expressLess 	= require('express-less');
+	expressLess 	= require('express-less'),
+	bodyParser		= require('body-parser');
 
 module.exports = function() {
 	
@@ -17,6 +18,8 @@ module.exports = function() {
 	app.use('/css', expressLess(__dirname + '/../public/less'));
 	app.set('view engine', 'jade');
 	app.set('views', __dirname + '/../views');
+	app.use(bodyParser.urlencoded());
+	app.use(bodyParser.json());
 	
 	config(this.app);
 	
