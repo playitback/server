@@ -2,6 +2,7 @@ var Sequelize = require('sequelize');
 
 module.exports = function() {
 	
+	var self = this;
 	var Media = this.sequelize.define('Media', {
 		type: {
 			type:			Sequelize.ENUM('movie', 'tv'),
@@ -28,11 +29,11 @@ module.exports = function() {
 	},
 	{
 		classMethods: {
-			createWithTvDbResults: function(results, callback) {
+			createWithTvDbResults: function(show, results, callback) {
 				var mediaResults = [];
 				
 				for(var r in results) {
-					Media.createWithTvDbResult(results[r], function(result) {
+					this.createWithTvDbResult(show, results[r], function(result) {
 						mediaResults.push(result);
 						
 						if(mediaResults.length === results.length) {
@@ -41,8 +42,29 @@ module.exports = function() {
 					});
 				}
 			},
-			createWithTvDbResult: function(result, callback) {
+			createWithTvDbResult: function(show, result, callback) {
+				var _self = this;
+			
+				show.getSeasons({ where: { number: result.SeasonNumber }}).success(function(seasons) {
+					var assignToSeason = function(season) {
+						_self.create(_self.mapWithTvDbResult(result))
+							.success(function(episode) {
+								season.addEpisode(episode)
+									.success(function() {
+										callback(episode);
+									});
+							});
+					};
 				
+					if(seasons.length === 0) {
+						self.model.Season.createWithTvDbResult(result, function(season) {
+							assignToSeason(season);
+						});
+					}
+					else {
+						assignToSeason(seasons[0]);
+					}
+				});
 			}
 		},
 		instanceMethods: {

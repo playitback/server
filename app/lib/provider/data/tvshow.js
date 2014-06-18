@@ -56,9 +56,7 @@ module.exports = TVShowHelper = {
 					
 					return;
 				}
-				
-				console.log('results', tvShows.length);
-				
+								
 				var results = [];
 				
 				tvShows.forEach(function(tvShow) {

@@ -11,7 +11,7 @@ module.exports = function() {
 		classMethods: {
 			mapWithTvDbResult: function(result) {
 				return {
-					url: TV.posterUrl(result.banner)
+					url: TV.posterUrl(result.poster)
 				}
 			}
 		}
