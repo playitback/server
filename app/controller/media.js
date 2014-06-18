@@ -35,7 +35,13 @@ module.exports = {
 	},
 	
 	postIndex: function() {
-		//this.model.Media.create
+		var self = this;
+	
+		if(typeof this.req.body.tvDbId != 'undefined') {
+			this.model.Show.createWithTvDbId(this.req.body.tvDbId, function(show) {
+				self.response({ tvshow: show });
+			});
+		}
 	},
 
 	getSearch: function() {	

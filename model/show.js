@@ -63,24 +63,28 @@ module.exports = function() {
 				});
 			},
 			
-			createWithTvDbResult: function(result, callback) {
-				var show = Show.build(this.mapWithTvDbResult(result));
-								
-				show.setPoster(self.model.Poster.build({
-					url: TV.posterUrl(result.banner)
-				}));
-								
-				/*
-				this.model.Season.buildWithTvDbResults(result.seasons, function(seasons) {
-					show.setSeasons(seasons).success(function() {
+			createWithTvDbId: function(tvDbId, callback) {
+				var _self = this;
+			
+				TV.tvdb().getInfo(tvDbId, function(result) {
+					_self.createWithTvDbResult(result, function(show) {
 						callback(show);
 					});
 				});
-				*/
-				
-				show.save().success(function() {
-					callback(show);
-				});
+			},
+			
+			createWithTvDbResult: function(result, callback) {
+				this.create(this.mapWithTvDbResult(result))
+					.success(function(show) {
+						show.setPoster(self.model.Poster.create(self.model.Poster.mapWithTvDbResult(result))
+							.success(function() {
+								self.model.Season.buildWithTvDbResults(result.seasons, function(seasons) {
+									show.setSeasons(seasons).success(function() {
+										callback(show);
+									});
+								});
+							});
+					});
 			},
 			
 			mapWithTvDbResult: function(result) {
