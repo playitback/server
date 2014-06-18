@@ -4,12 +4,28 @@ module.exports = {
 
 	getIndex: function() {
 		var type 		= this.req.params.type,
-			model 		= this.model[type == 'tvshow' ? 'Show' : 'Movie'];
-			_response 	= {};
+			model 		= this.model[type == 'tvshow' ? 'Show' : 'Movie'],
+			self		= this;
+							
+		model.findAll().success(function(medias) {
+			var response = {};
+			
+			response[type] = [];
+			
+			medias.forEach(function(media) {
+				var _response = media.values;
+			
+				media.getPoster().success(function(poster) {
+					_response.poster = poster.values;
 					
-		_response[type] = [];
-				
-		this.response(_response);
+					response[type].push(_response);
+					
+					if(response[type].length === medias.length) {
+						self.response(response);
+					}
+				});
+			});
+		});
 	},
 	
 	postIndex: function() {
