@@ -17,6 +17,7 @@
 		"moment": "2.6.0",
 		"express-less": "0.0.3",
 		"sqlite3": "2.2.3",
-		"pirateship": "https://github.com/playitback/pirateship/tarball/master"
+		"pirateship": "https://github.com/playitback/pirateship/tarball/master",
+		"body-parser": "1.3.1"
 	}
 }
