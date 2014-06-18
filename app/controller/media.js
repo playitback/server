@@ -12,6 +12,12 @@ module.exports = {
 			
 			response[type] = [];
 			
+			if(medias.length === 0) {
+				self.response(response);
+				
+				return;
+			}
+			
 			medias.forEach(function(media) {
 				var _response = media.values;
 			
@@ -45,17 +51,7 @@ module.exports = {
 			var results = [];
 		
 			medias.forEach(function(media) {
-				var result = media.values;
-								
-				media.getPoster().success(function(poster) {
-					result.poster = poster.values;
-					
-					results.push(result);
-										
-					if(results.length === medias.length) {
-						self.response({ results: results });
-					}
-				});
+				self.response({ results: media });
 			});
 		});
 	}

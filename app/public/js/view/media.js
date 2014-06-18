@@ -87,6 +87,7 @@ define('view/media', ['backbone', 'view/media/header', 'collection/show', 'colle
 		
 		addMedia: function(media) {
 			this.collection.add(media);
+						
 			this.showNoMedia();
 		},
 		

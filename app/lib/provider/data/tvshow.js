@@ -56,9 +56,21 @@ module.exports = TVShowHelper = {
 					
 					return;
 				}
-
-				self.model.Show.createWithTvDbResults(tvShows, function(shows) {
-					callback(shows);
+				
+				console.log('results', tvShows.length);
+				
+				var results = [];
+				
+				tvShows.forEach(function(tvShow) {
+					var result = self.model.Show.mapWithTvDbResult(tvShow);
+					
+					result.poster = self.model.Poster.mapWithTvDbResult(tvShow);
+					
+					results.push(result);
+					
+					if(results.length === tvShows.length) {
+						callback(results);
+					}
 				});
 			})
 		});
