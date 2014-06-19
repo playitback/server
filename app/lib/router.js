@@ -7,7 +7,7 @@ module.exports = function(routes) {
 	var self = this;
 	
 	function handle404() {
-		self.res.render('404');
+		self.res.status(404).render('404');
 	}
 	
 	function ucFirst(string) {
@@ -22,7 +22,7 @@ module.exports = function(routes) {
 		if(typeof status === 'undefined') {
 			status = 200;
 		}
-		
+				
 		this.res.json(status, data);
 	};
 	

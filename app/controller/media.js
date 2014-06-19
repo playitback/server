@@ -25,7 +25,7 @@ module.exports = {
 					_response.poster = poster.values;
 					
 					response[type].push(_response);
-					
+										
 					if(response[type].length === medias.length) {
 						self.response(response);
 					}
@@ -53,12 +53,8 @@ module.exports = {
 			throw 'missing_required_param';
 		}
 			
-		require('../lib/provider/data/' + this.req.params.type).search.call(this, query, function(medias) {
-			var results = [];
-		
-			medias.forEach(function(media) {
-				self.response({ results: media });
-			});
+		require('../lib/provider/data/' + this.req.params.type).search.call(this, query, function(media) {		
+			self.response({ results: media });
 		});
 	}
 	
