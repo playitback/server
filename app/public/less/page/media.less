@@ -1,45 +1,36 @@
 div#media {
-	position: absolute;
-	bottom: 0;
-	right: 0;
-	left: 0;
-	top: 0;
+	height: 100%;
 
 	.header {
-		position: absolute;
-		top: 0;
-		right: 0;
-		left: 0;
 		height: 90px;
-		z-index: 50;
+		overflow: visible;
+		margin-top: 15px;
 	
 		form.search {
-			position: absolute;
-			left: 20px;
-			top: 20px;
-			right: 20px;
-			bottom: 0;
+			z-index: 50;
+			overflow: visible;
 			
 			input[type=text] {
 				.at2x('/img/content/media/search/search_icon.png', 29px, 30px);
 			
 				background-position: 20px 50% !important;
-				height: 100%;
+				height: 70px;
 				background: none;
 				border: none;
-				width: 100%;
 				padding: 0 30px 0 70px;
 				font-size: 26px;
 				color: #ffffff;
 				background: rgba(255, 255, 255, 0.07);
+				display: block;
+				width: 100%;
 			}
 			
 			ul.autocomplete {
 				position: absolute;
 				bottom: 20px;
 				right: 20px;
-				left: 0;
-				top: 68px;
+				left: 15px;
+				top: 85px;
 				overflow: hidden;
 				background: rgba(69, 69, 69, 0.91);
 				padding: 10px;
@@ -63,9 +54,6 @@ div#media {
 		}
 		
 		&.search-visible {
-			bottom: 0;
-			height: auto;
-			
 			input[type=text] {
 				height: 70px !important;
 			}
@@ -73,11 +61,8 @@ div#media {
 	}
 	
 	ul.items {
-		position: absolute;
-		top: 110px;
-		left: 20px;
-		right: 20px;
-		bottom: 0;
+		position: relative;
+		height: 100%;
 		
 		li {
 			float: left;
