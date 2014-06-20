@@ -33,7 +33,7 @@ define('view/media/header/search', ['backbone', 'collection/show', 'collection/m
 				model: this.collection,
 				onSelect: function(selected) {
 					self.$el.find('input').val('');
-				
+					
 					self.mediaView.addMedia(selected);
 				},
 				onShow: function() {

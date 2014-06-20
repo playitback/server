@@ -17,8 +17,6 @@ module.exports = Season = function() {
 					.success(function(season) {
 						callback(season);	
 					});
-			
-				callback(show);
 			},
 			
 			mapWithTvDbResult: function(result) {

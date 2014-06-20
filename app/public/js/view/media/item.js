@@ -8,9 +8,9 @@ define('view/media/item', ['backbone', 'jquery.unveil'], function(Backbone, jqUn
 			
 		},
 		
-		render: function() {			
+		render: function() {
 			this.$el.append(
-				$('<img />', { src: '', 'data-src': this.model.get('poster').url })
+				$('<img />')
 			)
 			.append(
 				$('<div></div>', { 'class': 'attr' })
@@ -24,7 +24,14 @@ define('view/media/item', ['backbone', 'jquery.unveil'], function(Backbone, jqUn
 		
 			$('section#content #media ul.items').append(this.$el);
 			
-			this.$el.find('img').unveil();
+			this.updateUI();
+		},
+		
+		updateUI: function() {
+			if(this.model.has('poster')) {
+				this.$el.find('img').attr('data-src', this.model.get('poster').url).unveil();
+			}
+			
 			this.$el.find('.attr label').text(this.model.get('title'));
 			this.$el.find('.attr span').text(this.model.has('firstAired') ? this.model.get('firstAired').format('YYYY') : '');
 		}

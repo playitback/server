@@ -65,15 +65,15 @@ module.exports = function() {
 			
 			createWithTvDbId: function(tvDbId, callback) {
 				var _self = this;
-			
-				TV.tvdb().getInfo(tvDbId, function(result) {
-					if(result.err) {
-						callback(null);
+							
+				TV.tvdb().getInfo(tvDbId, function(err, result) {
+					if(err) {
+						callback(err);
 						
 						return;
 					}
-				
-					_self.createWithTvDbResult(result.info, function(show) {
+									
+					_self.createWithTvDbResult(result, function(show) {
 						callback(show);
 					});
 				});
@@ -82,7 +82,7 @@ module.exports = function() {
 			createWithTvDbResult: function(result, callback) {
 				this.create(this.mapWithTvDbResult(result.tvShow))
 					.success(function(show) {
-						self.model.Poster.create(self.model.Poster.mapWithTvDbResult(result.tvShow))
+						self.model.Poster.create(self.model.Poster.mapWithTvDbResult(result))
 							.success(function(poster) {
 								show.setPoster(poster)
 									.success(function() {

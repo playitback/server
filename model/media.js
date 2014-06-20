@@ -16,15 +16,44 @@ module.exports = function() {
 		// Movie only
 		title: {
 			type: 			Sequelize.STRING,
-			allowNull: 		false
+			validate: {
+				notNullIfMovie: function(value) {
+					if(typeof value === 'undefined') {
+						value = null;
+					}
+				
+					console.log(this.type, value);
+					if(this.type === 'movie' && value === null) {
+						throw new Error('Movie\'s require a title');
+					}
+				}
+			}
 		},
 		year: {
-			type:			Sequelize.INTEGER
+			type:			Sequelize.INTEGER,
+			notNullIfMovie: function(value) {
+				if(typeof value === 'undefined') {
+					value = null;
+				}
+			
+				if(this.type === 'movie' && value === null) {
+					throw new Error('Movie\'s require a year');
+				}
+			}
 		},
 		
 		// TV only
 		number: {
-			type:			Sequelize.INTEGER
+			type:			Sequelize.INTEGER,
+			notNullIfTvShow: function(value) {
+				if(typeof value === 'undefined') {
+					value = null;
+				}
+				
+				if(this.type === 'tv' && value === null) {
+					throw new Error('TV Show\'s require an episode number');
+				}
+			}
 		}
 	},
 	{
@@ -65,6 +94,13 @@ module.exports = function() {
 						assignToSeason(seasons[0]);
 					}
 				});
+			},
+			mapWithTvDbResult: function(result) {
+				console.log(result);
+				return {
+					type: 'tv',
+					number: result.number
+				};
 			}
 		},
 		instanceMethods: {
