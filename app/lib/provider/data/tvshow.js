@@ -61,9 +61,7 @@ module.exports = TVShowHelper = {
 				
 				tvShows.forEach(function(tvShow) {
 					var result = self.model.Show.mapWithTvDbResult(tvShow);
-					
-					result.poster = self.model.Poster.mapWithTvDbResult(tvShow);
-					
+										
 					results.push(result);
 					
 					if(results.length === tvShows.length) {

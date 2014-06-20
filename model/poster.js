@@ -10,8 +10,14 @@ module.exports = function() {
 	}, {
 		classMethods: {
 			mapWithTvDbResult: function(result) {
-				return {
-					url: TV.posterUrl(result.poster)
+				for(var i in result.banners) {
+					var banner = result.banners[i];
+					
+					if(banner.type === 'poster') {
+						return {
+							url: TV.posterUrl(banner.path)
+						};
+					}
 				}
 			}
 		}

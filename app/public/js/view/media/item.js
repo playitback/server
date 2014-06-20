@@ -5,7 +5,11 @@ define('view/media/item', ['backbone', 'jquery.unveil'], function(Backbone, jqUn
 		tagName: 'li',
 		
 		inititialize: function() {
+			var self = this;
 			
+			this.model.off('sync').on('sync', function() {
+				self.updateUI();
+			});
 		},
 		
 		render: function() {

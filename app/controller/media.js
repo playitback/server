@@ -39,7 +39,13 @@ module.exports = {
 	
 		if(typeof this.req.body.tvDbId != 'undefined') {
 			this.model.Show.createWithTvDbId(this.req.body.tvDbId, function(show) {
-				self.response({ tvshow: show });
+				show.getPoster().success(function(poster) {
+					var response = show.values;
+					
+					response.poster = poster.values;
+					
+					self.response({ tvshow: response });
+				});
 			});
 		}
 	},
