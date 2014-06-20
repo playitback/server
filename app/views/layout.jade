@@ -1,19 +1,21 @@
 doctype html
 html(lang="en")
 	head
+		meta(name="viewport", content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no")
 		title Playback Media Server
 		link(rel="stylesheet", href="/css/style.css")
 		script(type="text/javascript", src="/js/lib/require.js", data-main="/js/bootstrap.js")
 	body
-		div#media
-			ul.main
-				li.logo
-				li.home
-					a(href="/#")
-				li.tvshows
-					a(href="/#media/tvshows")
-				li.movies
-					a(href="/#media/movies")
-				li.settings
-					a(href="/#settings")
-			block content
+		div#media.container-fluid
+			div.row
+				ul.main.col-md-1.col-sm-1.col-xs-12
+					li.logo
+					li.home.hidden-xs
+						a(href="/#")
+					li.tvshows.hidden-xs
+						a(href="/#media/tvshows")
+					li.movies.hidden-xs
+						a(href="/#media/movies")
+					li.settings.hidden-xs
+						a(href="/#settings")
+				block content
