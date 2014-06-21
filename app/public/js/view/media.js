@@ -26,7 +26,7 @@ define('view/media', ['backbone', 'view/media/header', 'collection/show', 'colle
 			this.$el
 				.attr('class', this.type)
 				.append(
-					$('<ul></ul>', { 'class': 'items' })
+					$('<div></div>', { 'class': 'row items' })
 				)
 				.append(
 					$('<div></div>', { 'class': 'no-items', html: 'You have no ' + this.typeTitle(true) + '.<br />Add one by searching above.' })

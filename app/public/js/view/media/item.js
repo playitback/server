@@ -2,7 +2,8 @@ define('view/media/item', ['backbone', 'jquery.unveil'], function(Backbone, jqUn
 	
 	return Backbone.View.extend({
 		
-		tagName: 'li',
+		tagName: 'div',
+		className: 'item col-md-2 col-sm-3 col-xs-6',
 		
 		inititialize: function() {
 			var self = this;
@@ -12,7 +13,7 @@ define('view/media/item', ['backbone', 'jquery.unveil'], function(Backbone, jqUn
 		
 		render: function() {
 			this.$el.append(
-				$('<img />')
+				$('<img />', { 'class': 'img-responsive' })
 			)
 			.append(
 				$('<div></div>', { 'class': 'attr' })
@@ -24,7 +25,7 @@ define('view/media/item', ['backbone', 'jquery.unveil'], function(Backbone, jqUn
 					)
 			);
 		
-			$('section#content #media ul.items').append(this.$el);
+			$('section#content #media .row.items').append(this.$el);
 			
 			this.updateUI();
 			this.createEvents();

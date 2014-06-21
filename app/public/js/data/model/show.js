@@ -18,7 +18,7 @@ define('model/show', ['backbone', 'moment'], function(Backbone, moment) {
 		
 		url: function() {
 			return '/media/tvshow' + (this.has('id') ? '/' + this.get('id') : '');
-		},
+		}
 		
 	});
 	
