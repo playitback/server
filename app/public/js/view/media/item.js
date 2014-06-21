@@ -7,9 +7,7 @@ define('view/media/item', ['backbone', 'jquery.unveil'], function(Backbone, jqUn
 		inititialize: function() {
 			var self = this;
 			
-			this.model.off('sync').on('sync', function() {
-				self.updateUI();
-			});
+			this.bindedModelSync = this.modelSync.bind(this);
 		},
 		
 		render: function() {
@@ -29,6 +27,17 @@ define('view/media/item', ['backbone', 'jquery.unveil'], function(Backbone, jqUn
 			$('section#content #media ul.items').append(this.$el);
 			
 			this.updateUI();
+			this.createEvents();
+		},
+		
+		createEvents: function() {
+			this.model
+				.off('sync', this.modelSync)
+				.on('sync', this.modelSync);
+		},
+		
+		modelSync: function() {
+			this.itemView.updateUI();
 		},
 		
 		updateUI: function() {
