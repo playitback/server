@@ -7,7 +7,11 @@ define('model/show', ['backbone', 'moment'], function(Backbone, moment) {
 		},
 		
 		parse: function(response) {
-			response.firstAired = moment(response.firstAired);
+			response = response.tvshow || response;
+		
+			if(typeof response.firstAired != 'undefined') {
+				response.firstAired = moment(response.firstAired);
+			}
 		
 			return response;
 		},
