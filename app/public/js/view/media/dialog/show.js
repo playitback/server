@@ -102,22 +102,32 @@ define('view/media/dialog/show', ['view/media/dialog/media', 'model/show', 'coll
 			season.listItem = listItem.clone();
 			
 			season.listItem.find('label').text('Season ' + season.get('number'));
-			season.listItem.find('span.status').addClass(season.watchedStatusClass()).text(season.unatchedCount());
+			season.listItem.find('span.status').addClass(season.watchedStatusClass()).text(season.unWatchedCount());
 			season.listItem.find('span.right').text(season.get('year'));
 		
 			this.$el.find('.inner ul').append(season.listItem);
 		},
 		
 		removeSeason: function(season) {
-			
+			if(typeof season.listItem != 'undefined') {
+				season.listItem.remove();
+			}
 		},
 		
 		addEpisode: function(episode) {
+			episode.listItem = listItem.clone();
 			
+			episode.listItem.find('label').text('Episode ' + episode.get('number'));
+			episode.listItem.find('span.status').addClass(episode.watchedStatusClass()).text(episode.unWatchedCount());
+			episode.listItem.find('span.right').text(episode.get('year'));
+			
+			this.$el.find('.inner ul').append(episode.listItem);
 		},
 		
 		removeEpisode: function(episode) {
-			
+			if(typeof episode.listItem != 'undefined') {
+				episode.listItem.remove();
+			}
 		}
 		
 	});
