@@ -59,8 +59,12 @@ define('view/media/dialog/show', ['view/media/dialog/media', 'model/show', 'coll
 		},
 		
 		updateHead: function() {
-			var head = this.$el.find('.inner .head'),
-				photo = head.find('.photo');
+			var head 			= this.$el.find('.inner .head'),
+				photo 			= head.find('.photo'),
+				meta 			= head.find('.meta'),
+				metaMain 		= meta.find('.main'),
+				metaMainFields 	= metaMain.find('.field'),
+				metaAttr 		= meta.find('.attr');
 			
 			if(this.show.has('poster')) {
 				var poster = this.show.get('poster');
@@ -68,7 +72,22 @@ define('view/media/dialog/show', ['view/media/dialog/media', 'model/show', 'coll
 				photo.find('img').attr('src', poster.url);
 			}
 			
+			metaMain.find('h2').text(this.show.get('title'));
 			
+			var metaMainField 		= metaMainFields.find('.field').clone(),
+				firstAiredField 	= metaMainField.clone(),
+				nextEpisodeField	= metaMainField.clone();
+			
+			metaMainFields.find('.field').remove();
+			
+			firstAiredField.find('label').text('First Aired');
+			firstAiredField.find('span').text('');
+			nextEpisodeField.find('label').text('Next Episode');
+			nextEpisodeField.find('span').text('');
+			
+			metaMainFields
+				.append(firstAiredField);
+				.append(nextEpisodeField);
 		},
 		
 		fetchSeasons: function() {
