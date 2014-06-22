@@ -7,7 +7,6 @@
 		"mediamanager": "./bin/mediamanager"
 	},
 	"dependencies": {
-		"less": "1.7.3",
 		"sequelize": "1.7.8",
 		"express": "4.4.1",
 		"jade": "1.3.1",
