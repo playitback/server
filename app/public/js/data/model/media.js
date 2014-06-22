@@ -1,15 +1,12 @@
-define('model/media', ['backbone'], function(Backbone) {
+define('model/media', ['model/core'], function(CoreModel) {
 	
 	/**
 	 * Doesn't make perfect sense as Show will subclass this, but this represents visible media
 	 */
 	
-	return Backbone.Model.extend({
+	return CoreModel.extend({
+	
 		
-		
-		seen: function() {
-			
-		}
 		
 	});
 	

@@ -1,6 +1,6 @@
-define('model/show', ['backbone', 'moment'], function(Backbone, moment) {
+define('model/show', ['model/core', 'moment'], function(CoreModel, moment) {
 	
-	return Backbone.Model.extend({
+	return CoreModel.extend({
 		
 		label: function() {
 			return this.get('title') + ' (' + this.get('firstAired').format('YYYY') + ')';
