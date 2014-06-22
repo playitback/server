@@ -1,20 +1,38 @@
-var Sequelize = require('sequelize');
+var Sequelize 	= require('sequelize'),
+	_			= require('underscore');
 
 module.exports = function() {
+	
+	var Type = {
+		Movie: 			'movie',
+		TV: 			'tv'
+	};
+	
+	var State = {
+		Wanted: 		'wanted',
+		Snatched:		'snatched',
+		RenameFailed: 	'renameFailed',
+		Downloaded:		'downloaded'
+	};
+	
+	var WatchStatus = {
+		Watched:		'watched',
+		UnWatched:		'unwatched'
+	};
 	
 	var self = this;
 	var Media = this.sequelize.define('Media', {
 		type: {
-			type:			Sequelize.ENUM('movie', 'tv'),
+			type:			_.values(Type),
 			allowNull: 		false
 		},
 		state: {
-			type: 			Sequelize.ENUM('wanted', 'snatched', 'renameFailed', 'downloaded'),
-			defaultValue:	'wanted'
+			type: 			_.values(State),
+			defaultValue:	State.Wanted
 		},
 		watchStatus: {
-			type:			Sequelize.ENUM('watched', 'unwatched'),
-			defaultValue:	'unwatched'
+			type:			_.values(WatchStatus),
+			defaultValue:	WatchStatus.UnWatched
 		},
 		
 		// Movie only
@@ -26,7 +44,7 @@ module.exports = function() {
 						value = null;
 					}
 				
-					if(this.type === 'movie' && value === null) {
+					if(this.type === Type.Movie && value === null) {
 						throw new Error('Movie\'s require a title');
 					}
 				}
@@ -39,7 +57,7 @@ module.exports = function() {
 					value = null;
 				}
 			
-				if(this.type === 'movie' && value === null) {
+				if(this.type === Type.Movie && value === null) {
 					throw new Error('Movie\'s require a year');
 				}
 			}
@@ -53,7 +71,7 @@ module.exports = function() {
 					value = null;
 				}
 				
-				if(this.type === 'tv' && value === null) {
+				if(this.type === Type.TV && value === null) {
 					throw new Error('TV Show\'s require an episode number');
 				}
 			}
@@ -61,10 +79,10 @@ module.exports = function() {
 	},
 	{
 		classMethods: {
-			WatchStatus: {
-				Unwatched: 'unwatched',
-				Watched: 'watched'
-			},
+			Type:			Type,
+			State:			State,
+			WatchStatus: 	WatchStatus,
+			
 			createWithTvDbResults: function(show, results, callback) {
 				var mediaResults = [];
 				
@@ -103,7 +121,6 @@ module.exports = function() {
 				});
 			},
 			mapWithTvDbResult: function(result) {
-				console.log(result);
 				return {
 					type: 'tv',
 					number: result.number
