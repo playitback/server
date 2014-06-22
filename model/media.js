@@ -111,6 +111,16 @@ module.exports = function() {
 			}
 		},
 		instanceMethods: {
+			indexInfo: function(callback) {
+				var _response 	= this.values,	
+					_self		= this;
+							
+				this.getPoster().success(function(poster) {
+					_response.poster = poster.values;
+					
+					callback(_response);
+				});
+			},
 			download: function(torrent) {
 				if(typeof torrent === 'undefined' || !torrent) {
 					torrent = this.loadBestTorrent(function(torrent) {

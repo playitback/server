@@ -103,6 +103,53 @@ module.exports = function() {
 					firstAired: 	moment(result.FirstAired).toDate()
 				};
 			}
+		},
+		instanceMethods: {
+			indexInfo: function(callback) {
+				var _response 	= this.values,	
+					_self		= this;
+							
+				this.getPoster().success(function(poster) {
+					_response.poster = poster.values;
+					
+					_self.watchedStats(function(stats) {
+						_response.stats = stats;
+						
+						callback(_response);
+					});
+				});
+			},
+			watchedStats: function(callback) {
+				var _self = this,
+					stats = {
+						watchedCount: 0,
+						episodeCount: 0
+					};
+			
+				this.totalEpisodeCount(function(count) {
+					stats.episodeCount = count;
+					
+					_self.watchedEpisodeCount(function(count) {
+						stats.watchedCount = count;
+						
+						callback(stats);
+					});
+				});
+			},
+			totalEpisodeCount: function(callback) {
+				self.model.sequelize
+					.query('SELECT COUNT(m.id) AS count FROM Seasons s JOIN Media m ON m.SeasonId = s.Id WHERE s.ShowId = \'' + this.id + '\'', null, { plain: true, raw: true })
+					.success(function(rows) {
+						callback(rows.count);
+					});
+			},
+			watchedEpisodeCount: function(callback) {
+				self.model.sequelize
+					.query('SELECT COUNT(m.id) AS count FROM Seasons s JOIN Media m ON m.SeasonId = s.Id WHERE s.ShowId = \'' + this.id + '\' AND m.watchStatus = \'' + self.model.Media.WatchStatus.Watched + '\'', null, { plain: true, raw: true })
+					.success(function(rows) {
+						callback(rows.count);
+					});
+			}
 		}
 	});
 	
