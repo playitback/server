@@ -10,7 +10,11 @@ module.exports = function() {
 		},
 		state: {
 			type: 			Sequelize.ENUM('wanted', 'snatched', 'renameFailed', 'downloaded'),
-			defaultValues:	'wanted'
+			defaultValue:	'wanted'
+		},
+		watchStatus: {
+			type:			Sequelize.ENUM('watched', 'unwatched'),
+			defaultValue:	'unwatched'
 		},
 		
 		// Movie only
@@ -22,7 +26,6 @@ module.exports = function() {
 						value = null;
 					}
 				
-					console.log(this.type, value);
 					if(this.type === 'movie' && value === null) {
 						throw new Error('Movie\'s require a title');
 					}
@@ -42,9 +45,9 @@ module.exports = function() {
 			}
 		},
 		
-		// TV only
+		// TV only (episode)
 		number: {
-			type:			Sequelize.INTEGER,
+			type:			 Sequelize.INTEGER,
 			notNullIfTvShow: function(value) {
 				if(typeof value === 'undefined') {
 					value = null;
@@ -58,6 +61,10 @@ module.exports = function() {
 	},
 	{
 		classMethods: {
+			WatchStatus: {
+				Unwatched: 'unwatched',
+				Watched: 'watched'
+			},
 			createWithTvDbResults: function(show, results, callback) {
 				var mediaResults = [];
 				

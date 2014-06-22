@@ -2,7 +2,7 @@ div#media {
 	height: 100%;
 
 	.header {
-		height: 90px;
+		height: 85px;
 		overflow: visible;
 		margin-top: 15px;
 	
@@ -67,12 +67,44 @@ div#media {
 		
 		.item {
 			height: 300px;
+			position: relative;
 			
 			img {
 				height: 241px;
 				background: #dbdbdb;
 				display: block;
 				width: 100%;
+			}
+			
+			.overlay {
+				position: absolute;
+				top: 0;
+				left: 15px;
+				height: 241px;
+				right: 15px;
+				
+				.status {				
+					position: absolute;
+					right: 15px;
+					bottom: 15px;
+					width: 22px;
+					height: 17px;
+					line-height: 17px;
+					min-width: 17px;
+					border-radius: 9px;
+					background-color: #FF992F;
+					display: block;
+					color: white;
+					text-transform: uppercase;
+					font-size: 10px;
+					text-align: center;
+					
+					&.watched {
+						.at2x('/img/content/media/item/seen_icon.png', 13px, 11px);
+						
+						background-color: #DA7915;
+					}
+				}
 			}
 			
 			.attr {

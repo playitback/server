@@ -1,6 +1,6 @@
-define('model/movie', ['backbone'], function(Backbone) {
+define('model/movie', ['model/media'], function(MediaModel) {
 	
-	return Backbone.Model.extend({
+	return MediaModel.extend({
 	
 		label: function() {
 			return this.get('name');
