@@ -15,10 +15,16 @@ module.exports = function() {
 					
 					if(banner.type === 'poster') {
 						return {
-							url: TV.posterUrl(banner.path)
+							url: this.cachePosterWithUrl(TV.posterUrl(banner.path))
 						};
 					}
 				}
+			},
+			cachePosterWithUrl: function(url) {
+				// @TODO: fetch the contents of the URL, make a local copy and return the local URL.
+				// Probably relative to the root domain to make sure if the url changes (ip and port)...
+				// ...it'll still work
+				return url;
 			}
 		}
 	});
