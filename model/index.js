@@ -24,6 +24,17 @@ module.exports = function() {
 	this.sequelize.sync();
 	//this.sequelize.sync({ force: true });
 	
+	// Helpers
+	
+	this.modelWithType = function(type) {
+		if(type === this.Media.Type.TV) {
+			return this.Show;
+		}
+		else {
+			return this.Media;
+		}
+	}
+	
 	return this;
 
 };

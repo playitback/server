@@ -1,32 +1,20 @@
 module.exports = {
 
 	getIndex: function() {
-		var type 		= this.req.params.type,
-			model 		= this.model[type === 'tvshow' ? 'Show' : 'Movie'],
-			self		= this;
-							
-		model.findAll().success(function(medias) {
-			var response 		= {},
-				checkedShows 	= 0;
+		var showId 		= this.req.params.showId,
+			type		= this.req.params.type,
+			response 	= {};
+	
+		if(typeof showId != 'undefined') {
 			
-			response[type] = [];
-			
-			if(medias.length === 0) {
-				self.response(response);
+		}
+		else if(typeof type != 'undefined') {
+			this.model.modelWithType(type).getMediaForIndex(function(media) {
+				response[type] = media;
 				
-				return;
-			}
-			
-			medias.forEach(function(media) {
-				media.indexInfo(function(_response) {
-					response[type].push(_response);
-											
-					if(response[type].length === medias.length) {
-						self.response(response);
-					}
-				});
+				self.response(response);
 			});
-		});
+		}
 	},
 	
 	postIndex: function() {

@@ -83,6 +83,31 @@ module.exports = function() {
 			State:			State,
 			WatchStatus: 	WatchStatus,
 			
+			getMediaForIndex: function(callback) {
+				var _self = this;
+			
+				this.findAll().success(function(medias) {
+					var response 		= [],
+						checkedShows 	= 0;
+										
+					if(medias.length === 0) {
+						_self.response(response);
+						
+						return;
+					}
+					
+					medias.forEach(function(media) {
+						media.indexInfo(function(_response) {
+							response.push(_response);
+													
+							if(response.length === medias.length) {
+								callback(response);
+							}
+						});
+					});
+				});
+			},
+			
 			createWithTvDbResults: function(show, results, callback) {
 				var mediaResults = [];
 				
