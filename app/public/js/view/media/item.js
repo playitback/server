@@ -55,24 +55,15 @@ define('view/media/item', ['backbone', 'jquery.unveil'], function(Backbone, jqUn
 			var statusClass = 'unwatched',	
 				statusText 	= '';
 			
-			if(this.model.has('stats')) {
-				var stats = this.model.get('stats');
-				
-				if(stats.episodeCount === stats.watchedCount) {
-					statusClass = 'watched';
-				}
-				else {
-					statusText = (stats.episodeCount - stats.watchedCount);
-				}
-			}
+			
 			else if(this.model.has('watchStatus') && this.model.get('watchStatus') === 'watched') {
 				statusClass = 'watched';
 			}
 			
 			this.$el.find('.overlay .status')
 				.attr('class', 'status') // reset
-				.addClass(statusClass)
-				.text(statusText);
+				.addClass(this.model.watchedStatusClassName())
+				.text(this.model.unWatchedCount());
 			
 			this.$el.find('.attr label').text(this.model.get('title'));
 			this.$el.find('.attr span').text(this.model.has('firstAired') ? this.model.get('firstAired').format('YYYY') : '');
