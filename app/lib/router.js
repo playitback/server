@@ -50,7 +50,7 @@ module.exports = function(routes) {
 	};
 	
 	for(var uri in routes) {
-		this.app.all(uri, function(req, res) {
+		this.app.all(uri, function(req, res) {		
 			var route = routes[req.route.path],
 				parts = route.split('@');
 								
@@ -72,6 +72,8 @@ module.exports = function(routes) {
 				controller = require('../controller/' + controllerName);
 			}
 			catch(e) {
+				throw e;
+				
 				handle404();
 				
 				return;
