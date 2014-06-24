@@ -1,4 +1,4 @@
-define('view/media/header/search', ['backbone', 'collection/show', 'collection/movie', 'backbone.autocomplete'], function(Backbone, ShowCollection, MovieCollection, AutoCompleteView) {
+define('view/media/header/search', ['backbone', 'collection/search', 'backbone.autocomplete'], function(Backbone, SearchCollection, AutoCompleteView) {
 	
 	return Backbone.View.extend({
 		
@@ -8,22 +8,14 @@ define('view/media/header/search', ['backbone', 'collection/show', 'collection/m
 		initialize: function(options) {
 			this.mediaView = options && options.mediaView || null;
 						
-			if(this.mediaView.type == 'tvshows') {
-				this.collection = new ShowCollection({ search: true });
-			}
-			else if(this.mediaView.type == 'movies') {
-				this.collection = new MovieCollection({ search: true });
-			}
-			else {
-				throw 'invalid_mediaView_type';
-			}
+			this.collection = new SearchCollection();
 		},
 		
 		render: function() {
 			var self = this;
 		
 			this.$el.append(
-				$('<input />', { type: 'text', placeholder: 'Add ' + this.mediaView.typeTitle() + '...' })
+				$('<input />', { type: 'text', placeholder: 'Add TV Show\'s & Movies...' })
 			);
 					
 			$('section#content #media .header').append(this.$el);

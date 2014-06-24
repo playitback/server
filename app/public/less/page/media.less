@@ -1,146 +1,157 @@
 div#media {
 	height: 100%;
-
-	.header {
-		height: 85px;
-		overflow: visible;
-		margin-top: 15px;
+	position: relative;
 	
-		form.search {
-			z-index: 50;
+	#content {
+		position: relative;
+		
+		.header {
+			height: 100px;
 			overflow: visible;
-			
-			input[type=text] {
-				.at2x('/img/content/media/search/search_icon.png', 29px, 30px);
-			
-				background-position: 20px 50% !important;
-				height: 70px;
-				background: none;
-				border: none;
-				padding: 0 30px 0 70px;
-				font-size: 26px;
-				color: #ffffff;
-				background: rgba(255, 255, 255, 0.07);
-				display: block;
-				width: 100%;
-			}
-			
-			ul.autocomplete {
-				position: absolute;
-				bottom: 20px;
-				right: 20px;
-				left: 15px;
-				top: 85px;
-				overflow: hidden;
-				background: rgba(69, 69, 69, 0.91);
-				padding: 10px;
-				display: none;
+			margin-top: 0;
+			position: fixed;
+			margin-left: -15px;
+			z-index: 1000;
+			right: 0;
+			left: 120px;
+		
+			form.search {
 				z-index: 50;
+				overflow: visible;
 				
-				li {
-					a {
-						color: #9e9e9e; 
-						line-height: 30px;
-						display: block;
-						padding: 0 10px;
-						text-decoration: none;
-						
-						&:hover {
-							background: rgba(0, 0, 0, 0.22);
-							color: #ffffff;
+				input[type=text] {
+					.at2x('/img/content/media/search/search_icon.png', 29px, 30px);
+				
+					background-position: 20px 50% !important;
+					height: 100px;
+					background: none;
+					border: none;
+					padding: 0 30px 0 70px;
+					font-size: 26px;
+					color: #ffffff;
+					background: #353535;
+					display: block;
+					width: 100%;
+				}
+				
+				ul.autocomplete {
+					position: absolute;
+					bottom: 20px;
+					right: 20px;
+					left: 15px;
+					top: 85px;
+					overflow: hidden;
+					background: rgba(69, 69, 69, 0.91);
+					padding: 10px;
+					display: none;
+					z-index: 50;
+					
+					li {
+						a {
+							color: #9e9e9e; 
+							line-height: 30px;
+							display: block;
+							padding: 0 10px;
+							text-decoration: none;
+							
+							&:hover {
+								background: rgba(0, 0, 0, 0.22);
+								color: #ffffff;
+							}
 						}
 					}
 				}
 			}
-		}
-		
-		&.search-visible {
-			input[type=text] {
-				height: 70px !important;
+			
+			&.search-visible {
+				input[type=text] {
+					height: 70px !important;
+				}
 			}
 		}
-	}
-	
-	.items {
-		position: relative;
-		height: 100%;
 		
-		.item {
-			height: 300px;
+		.items {
 			position: relative;
+			height: 100%;
+			padding-top: 120px;
 			
-			img {
-				height: 241px;
-				background: #dbdbdb;
-				display: block;
-				width: 100%;
-			}
-			
-			.overlay {
-				position: absolute;
-				top: 0;
-				left: 15px;
-				height: 241px;
-				right: 15px;
+			.item {
+				height: 300px;
+				position: relative;
 				
-				.status {				
-					position: absolute;
-					right: 15px;
-					bottom: 15px;
-					width: 22px;
-					height: 17px;
-					line-height: 17px;
-					min-width: 17px;
-					border-radius: 9px;
-					background-color: #FF992F;
+				img {
+					height: 241px;
+					background: #dbdbdb;
 					display: block;
-					color: white;
-					text-transform: uppercase;
-					font-size: 10px;
-					text-align: center;
+					width: 100%;
+				}
+				
+				.overlay {
+					position: absolute;
+					top: 0;
+					left: 15px;
+					height: 241px;
+					right: 15px;
 					
-					&.watched {
-						.at2x('/img/content/media/item/seen_icon.png', 13px, 11px);
+					.status {				
+						position: absolute;
+						right: 15px;
+						bottom: 15px;
+						width: 22px;
+						height: 17px;
+						line-height: 17px;
+						min-width: 17px;
+						border-radius: 9px;
+						background-color: #FF992F;
+						display: block;
+						color: white;
+						text-transform: uppercase;
+						font-size: 10px;
+						text-align: center;
 						
-						background-color: #DA7915;
+						&.watched {
+							.at2x('/img/content/media/item/seen_icon.png', 13px, 11px);
+							
+							background-color: #DA7915;
+						}
+					}
+				}
+				
+				.attr {
+					position: relative;
+					margin-top: 5px;
+					
+					label {
+						margin-right: 50px;
+						color: #A9A9A9;
+						height: 40px;
+					}
+				
+					span {
+						width: 50px;
+						color: #5F5F5F;
+						position: absolute;
+						right: 0;
+						text-align: right;
 					}
 				}
 			}
-			
-			.attr {
-				position: relative;
-				margin-top: 5px;
-				
-				label {
-					margin-right: 50px;
-					color: #A9A9A9;
-					height: 40px;
-				}
-			
-				span {
-					width: 50px;
-					color: #5F5F5F;
-					position: absolute;
-					right: 0;
-					text-align: right;
-				}
-			}
 		}
-	}
-	
-	.no-items {
-		padding-top: 300px;
-		text-align: center;
-		color: #484848;
-		font-size: 26px;
-		font-weight: 500;
-	}
-	
-	&.tvshows {
+		
 		.no-items {
-			.at2x('/img/content/media/tv_icon_large.png', 129px, 129px);
-			
-			background-position: 50% 150px;
+			padding-top: 300px;
+			text-align: center;
+			color: #484848;
+			font-size: 26px;
+			font-weight: 500;
+		}
+		
+		&.tvshows {
+			.no-items {
+				.at2x('/img/content/media/tv_icon_large.png', 129px, 129px);
+				
+				background-position: 50% 150px;
+			}
 		}
 	}
 }

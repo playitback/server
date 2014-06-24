@@ -1,12 +1,11 @@
 var Sequelize 	= require('sequelize'),
-	moment		= require('moment'),
-	TV			= require('../app/lib/provider/data/tvshow');
+	moment		= require('moment');
 
 module.exports = function() {
 	
 	var self = this;
 	var Show = this.sequelize.define('Show', {
-		tvDbId: {
+		remoteId: {
 			type: Sequelize.INTEGER,
 			allowNull: false
 		},
@@ -105,7 +104,7 @@ module.exports = function() {
 			},
 			
 			createWithTvDbResult: function(result, callback) {
-				this.create(this.mapWithTvDbResult(result.tvShow))
+				this.create(this.mapWithTheMovieDbResult(result.tvShow))
 					.success(function(show) {
 						self.model.Poster.create(self.model.Poster.mapWithTvDbResult(result))
 							.success(function(poster) {
@@ -121,11 +120,11 @@ module.exports = function() {
 					});
 			},
 			
-			mapWithTvDbResult: function(result) {
+			mapWithTheMovieDbResult: function(result) {
 				return {
-					tvDbId:			result.id,
+					remoteId:		result.id,
 					title: 			result.name,
-					firstAired: 	moment(result.FirstAired).toDate()
+					firstAired: 	moment(result.first_air_date).toDate()
 				};
 			}
 		},

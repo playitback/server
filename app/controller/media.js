@@ -1,19 +1,33 @@
+var TheMovieDB = require('themoviedb');
+
 module.exports = {
 
 	getIndex: function() {
-		var showId 		= this.req.params.showId,
+		var mediaId		= this.req.params.mediaId,
 			type		= this.req.params.type,
-			response 	= {};
+			response 	= {},
+			self		= this;
 	
-		if(typeof showId != 'undefined') {
-			
+		if(typeof type != 'undefined') {
+			if(typeof mediaId != 'undefined') {
+				this.model.modelWithType(type).find(mediaId).success(function(media) {
+					media.indexInfo(function(media) {
+						response[type] = media;
+						
+						self.response(response);
+					});
+				});
+			}
+			else {
+				this.model.modelWithType(type).getMediaForIndex(function(media) {
+					response[type] = media;
+					
+					self.response(response);
+				});
+			}
 		}
-		else if(typeof type != 'undefined') {
-			this.model.modelWithType(type).getMediaForIndex(function(media) {
-				response[type] = media;
-				
-				self.response(response);
-			});
+		else {
+			self.errorResponse('invalid_parameters');
 		}
 	},
 	
@@ -35,15 +49,28 @@ module.exports = {
 
 	getSearch: function() {	
 		var query,
-			type,
 			self = this;
 	
 		if(!(query = this.input('query'))) {
 			throw 'missing_required_param';
 		}
+						
+		new TheMovieDB({ apiKey: '' }).searchMulti(query, function(err, remoteResults) {
+			var results = [];
+		
+			remoteResults.forEach(function(remoteResult) {
+				if(remoteResult.media_type === 'person') {
+					remoteResults.splice(remoteResults.indexOf(remoteResult, 1));
+				
+					return;
+				}
 			
-		require('../lib/provider/data/' + this.req.params.type).search.call(this, query, function(media) {		
-			self.response({ results: media });
+				results.push(self.model.modelWithType(remoteResult.media_type).mapWithTheMovieDbResult(remoteResult));
+				
+				if(results === remoteResults.length) {
+					self.response({ results: results });
+				}
+			});
 		});
 	}
 	

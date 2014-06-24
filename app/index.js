@@ -13,4 +13,10 @@ var App = function() {
 	
 };
 
-App();
+var app = App();
+
+if(typeof test != 'undefined') {
+	test.app = app;
+	
+	test.run();
+}

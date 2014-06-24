@@ -1,5 +1,4 @@
-var Sequelize 	= require('sequelize'),
-	TV			= require('../app/lib/provider/data/tvshow');
+var Sequelize 	= require('sequelize');
 
 module.exports = function() {
 
@@ -15,7 +14,7 @@ module.exports = function() {
 					
 					if(banner.type === 'poster') {
 						return {
-							url: this.cachePosterWithUrl(TV.posterUrl(banner.path))
+							url: this.cachePosterWithUrl(banner.path)
 						};
 					}
 				}

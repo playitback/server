@@ -145,11 +145,20 @@ module.exports = function() {
 					}
 				});
 			},
-			mapWithTvDbResult: function(result) {
-				return {
-					type: 'tv',
-					number: result.number
+			mapWithTheMovieDbResult: function(result) {
+				var mapped = {
+					type:		result.media_type	
 				};
+				
+				if(mapped.type === this.Type.TV) {
+					
+				}
+				else if(mapped.type === this.Type.Movie) {
+					mapped.title 	= result.title;
+					mapped.year 	= result.release_date.split('-')[0];
+				}
+			
+				return mapped;
 			}
 		},
 		instanceMethods: {
@@ -158,7 +167,9 @@ module.exports = function() {
 					_self		= this;
 							
 				this.getPoster().success(function(poster) {
-					_response.poster = poster.values;
+					if(poster) {
+						_response.poster = poster.values;
+					}
 					
 					callback(_response);
 				});

@@ -52,14 +52,6 @@ define('view/media/item', ['backbone', 'jquery.unveil'], function(Backbone, jqUn
 				this.$el.find('img').attr('data-src', this.model.get('poster').url).unveil();
 			}
 			
-			var statusClass = 'unwatched',	
-				statusText 	= '';
-			
-			
-			else if(this.model.has('watchStatus') && this.model.get('watchStatus') === 'watched') {
-				statusClass = 'watched';
-			}
-			
 			this.$el.find('.overlay .status')
 				.attr('class', 'status') // reset
 				.addClass(this.model.watchedStatusClassName())

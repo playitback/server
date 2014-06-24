@@ -4,7 +4,8 @@ requirejs.config({
 		view: '../view',
 		model: '../data/model',
 		collection: '../data/collection',
-		router: '../router'
+		router: '../router',
+		'const': '../data/const/index'
 	}
 });
 
