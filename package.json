@@ -1,24 +1,28 @@
 {
-	"name": "mediamanager",
+	"name": "playback-server",
 	"version": "0.0.1",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/playitback/server.git"
+	},
 	"description": "",
 	"author": "Nick Babenko <nickbabenko@me.com>",
 	"bin": {
 		"mediamanager": "./bin/mediamanager"
 	},
 	"dependencies": {
-		"sequelize": "1.7.8",
+		"sqlite3": "2.2.3",
 		"express": "4.4.1",
+		"sequelize": "1.7.9",
 		"jade": "1.3.1",
 		"transmission": "0.4.0",
-		"tmdbv3": "0.1.2",
-		"tvdb": "0.0.13",
 		"cron": "1.0.4",
 		"moment": "2.6.0",
 		"express-less": "0.0.3",
-		"sqlite3": "2.2.3",
-		"pirateship": "https://github.com/playitback/pirateship/tarball/master",
 		"body-parser": "1.3.1",
-		"underscore": "1.6.0"
+		"underscore": "1.6.0",
+		"mocha": "1.20.1",
+		"themoviedb": "https://github.com/playitback/themoviedb/tarball/master",
+		"pirateship": "https://github.com/playitback/pirateship/tarball/master"
 	}
 }
