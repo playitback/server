@@ -73,10 +73,10 @@ div#media {
 		.items {
 			position: relative;
 			height: 100%;
-			padding-top: 120px;
+			padding-top: 100px;
 			
 			.item {
-				height: 300px;
+				height: 241px;
 				position: relative;
 				padding: 0;
 				
@@ -90,14 +90,14 @@ div#media {
 				.overlay {
 					position: absolute;
 					top: 0;
-					left: 15px;
+					left: 0;
 					height: 241px;
-					right: 15px;
+					right: 0;
 					
 					.status {				
 						position: absolute;
 						right: 15px;
-						bottom: 15px;
+						top: 15px;
 						width: 22px;
 						height: 17px;
 						line-height: 17px;
@@ -119,13 +119,17 @@ div#media {
 				}
 				
 				.attr {
-					position: relative;
+					position: absolute;
+					bottom: 0;
+					left: 0;
+					right: 0;
+					background: rgba(0, 0, 0, 0.6);
 					margin-top: 5px;
+					padding: 10px;
 					
 					label {
 						margin-right: 50px;
 						color: #A9A9A9;
-						height: 40px;
 					}
 				
 					span {
