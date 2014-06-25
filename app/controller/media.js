@@ -55,8 +55,14 @@ module.exports = {
 			throw 'missing_required_param';
 		}
 						
-		new TheMovieDB({ apiKey: '' }).searchMulti(query, function(err, remoteResults) {
+		new TheMovieDB({ apiKey: 'fd8c8d9adabc2d072ef3d436396a87fb' }).searchMulti(query, function(err, remoteResults) {
 			var results = [];
+			
+			if(err) {
+				self.errorResponse(err);
+				
+				return;
+			}
 		
 			remoteResults.forEach(function(remoteResult) {
 				if(remoteResult.media_type === 'person') {

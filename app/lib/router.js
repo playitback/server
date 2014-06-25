@@ -71,10 +71,8 @@ module.exports = function(routes) {
 			try {
 				controller = require('../controller/' + controllerName);
 			}
-			catch(e) {
-				throw e;
-				
-				handle404();
+			catch(e) {				
+				self.errorResponse(400);
 				
 				return;
 			}
