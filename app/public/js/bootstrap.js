@@ -5,7 +5,7 @@ requirejs.config({
 		model: '../data/model',
 		collection: '../data/collection',
 		router: '../router',
-		'const': '../data/const/index'
+		'const': '../data/const'
 	}
 });
 

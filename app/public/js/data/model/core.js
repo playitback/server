@@ -1,4 +1,4 @@
-define('model/core', ['backbone', 'const'], function(Backbone, Const) {
+define('model/core', ['backbone', 'const/index'], function(Backbone, Const) {
 	
 	return Backbone.Model.extend({
 		
@@ -24,8 +24,8 @@ define('model/core', ['backbone', 'const'], function(Backbone, Const) {
 		},
 		
 		unWatchedCount: function() {
-			if(this.model.has('stats')) {
-				var stats = this.model.get('stats');
+			if(this.has('stats')) {
+				var stats = this.get('stats');
 				
 				return (stats.episodeCount - stats.watchedCount);
 			}
