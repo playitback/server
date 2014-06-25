@@ -72,8 +72,8 @@ module.exports = {
 				}
 			
 				results.push(self.model.modelWithType(remoteResult.media_type).mapWithTheMovieDbResult(remoteResult));
-				
-				if(results === remoteResults.length) {
+								
+				if(results.length === remoteResults.length) {
 					self.response({ results: results });
 				}
 			});
