@@ -30,8 +30,11 @@ module.exports = function() {
 		if(type === this.Media.Type.TV) {
 			return this.Show;
 		}
-		else {
+		else if(type === this.Media.Type.Movie) {
 			return this.Media;
+		}
+		else {
+			throw 'invalid_type';
 		}
 	}
 	

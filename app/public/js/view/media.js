@@ -1,4 +1,4 @@
-define('view/media', ['backbone', 'view/media/header', 'collection/show', 'collection/movie', 'view/media/item'], function(Backbone, HeaderView, ShowCollection, MovieCollection, ItemView) {
+define('view/media', ['backbone', 'view/media/header', 'collection/show', 'collection/movie', 'view/media/item', 'const/index'], function(Backbone, HeaderView, ShowCollection, MovieCollection, ItemView, Const) {
 	
 	return Backbone.View.extend({
 		
@@ -44,19 +44,19 @@ define('view/media', ['backbone', 'view/media/header', 'collection/show', 'colle
 				plural = '';
 			}
 		
-			if(this.type == 'tvshows') {
+			if(this.type === Const.Type.TV) {
 				return 'TV Show' + plural;
 			}
-			else if(this.type == 'movies') {
+			else if(this.type === Const.Type.Movie) {
 				return 'Movie' + plural;
 			}
 		},
 		
 		collection: function() {
-			if(this.type == 'tvshows') {
+			if(this.type === Const.Type.TV) {
 				return new ShowCollection();
 			}
-			else if(this.type == 'movies') {
+			else if(this.type === Const.Type.Movie) {
 				return new MovieCollection();
 			}
 		},

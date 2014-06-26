@@ -18,10 +18,10 @@ define('collection/show', ['backbone', 'model/show'], function(Backbone, ShowMod
 		
 		url: function() {
 			if(this.searchMode) {
-				return '/media/tvshow/search';
+				return '/media/tv/search';
 			}
 			else {
-				return '/media/tvshow';
+				return '/media/tv';
 			}
 		},
 		

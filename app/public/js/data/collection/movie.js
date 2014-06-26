@@ -18,10 +18,10 @@ define('collection/movie', ['backbone', 'model/movie'], function(Backbone, Movie
 		
 		url: function() {
 			if(this.searchMode) {
-				return '/media/movies/search';
+				return '/media/movie/search';
 			}
 			else {
-				return '/media/movies';
+				return '/media/movie';
 			}
 		},
 		

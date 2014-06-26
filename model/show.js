@@ -22,13 +22,13 @@ module.exports = function() {
 		
 			getMediaForIndex: function(callback) {
 				var _self = this;
-			
+							
 				this.findAll().success(function(medias) {
 					var response 		= [],
 						checkedShows 	= 0;
-										
+																
 					if(medias.length === 0) {
-						_self.response(response);
+						callback(response);
 						
 						return;
 					}
@@ -135,6 +135,9 @@ module.exports = function() {
 							
 				this.getPoster().success(function(poster) {
 					_response.poster = poster.values;
+					
+					console.log('1');
+					console.log(poster);
 					
 					_self.watchedStats(function(stats) {
 						_response.stats = stats;

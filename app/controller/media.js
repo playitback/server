@@ -18,7 +18,7 @@ module.exports = {
 					});
 				});
 			}
-			else {
+			else {			
 				this.model.modelWithType(type).getMediaForIndex(function(media) {
 					response[type] = media;
 					
