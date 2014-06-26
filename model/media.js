@@ -145,7 +145,7 @@ module.exports = function() {
 					}
 				});
 			},
-			mapWithTheMovieDbResult: function(result) {
+			mapWithRemoteResult: function(result) {
 				var mapped = {
 					type:		result.media_type	
 				};

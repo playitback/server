@@ -120,7 +120,7 @@ module.exports = function() {
 					});
 			},
 			
-			mapWithTheMovieDbResult: function(result) {
+			mapWithRemoteResult: function(result) {
 				return {
 					remoteId:		result.id,
 					title: 			result.name,

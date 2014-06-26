@@ -34,8 +34,8 @@ module.exports = {
 	postIndex: function() {
 		var self = this;
 	
-		if(typeof this.req.body.tvDbId != 'undefined') {
-			this.model.Show.createWithTvDbId(this.req.body.tvDbId, function(show) {
+		if(typeof this.req.body.remoteId != 'undefined') {
+			this.model.modelWithType(this.req.body.type).createWithRemoteId(this.req.body.remoteId, function(show) {
 				show.getPoster().success(function(poster) {
 					var response = show.values;
 					
@@ -71,7 +71,7 @@ module.exports = {
 					return;
 				}
 			
-				results.push(self.model.modelWithType(remoteResult.media_type).mapWithTheMovieDbResult(remoteResult));
+				results.push(self.model.modelWithType(remoteResult.media_type).mapWithRemoteResult(remoteResult));
 								
 				if(results.length === remoteResults.length) {
 					self.response({ results: results });
