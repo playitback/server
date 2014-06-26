@@ -30,7 +30,7 @@ define('collection/movie', ['backbone', 'model/movie'], function(Backbone, Movie
 				return response.results || response;
 			}
 			else {
-				return response.movies || response;
+				return response.movie || response;
 			}
 		}
 		

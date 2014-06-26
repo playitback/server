@@ -30,7 +30,7 @@ define('collection/show', ['backbone', 'model/show'], function(Backbone, ShowMod
 				return response.results || response;
 			}
 			else {
-				return response.tvshow || response;
+				return response.tv || response;
 			}
 		}
 		
