@@ -18,7 +18,7 @@ define('view/media/header/search', ['backbone', 'collection/search', 'backbone.a
 				$('<input />', { type: 'text', placeholder: 'Add TV Show\'s & Movies...' })
 			);
 					
-			$('section#content #media .header').append(this.$el);
+			$('#media .row .header').append(this.$el);
 			
 			new AutoCompleteView({
 				input: this.$el.find('input'),

@@ -11,7 +11,7 @@ define('view/media/header', ['backbone', 'view/media/header/search'], function(B
 		},
 		
 		render: function() {		
-			$('section#content #media').append(this.$el);
+			$('#media .row').prepend(this.$el);
 			
 			this.search.render();
 		},

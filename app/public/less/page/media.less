@@ -2,73 +2,80 @@ div#media {
 	height: 100%;
 	position: relative;
 	
-	#content {
-		position: relative;
-		
-		.header {
-			height: 100px;
+	.header {
+		height: 100px;
+		overflow: visible;
+		margin-top: 0;
+		position: fixed;
+		left: 0;
+		top: 0;
+		z-index: 1000;
+		right: 0;
+		left: 8.33333333%;
+	
+		form.search {
+			z-index: 50;
 			overflow: visible;
-			margin-top: 0;
-			position: fixed;
-			margin-left: -15px;
-			z-index: 1000;
-			right: 0;
-			left: 120px;
-		
-			form.search {
+			
+			input[type=text] {
+				.at2x('/img/content/media/search/search_icon.png', 29px, 30px);
+			
+				background-position: 20px 50% !important;
+				height: 100px;
+				background: none;
+				border: none;
+				padding: 0 30px 0 70px;
+				font-size: 26px;
+				color: #ffffff;
+				background: #353535;
+				display: block;
+				width: 100%;
+			}
+			
+			ul.autocomplete {
+				position: fixed;
+				bottom: 0px;
+				right: 0px !important;
+				left: 8.33333333%;
+				top: 100px;
+				overflow: hidden;
+				background: rgba(69, 69, 69, 0.91);
+				padding: 10px;
+				display: none;
 				z-index: 50;
-				overflow: visible;
 				
-				input[type=text] {
-					.at2x('/img/content/media/search/search_icon.png', 29px, 30px);
-				
-					background-position: 20px 50% !important;
-					height: 100px;
-					background: none;
-					border: none;
-					padding: 0 30px 0 70px;
-					font-size: 26px;
-					color: #ffffff;
-					background: #353535;
-					display: block;
-					width: 100%;
-				}
-				
-				ul.autocomplete {
-					position: absolute;
-					bottom: 20px;
-					right: 20px;
-					left: 15px;
-					top: 85px;
-					overflow: hidden;
-					background: rgba(69, 69, 69, 0.91);
-					padding: 10px;
-					display: none;
-					z-index: 50;
-					
-					li {
-						a {
-							color: #9e9e9e; 
-							line-height: 30px;
-							display: block;
-							padding: 0 10px;
-							text-decoration: none;
+				li {
+					a {
+						color: #9e9e9e; 
+						line-height: 30px;
+						display: block;
+						padding: 0 10px;
+						text-decoration: none;
+						cursor: pointer;
+						
+						span {
+							float: right;
+							color: #7e7e7e;
+						}
+						
+						&:hover {
+							background: rgba(0, 0, 0, 0.22);
+							color: #ffffff;
 							
-							&:hover {
-								background: rgba(0, 0, 0, 0.22);
-								color: #ffffff;
+							span {
+								color: @orange;
 							}
 						}
+						
+						
 					}
 				}
 			}
-			
-			&.search-visible {
-				input[type=text] {
-					height: 70px !important;
-				}
-			}
 		}
+	}
+	
+	#content {
+		position: relative;
 		
 		.items {
 			position: relative;
