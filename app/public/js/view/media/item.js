@@ -3,7 +3,7 @@ define('view/media/item', ['backbone', 'jquery.unveil'], function(Backbone, jqUn
 	return Backbone.View.extend({
 		
 		tagName: 'div',
-		className: 'item col-md-2 col-sm-3 col-xs-6',
+		className: 'item col-md-2 col-sm-3 col-xs-4',
 		
 		inititialize: function() {
 			var self = this;
@@ -13,7 +13,7 @@ define('view/media/item', ['backbone', 'jquery.unveil'], function(Backbone, jqUn
 		
 		render: function() {
 			this.$el.append(
-				$('<img />', { 'class': 'img-responsive' })
+				$('<div></div>', { 'class': 'poster' })
 			)
 			.append(
 				$('<div></div>', { 'class': 'overlay' })
@@ -49,7 +49,7 @@ define('view/media/item', ['backbone', 'jquery.unveil'], function(Backbone, jqUn
 		
 		updateUI: function() {
 			if(this.model.has('poster')) {
-				this.$el.find('img').attr('data-src', this.model.get('poster').url).unveil();
+				this.$el.find('.poster').css('background-image', 'url(' + this.model.get('poster').url + ')');
 			}
 			
 			this.$el.find('.overlay .status')
