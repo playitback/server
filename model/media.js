@@ -147,7 +147,8 @@ module.exports = function() {
 			},
 			mapWithRemoteResult: function(result) {
 				var mapped = {
-					type:		result.media_type	
+					type: 		result.media_type,
+					remoteId: 	result.id
 				};
 				
 				if(mapped.type === this.Type.TV) {
