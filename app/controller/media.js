@@ -59,6 +59,9 @@ module.exports = {
 			catch(e) {
 				transaction.rollback();
 				transaction.done();
+				
+				// Continue exception to request
+				throw e;
 			}
 		});
 	},
