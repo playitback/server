@@ -20,6 +20,26 @@ module.exports = function() {
 		UnWatched:		'unwatched'
 	};
 	
+	var notNullIfTvShow = function(value) {
+		if(typeof value === 'undefined') {
+			value = null;
+		}
+		
+		if(this.type === Type.TV && value === null) {
+			throw new Error('Required for TV Shows');
+		}
+	};
+	
+	var notNullIfMovie = function(value) {
+		if(typeof value === 'undefined') {
+			value = null;
+		}
+		
+		if(this.type === Type.Movie && value === null) {
+			throw new Error('Required for Movies');
+		}
+	};
+	
 	var self = this;
 	var Media = this.sequelize.define('Media', {
 		type: {
@@ -39,41 +59,39 @@ module.exports = function() {
 		title: {
 			type: 			Sequelize.STRING,
 			validate: {
-				notNullIfMovie: function(value) {
-					if(typeof value === 'undefined') {
-						value = null;
-					}
-				
-					if(this.type === Type.Movie && value === null) {
-						throw new Error('Movie\'s require a title');
-					}
-				}
+				notNullIfMovie: notNullIfMovie
 			}
 		},
 		year: {
 			type:			Sequelize.INTEGER,
-			notNullIfMovie: function(value) {
-				if(typeof value === 'undefined') {
-					value = null;
-				}
-			
-				if(this.type === Type.Movie && value === null) {
-					throw new Error('Movie\'s require a year');
-				}
+			validate: {
+				notNullIfMovie: notNullIfMovie
 			}
 		},
 		
 		// TV only (episode)
 		number: {
 			type:			 Sequelize.INTEGER,
-			notNullIfTvShow: function(value) {
-				if(typeof value === 'undefined') {
-					value = null;
-				}
-				
-				if(this.type === Type.TV && value === null) {
-					throw new Error('TV Show\'s require an episode number');
-				}
+			validate: {
+				notNullIfTvShow: notNullIfTvShow
+			}
+		},
+		airDate: {
+			type:			Sequelize.DATE,
+			validate: {
+				notNullIfTvShow: notNullIfTvShow
+			}
+		},
+		name: {
+			type:			Sequelize.STRING,
+			validate: {
+				notNullIfTvShow: notNullIfTvShow
+			}
+		},
+		overview: {
+			type:			Sequelize.STRING,
+			validate: {
+				notNullIfTvShow: notNullIfTvShow
 			}
 		}
 	},
@@ -108,55 +126,69 @@ module.exports = function() {
 				});
 			},
 			
-			createWithTvDbResults: function(show, results, callback) {
-				var mediaResults = [];
+			createWithRemoteId: function(remoteId, callback) {
+				// TODO
+			},
+			
+			createWithRemoteResults: function(results, callback) {
+				if(typeof results != 'object' || typeof results.length != 'number') {
+					throw 'Invalid results array';
+				}
 				
-				for(var r in results) {
-					this.createWithTvDbResult(show, results[r], function(result) {
-						mediaResults.push(result);
+				if(typeof callback != 'function') {
+					throw 'Invalid callback';
+				}
+			
+				var media 	= [],
+					_self	= this;
+				
+				results.forEach(function(result) {
+					_self.createWithRemoteResult(result, function(episode) {
+						media.push(episode);
 						
-						if(mediaResults.length === results.length) {
-							callback(mediaResults);
+						if(media.length === results.length) {
+							callback(media);
 						}
 					});
-				}
+				});
 			},
-			createWithTvDbResult: function(show, result, callback) {
+			createWithRemoteResult: function(result, callback) {
 				var _self = this;
 			
-				show.getSeasons({ where: { number: result.SeasonNumber }}).success(function(seasons) {
-					var assignToSeason = function(season) {
-						_self.create(_self.mapWithTvDbResult(result))
-							.success(function(episode) {
-								season.addEpisode(episode)
-									.success(function() {
-										callback(episode);
-									});
+				this.create(this.mapWithRemoteResult(result)).success(function(media) {
+					if(typeof result.still_path === 'string') {
+						self.model.Poster.createWithRemoteResult(result).success(function(poster) {
+							media.setPoster(poster).success(function() {
+								callback(media);
 							});
-					};
-				
-					if(seasons.length === 0) {
-						self.model.Season.createWithTvDbResult(result, function(season) {
-							assignToSeason(season);
 						});
 					}
 					else {
-						assignToSeason(seasons[0]);
+						callback(media);
 					}
 				});
 			},
 			mapWithRemoteResult: function(result) {
 				var mapped = {
-					type: 		result.media_type,
-					remoteId: 	result.id
+					remoteId: result.id
 				};
 				
-				if(mapped.type === this.Type.TV) {
-					
+				// Search results
+				if(typeof result.media_type === 'string') {
+					mapped.type = result.media_type;
 				}
-				else if(mapped.type === this.Type.Movie) {
+				
+				if(mapped.type === this.Type.Movie) {
 					mapped.title 	= result.title;
 					mapped.year 	= result.release_date.split('-')[0];
+				}
+				
+				// TV
+				else {
+					mapped.airDate 	= moment(result.air_date);
+					mapped.number	= result.episode_number;
+					mapped.name		= result.name;
+					mapped.overview	= result.overview;
 				}
 			
 				return mapped;

@@ -45,6 +45,7 @@ module.exports = function() {
 				});
 			},
 		
+			/*
 			createWithTvDbResults: function(results, callback) {
 				if(results.length === 0) {
 					callback([]);
@@ -85,32 +86,32 @@ module.exports = function() {
 						}
 					});
 				});
-			},
+			},*/
 			
-			createWithTvDbId: function(tvDbId, callback) {
+			createWithRemoteId: function(remoteId, callback) {
 				var _self = this;
-							
-				TV.tvdb().getInfo(tvDbId, function(err, result) {
+				
+				self.theMovieDb.getTv(remoteId, function(err, result) {
 					if(err) {
 						callback(err);
 						
 						return;
 					}
-									
-					_self.createWithTvDbResult(result, function(show) {
+					
+					_self.createWithRemoteResult(result, function(show) {
 						callback(show);
 					});
 				});
 			},
 			
-			createWithTvDbResult: function(result, callback) {
-				this.create(this.mapWithTheMovieDbResult(result.tvShow))
+			createWithRemoteResult: function(result, callback) {
+				this.create(this.mapWithRemoteResult(result))
 					.success(function(show) {
-						self.model.Poster.create(self.model.Poster.mapWithTvDbResult(result))
+						self.model.Poster.createWithRemoteResult(result)
 							.success(function(poster) {
 								show.setPoster(poster)
-									.success(function() {
-										self.model.Media.createWithTvDbResults(show, result.episodes, function(seasons) {
+									.success(function() {									
+										self.model.Season.createWithRemoteResults(result.seasons, function(seasons) {
 											show.setSeasons(seasons).success(function() {
 												callback(show);
 											});

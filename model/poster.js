@@ -1,28 +1,45 @@
-var Sequelize 	= require('sequelize');
+var Sequelize = require('sequelize');
 
 module.exports = function() {
 
+	var self = this;
+	
 	return this.sequelize.define('Poster', {
 		url: {
 			type: Sequelize.STRING
 		}
 	}, {
 		classMethods: {
-			mapWithTvDbResult: function(result) {
-				for(var i in result.banners) {
-					var banner = result.banners[i];
-					
-					if(banner.type === 'poster') {
-						return {
-							url: this.cachePosterWithUrl(banner.path)
-						};
+			createWithRemoteResult: function(result, callback) {
+				return this.create(this.mapWithRemoteResult(result));
+			},
+			
+			mapWithRemoteResult: function(result, key) {
+				var posterUri = null;
+				
+				if(typeof key != 'undefined') {
+					if(typeof result[key] === 'string') {
+						posterUri = result[key];
 					}
 				}
+				else if(typeof result.still_path === 'string') {
+					posterUri = result.still_path;
+				}
+				else if(typeof result.poster_path === 'string') {
+					posterUri = result.poster_path;
+				}
+				
+				if(!posterUri) {
+					throw 'Poster URI not found';
+				}
+						
+				return {
+					url: this.cachePosterWithUrl(self.theMovieDb.posterUrl(posterUri))
+				};
 			},
-			cachePosterWithUrl: function(url) {
-				// @TODO: fetch the contents of the URL, make a local copy and return the local URL.
-				// Probably relative to the root domain to make sure if the url changes (ip and port)...
-				// ...it'll still work
+			
+			cachePosterWithUri: function(uri) {
+				// @TODO: Get poster configuration and cache the sizes we need.
 				return url;
 			}
 		}

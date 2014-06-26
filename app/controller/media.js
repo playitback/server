@@ -1,5 +1,3 @@
-var TheMovieDB = require('themoviedb');
-
 module.exports = {
 
 	getIndex: function() {
@@ -32,19 +30,37 @@ module.exports = {
 	},
 	
 	postIndex: function() {
-		var self = this;
-	
-		if(typeof this.req.body.remoteId != 'undefined') {
-			this.model.modelWithType(this.req.body.type).createWithRemoteId(this.req.body.remoteId, function(show) {
-				show.getPoster().success(function(poster) {
-					var response = show.values;
-					
-					response.poster = poster.values;
-					
-					self.response({ tvshow: response });
-				});
-			});
+		var self 		= this,
+			type 		= this.req.body.type,
+			remoteId 	= this.req.body.remoteId;
+						
+		if(typeof type != 'string') {
+			throw 'invalid or missing type';
 		}
+		
+		if(typeof remoteId != 'number') {
+			throw 'invalid or missing remoteId';
+		}
+	
+		this.model.sequelize.transaction(function(transaction) {
+			try {
+				this.model.modelWithType(type).createWithRemoteId(remoteId, function(show) {
+					show.getPoster().success(function(poster) {
+						var response = show.values;
+						
+						response.poster = poster.values;
+						
+						transaction.commit();
+						
+						self.response({ tvshow: response });
+					});
+				});
+			}
+			catch(e) {
+				transaction.rollback();
+				transaction.done();
+			}
+		});
 	},
 
 	getSearch: function() {	
@@ -55,7 +71,7 @@ module.exports = {
 			throw 'missing_required_param';
 		}
 						
-		new TheMovieDB({ apiKey: 'fd8c8d9adabc2d072ef3d436396a87fb' }).searchMulti(query, function(err, remoteResults) {
+		this.theMovieDb.searchMulti(query, function(err, remoteResults) {
 			var results = [];
 			
 			if(err) {
@@ -72,7 +88,7 @@ module.exports = {
 				}
 			
 				results.push(self.model.modelWithType(remoteResult.media_type).mapWithRemoteResult(remoteResult));
-								
+												
 				if(results.length === remoteResults.length) {
 					self.response({ results: results });
 				}

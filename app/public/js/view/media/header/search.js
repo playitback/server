@@ -26,7 +26,7 @@ define('view/media/header/search', ['backbone', 'collection/search', 'backbone.a
 				onSelect: function(selected) {
 					self.$el.find('input').val('');
 					
-					self.mediaView.addMedia(selected);
+					self.mediaView.addMedia(selected.mediaObject());
 				},
 				onShow: function() {
 					$('section#content #media .header').addClass('search-visible');

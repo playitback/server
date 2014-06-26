@@ -18,7 +18,7 @@ module.exports = function() {
 	this.Season.hasMany(this.Media, { as: 'Episodes' });
 	this.Show.hasOne(this.Poster);
 	this.Season.hasOne(this.Poster);
-	this.Media.hasOne(this.Poster);
+	this.Media.hasOne(this.Poster, { as: 'Still' });
 	this.Media.hasMany(this.Torrent);
 	
 	this.sequelize.sync();
