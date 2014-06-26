@@ -1,5 +1,6 @@
 var Sequelize 	= require('sequelize'),
-	_			= require('underscore');
+	_			= require('underscore'),
+	moment		= require('moment');
 
 module.exports = function() {
 	
@@ -154,6 +155,8 @@ module.exports = function() {
 			},
 			createWithRemoteResult: function(result, callback) {
 				var _self = this;
+								
+				result.type = typeof result.episode_number === 'number' ? Type.TV : Type.Movie;
 			
 				this.create(this.mapWithRemoteResult(result)).success(function(media) {
 					if(typeof result.still_path === 'string') {
@@ -177,20 +180,23 @@ module.exports = function() {
 				if(typeof result.media_type === 'string') {
 					mapped.type = result.media_type;
 				}
-				
-				if(mapped.type === this.Type.Movie) {
+				else if(typeof result.type === 'string') {
+					mapped.type = result.type;
+				}
+								
+				if(mapped.type === Type.Movie) {
 					mapped.title 	= result.title;
 					mapped.year 	= result.release_date.split('-')[0];
 				}
 				
 				// TV
-				else {
-					mapped.airDate 	= moment(result.air_date);
+				else if(mapped.type === Type.TV) {
+					mapped.airDate 	= moment(result.air_date).toDate();
 					mapped.number	= result.episode_number;
 					mapped.name		= result.name;
 					mapped.overview	= result.overview;
 				}
-			
+							
 				return mapped;
 			}
 		},

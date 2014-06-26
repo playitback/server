@@ -34,11 +34,11 @@ module.exports = Season = function() {
 			
 				_self.create(_self.mapWithRemoteResult(result))
 					.success(function(season) {
-						self.model.Poster.createWithRemoteResult(remoteSeason)
+						self.model.Poster.createWithRemoteResult(result)
 							.success(function(poster) {
 								season.setPoster(poster)
 									.success(function() {
-										self.theMovieDb.getSeason(show.id, season.number, function(remoteSeason) {
+										self.theMovieDb.getSeason(show.remoteId, season.number, function(err, remoteSeason) {
 											self.model.Media.createWithRemoteResults(remoteSeason.episodes, function(episodes) {
 												season.setEpisodes(episodes)
 													.success(function() {
@@ -51,10 +51,10 @@ module.exports = Season = function() {
 					});
 			},
 			
-			mapWithRemoteResult: function(result) {
+			mapWithRemoteResult: function(result) {						
 				return {
-					number: result.SeasonNumber,
-					year: moment(result.FirstAired).format('YYYY')
+					number: result.season_number,
+					year: moment(result.air_date).format('YYYY')
 				};
 			}
 		}

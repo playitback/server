@@ -41,10 +41,10 @@ module.exports = {
 		if(typeof remoteId != 'number') {
 			throw 'invalid or missing remoteId';
 		}
-	
+			
 		this.model.sequelize.transaction(function(transaction) {
 			try {
-				this.model.modelWithType(type).createWithRemoteId(remoteId, function(show) {
+				self.model.modelWithType(type).createWithRemoteId(remoteId, function(show) {
 					show.getPoster().success(function(poster) {
 						var response = show.values;
 						

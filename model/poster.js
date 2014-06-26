@@ -38,7 +38,7 @@ module.exports = function() {
 				};
 			},
 			
-			cachePosterWithUri: function(uri) {
+			cachePosterWithUrl: function(url) {
 				// @TODO: Get poster configuration and cache the sizes we need.
 				return url;
 			}

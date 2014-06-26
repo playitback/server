@@ -110,8 +110,8 @@ module.exports = function() {
 						self.model.Poster.createWithRemoteResult(result)
 							.success(function(poster) {
 								show.setPoster(poster)
-									.success(function() {									
-										self.model.Season.createWithRemoteResults(result.seasons, function(seasons) {
+									.success(function() {
+										self.model.Season.createWithRemoteResults(show, result.seasons, function(seasons) {
 											show.setSeasons(seasons).success(function() {
 												callback(show);
 											});
