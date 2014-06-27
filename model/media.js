@@ -128,7 +128,19 @@ module.exports = function() {
 			},
 			
 			createWithRemoteId: function(remoteId, callback) {
-				// TODO
+				var _self = this;
+				
+				self.theMovieDb.getMovie(remoteId, function(err, result) {
+					if(err) {
+						callback(err);
+						
+						return;
+					}
+					
+					_self.createWithRemoteResult(result, function(show) {
+						callback(show);
+					});
+				});
 			},
 			
 			createWithRemoteResults: function(results, callback) {
