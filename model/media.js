@@ -110,7 +110,7 @@ module.exports = function() {
 						checkedShows 	= 0;
 										
 					if(medias.length === 0) {
-						_self.response(response);
+						callback(response);
 						
 						return;
 					}
