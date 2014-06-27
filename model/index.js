@@ -14,12 +14,12 @@ module.exports = function() {
 	this.Show		= require('./show').call(this);
 	this.Torrent	= require('./torrent').call(this);
 		
-	this.Show.hasMany(this.Season);
-	this.Season.hasMany(this.Media, { as: 'Episodes' });
-	this.Show.hasOne(this.Poster);
-	this.Season.hasOne(this.Poster);
-	this.Media.hasOne(this.Poster, { as: 'Still' });
-	this.Media.hasMany(this.Torrent);
+	this.Show.hasMany(this.Season, { onDelete: 'CASCADE' });
+	this.Season.hasMany(this.Media, { as: 'Episodes', onDelete: 'CASCADE' });
+	this.Show.hasOne(this.Poster, { onDelete: 'CASCADE' });
+	this.Season.hasOne(this.Poster, { onDelete: 'CASCADE' });
+	this.Media.hasOne(this.Poster, { as: 'Still', onDelete: 'CASCADE' });
+	this.Media.hasMany(this.Torrent, { onDelete: 'CASCADE' });
 	
 	this.sequelize.sync();
 	//this.sequelize.sync({ force: true });
