@@ -83,6 +83,12 @@ module.exports = {
 				return;
 			}
 			
+			if(remoteResults.length === 0) {
+				self.response({ results: results });
+				
+				return;
+			}
+			
 			var targetSize = remoteResults.length;
 		
 			remoteResults.forEach(function(remoteResult, i) {
@@ -91,7 +97,7 @@ module.exports = {
 				}
 				else {
 					results.push(self.model.modelWithType(remoteResult.media_type).mapWithRemoteResult(remoteResult));
-																	
+																									
 					if(results.length === targetSize) {
 						self.response({ results: results });
 					}
