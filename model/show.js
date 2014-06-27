@@ -44,49 +44,6 @@ module.exports = function() {
 					});
 				});
 			},
-		
-			/*
-			createWithTvDbResults: function(results, callback) {
-				if(results.length === 0) {
-					callback([]);
-					
-					return;
-				}
-			
-				if(typeof results != 'object' && typeof results.length === 'undefined')
-					throw 'Show.buildWithTvDbResults: Invalid results parameter';
-					
-				if(typeof callback != 'function')
-					throw 'Show.buildWithTvDbResults: Invalid callback parameter';
-					
-				var response = [];
-									
-				results.forEach(function(result) {
-					Show.find({ where: { tvDbId: result.id }}).success(function(show) {
-						if(show) {
-							response.push(show);
-							
-							if(response.length === results.length) {
-								callback(response);
-							}
-						}
-						else {
-							Show.createWithTvDbResult(result, function(show) {
-								if(!show) {
-									results.splice(r, 1);
-								}
-								else {
-									response.push(show);
-								}
-														
-								if(response.length === results.length) {
-									callback(response);
-								}
-							});
-						}
-					});
-				});
-			},*/
 			
 			createWithRemoteId: function(remoteId, callback) {
 				var _self = this;
