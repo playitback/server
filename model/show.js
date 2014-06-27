@@ -82,7 +82,8 @@ module.exports = function() {
 				return {
 					remoteId:		result.id,
 					title: 			result.name,
-					firstAired: 	moment(result.first_air_date).toDate()
+					firstAired: 	moment(result.first_air_date).toDate(),
+					type:			self.model.Media.Type.TV
 				};
 			}
 		},

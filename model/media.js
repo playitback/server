@@ -44,7 +44,7 @@ module.exports = function() {
 	var self = this;
 	var Media = this.sequelize.define('Media', {
 		type: {
-			type:			_.values(Type),
+			type:			Sequelize.ENUM(Type.Movie, Type.TV),
 			allowNull: 		false
 		},
 		state: {
@@ -161,7 +161,7 @@ module.exports = function() {
 				this.create(this.mapWithRemoteResult(result)).success(function(media) {
 					if(typeof result.still_path === 'string') {
 						self.model.Poster.createWithRemoteResult(result).success(function(poster) {
-							media.setPoster(poster).success(function() {
+							media.setStill(poster).success(function() {
 								callback(media);
 							});
 						});
