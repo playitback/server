@@ -48,11 +48,11 @@ module.exports = function() {
 			allowNull: 		false
 		},
 		state: {
-			type: 			_.values(State),
+			type: 			Sequelize.ENUM(State.Wanted, State.Snatched, State.RenameFailed, State.Downloaded),
 			defaultValue:	State.Wanted
 		},
 		watchStatus: {
-			type:			_.values(WatchStatus),
+			type:			Sequelize.ENUM(WatchStatus.Watched, WatchStatus.UnWatched),
 			defaultValue:	WatchStatus.UnWatched
 		},
 		
