@@ -1,9 +1,26 @@
-define('model/search', ['backbone', 'model/show', 'model/media', 'const/index'], function(Backbone, ShowModel, MediaModel, Const) {
+define('model/search', ['backbone', 'model/show', 'model/media', 'const/index', 'moment'], function(Backbone, ShowModel, MediaModel, Const, moment) {
 	
 	return Backbone.Model.extend({
+	
+		parse: function(response) {
+			if(typeof response.firstAired === 'string') {
+				response.firstAired = moment(response.firstAired);
+			}
+		
+			return response;
+		},
 		
 		label: function() {
-			return this.get('title') + ' <span>' + this.get('year') + '</span>';
+			var year = '';
+			
+			if(this.has('year')) {
+				year = this.get('year');
+			}
+			else if(this.has('firstAired')) {
+				year = this.get('firstAired').format('YYYY');
+			}
+		
+			return this.get('title') + ' <span>' + year + '</span>';
 		},
 		
 		mediaObject: function() {
