@@ -92,7 +92,9 @@ module.exports = function() {
 					_self		= this;
 							
 				this.getPoster().success(function(poster) {
-					_response.poster = poster.values;
+					if(poster) {
+						_response.poster = poster.values;
+					}
 										
 					_self.watchedStats(function(stats) {
 						_response.stats = stats;
