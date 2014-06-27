@@ -82,18 +82,19 @@ module.exports = {
 				
 				return;
 			}
-		
-			remoteResults.forEach(function(remoteResult) {
-				if(remoteResult.media_type === 'person') {
-					remoteResults.splice(remoteResults.indexOf(remoteResult, 1));
-				
-					return;
-				}
 			
-				results.push(self.model.modelWithType(remoteResult.media_type).mapWithRemoteResult(remoteResult));
-												
-				if(results.length === remoteResults.length) {
-					self.response({ results: results });
+			var targetSize = remoteResults.length;
+		
+			remoteResults.forEach(function(remoteResult, i) {
+				if(remoteResult.media_type === 'person') {
+					targetSize--;
+				}
+				else {
+					results.push(self.model.modelWithType(remoteResult.media_type).mapWithRemoteResult(remoteResult));
+																	
+					if(results.length === targetSize) {
+						self.response({ results: results });
+					}
 				}
 			});
 		});
