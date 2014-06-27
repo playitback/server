@@ -45,13 +45,9 @@ module.exports = {
 		this.model.sequelize.transaction(function(transaction) {
 			try {
 				self.model.modelWithType(type).createWithRemoteId(remoteId, function(show) {
-					show.getPoster().success(function(poster) {
-						var response = show.values;
-						
-						response.poster = poster.values;
-						
+					show.indexInfo(function(response) {
 						transaction.commit();
-						
+					
 						self.response({ tvshow: response });
 					});
 				});
