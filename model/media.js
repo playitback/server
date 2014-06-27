@@ -105,7 +105,7 @@ module.exports = function() {
 			getMediaForIndex: function(callback) {
 				var _self = this;
 			
-				this.findAll().success(function(medias) {
+				this.findAll({ where: { type: Type.Movie }}).success(function(medias) {
 					var response 		= [],
 						checkedShows 	= 0;
 										
