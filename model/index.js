@@ -18,7 +18,8 @@ module.exports = function() {
 	this.Season.hasMany(this.Media, { as: 'Episodes', onDelete: 'CASCADE' });
 	this.Show.hasOne(this.Poster, { onDelete: 'CASCADE' });
 	this.Season.hasOne(this.Poster, { onDelete: 'CASCADE' });
-	this.Media.hasOne(this.Poster, { as: 'Still', onDelete: 'CASCADE' });
+	this.Media.hasOne(this.Poster, { as: 'Still', onDelete: 'CASCADE' }); 	// TV
+	this.Media.hasOne(this.Poster, { onDelete: 'CASCADE' });				// Movie
 	this.Media.hasMany(this.Torrent, { onDelete: 'CASCADE' });
 	
 	this.sequelize.sync();
