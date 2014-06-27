@@ -38,6 +38,8 @@ module.exports = function() {
 		}
 	}
 	
+	this.log.debug('DB & Models initialized');
+	
 	return this;
 
 };

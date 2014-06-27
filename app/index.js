@@ -1,5 +1,6 @@
 var express 	= require('express'),
-	TheMovieDB	= require('themoviedb');
+	TheMovieDB	= require('themoviedb'),
+	winston		= require('winston');
 
 var App = function() {
 	
@@ -7,12 +8,15 @@ var App = function() {
 	
 	this.app 			= express();
 	this.model 			= require('../model')();
+	this.log			= winston;
 	this.theMovieDb 	= new TheMovieDB({ apiKey: 'fd8c8d9adabc2d072ef3d436396a87fb' }); // @TODO: load from config
 	
 	require('./lib/config').call(this);
 	require('./lib/router').call(this, require('./routes'));
 	
 	this.app.listen(3030);
+	
+	this.log.debug('Playback server started and running on port 3030');
 	
 };
 

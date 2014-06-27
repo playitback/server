@@ -1,6 +1,7 @@
 var express 		= require('express'),
 	expressLess 	= require('express-less'),
-	bodyParser		= require('body-parser');
+	bodyParser		= require('body-parser'),
+	winston			= require('winston');
 
 module.exports = function() {
 	
@@ -13,7 +14,7 @@ module.exports = function() {
 		throw 'Configuration for environment (' + this.env + ') doesn\'t exist.';
 	}
 	
-	// Configure defaults
+	// Express
 	app.use(express.static(__dirname + '/../public'));
 	app.use('/css', expressLess(__dirname + '/../public/less'));
 	app.set('view engine', 'jade');
@@ -22,5 +23,9 @@ module.exports = function() {
 	app.use(bodyParser.json());
 	
 	config(this.app);
+	
+	
+	// Log
+	this.log.add(winston.transports.File, { filename: 'playback.log' });
 	
 }
