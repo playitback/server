@@ -47,8 +47,12 @@ module.exports = {
 				self.model.modelWithType(type).createWithRemoteId(remoteId, function(show) {
 					show.indexInfo(function(response) {
 						transaction.commit();
+						
+						var responseObject = {};
+						
+						responseObject[type] = response;
 					
-						self.response({ tvshow: response });
+						self.response(responseObject);
 					});
 				});
 			}
