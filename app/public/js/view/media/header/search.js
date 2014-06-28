@@ -21,6 +21,7 @@ define('view/media/header/search', ['backbone', 'collection/search', 'backbone.a
 			$('#media .row .header').append(this.$el);
 			
 			new AutoCompleteView({
+				groupKey: 'type',
 				input: this.$el.find('input'),
 				model: this.collection,
 				onSelect: function(selected) {

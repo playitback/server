@@ -15,11 +15,21 @@ define('backbone.autocomplete', [], function() {
 	        this.$el.html(this.template({
 	            "label": this.model.label()
 	        }));
+	        
+	        if(typeof this.options.group === 'boolean' && this.options.group) {
+		        this.$el.addClass('title');
+	        }
+	        
 	        return this;
 	    },
 	
 	    select: function () {
+	    	if(typeof this.options.group === 'boolean' && this.options.group) {
+	    		return false;
+	    	}
+	    	
 	        this.options.parent.hide().select(this.model);
+	        
 	        return false;
 	    }
 	
@@ -34,10 +44,15 @@ define('backbone.autocomplete', [], function() {
 	    minKeywordLength: 2,
 	    currentText: "",
 	    itemView: AutoCompleteItemView,
+	    groupKey: null,
 	
 	    initialize: function (options) {
 	        _.extend(this, options);
 	        this.filter = _.debounce(this.filter, this.wait);
+	        
+	        if(this.groupKey) {
+		        this.model.comparator = this.groupKey;
+	        }
 	    },
 	
 	    render: function () {
@@ -127,8 +142,29 @@ define('backbone.autocomplete', [], function() {
 	            this.hide();
 	        }
 	    },
+	    
+	    currentGroup: null,
 	
 	    addItem: function (model) {
+	    	var self = this;
+	    		    
+	    	if(this.groupKey && model.has(this.groupKey) && 
+	    	   (!this.currentGroup || this.currentGroup != model.get(this.groupKey))) {
+	    	   	this.currentGroup = model.get(this.groupKey);
+	    	   	
+	    	   	var GroupModel = Backbone.Model.extend({
+	            	label: function() {
+	            		return self.currentGroup;
+	            	}
+	            });
+	    	   
+		    	this.$el.append(new this.itemView({
+		            model: new GroupModel(),
+		            parent: this,
+		            group: true
+		        }).render().$el);
+	    	}
+	    
 	        this.$el.append(new this.itemView({
 	            model: model,
 	            parent: this
