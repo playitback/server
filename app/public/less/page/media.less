@@ -16,6 +16,7 @@ div#media {
 		form.search {
 			z-index: 50;
 			overflow: visible;
+			position: relative;
 			
 			input[type=text] {
 				.at2x('/img/content/media/search/search_icon.png', 29px, 30px);
@@ -30,6 +31,19 @@ div#media {
 				background: #353535;
 				display: block;
 				width: 100%;
+			}
+			
+			a.clear {
+				.at2x('/img/content/media/search/clear.png', 30px, 30px);
+			
+				position: absolute;
+				right: 20px;
+				top: 50%;
+				margin-top: -15px;
+				width: 30px;
+				height: 30px;
+				display: none;
+				cursor: pointer;
 			}
 			
 			ul.autocomplete {
@@ -66,8 +80,6 @@ div#media {
 								color: @orange;
 							}
 						}
-						
-						
 					}
 					
 					&.title {

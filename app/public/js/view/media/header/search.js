@@ -16,11 +16,14 @@ define('view/media/header/search', ['backbone', 'collection/search', 'backbone.a
 		
 			this.$el.append(
 				$('<input />', { type: 'text', placeholder: 'Add TV Show\'s & Movies...' })
+			)
+			.append(
+				$('<a></a>', { 'class': 'clear' })
 			);
 					
 			$('#media .row .header').append(this.$el);
 			
-			new AutoCompleteView({
+			this.autoComplete = new AutoCompleteView({
 				groupKey: 'type',
 				input: this.$el.find('input'),
 				model: this.collection,
@@ -35,7 +38,25 @@ define('view/media/header/search', ['backbone', 'collection/search', 'backbone.a
 				onHide: function() {
 					$('section#content #media .header').removeClass('search-visible');
 				}
-			}).render();
+			});
+			
+			this.autoComplete.render();
+			
+			this.createEvents();
+		},
+		
+		createEvents: function() {
+			var self = this;
+		
+			this.$el.find('a.clear').click(function() {
+				self.autoComplete.hide();
+				
+				self.$el.find('input[type=text]').val('').trigger('keyup');
+			});
+			
+			this.$el.find('input[type=text]').keyup(function() {
+				self.$el.find('a.clear').toggle($(this).val().length > 0);
+			});
 		}
 		
 	});
