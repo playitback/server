@@ -76,7 +76,8 @@ define('view/media/item', ['backbone', 'jquery.unveil', 'spinner'], function(Bac
 		
 		updateUI: function() {
 			if(this.model.has('poster')) {
-				this.$el.find('.poster').css('background-image', 'url(' + this.model.get('poster').url + ')');
+				this.loadPoster();
+				
 			}
 			
 			this.$el.find('.overlay .status')
@@ -86,6 +87,17 @@ define('view/media/item', ['backbone', 'jquery.unveil', 'spinner'], function(Bac
 			
 			this.$el.find('.attr label').text(this.model.get('title'));
 			this.$el.find('.attr span').text(this.model.year());
+		},
+		
+		loadPoster: function() {
+			var image 	= new Image(),
+				self	= this;
+			
+			image.onload = function() {
+				self.$el.find('.poster').css('background-image', 'url(' + this.src + ')');
+			};
+			
+			image.src = this.model.get('poster').url;
 		}
 		
 	});
