@@ -178,6 +178,13 @@ module.exports = function() {
 							});
 						});
 					}
+					else if(typeof result.poster_path === 'string') {
+						self.model.Poster.createWithRemoteResult(result).success(function(poster) {
+							media.setPoster(poster).success(function() {
+								callback(media);
+							});
+						});
+					}
 					else {
 						callback(media);
 					}
