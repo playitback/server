@@ -1,4 +1,4 @@
-define('view/media/item', ['backbone', 'jquery.unveil'], function(Backbone, jqUnveil) {
+define('view/media/item', ['backbone', 'jquery.unveil', 'spinner'], function(Backbone, jqUnveil, Spinner) {
 	
 	return Backbone.View.extend({
 		
@@ -8,7 +8,8 @@ define('view/media/item', ['backbone', 'jquery.unveil'], function(Backbone, jqUn
 		inititialize: function() {
 			var self = this;
 			
-			this.bindedModelSync = this.modelSync.bind(this);
+			this.bindedModelSync 		= this.modelSync.bind(this);
+			this.bindedModelRequest 	= this.modelRequest.bind(this);
 		},
 		
 		render: function() {
@@ -29,6 +30,12 @@ define('view/media/item', ['backbone', 'jquery.unveil'], function(Backbone, jqUn
 					.append(
 						$('<span></span>')
 					)
+			)
+			.append(
+				$('<div></div>', { 'class': 'progress-overlay' })
+					.append(
+						$('<div></div>', { 'class': 'spinner' })
+					)
 			);
 		
 			$('section#content #media .row.items').append(this.$el);
@@ -39,12 +46,32 @@ define('view/media/item', ['backbone', 'jquery.unveil'], function(Backbone, jqUn
 		
 		createEvents: function() {
 			this.model
-				.off('sync', this.modelSync)
-				.on('sync', this.modelSync);
+				.on('sync', this.modelSync.bind(this));
+			
+			this.model
+				.on('request', this.modelRequest.bind(this));
+		},
+		
+		modelRequest: function() {
+			this.showProgress();
 		},
 		
 		modelSync: function() {
-			this.itemView.updateUI();
+			this.hideProgress();
+		
+			this.updateUI();
+		},
+		
+		showProgress: function() {
+			this.$el.find('.progress-overlay').show();
+			
+			this.spinner = new Spinner({ color: '#fff' }).spin(this.$el.find('.progress-overlay')[0]);
+		},
+		
+		hideProgress: function() {
+			this.$el.find('.progress-overlay').hide();
+			
+			this.spinner.stop();
 		},
 		
 		updateUI: function() {

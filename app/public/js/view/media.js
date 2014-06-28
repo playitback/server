@@ -90,6 +90,7 @@ define('view/media', ['backbone', 'view/media/header', 'collection/show', 'colle
 						
 			this.showNoMedia();
 			
+			media.itemView.createEvents();
 			media.save();
 		},
 		

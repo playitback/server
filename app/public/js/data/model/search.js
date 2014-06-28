@@ -1,4 +1,4 @@
-define('model/search', ['backbone', 'model/show', 'model/media', 'const/index', 'moment'], function(Backbone, ShowModel, MediaModel, Const, moment) {
+define('model/search', ['backbone', 'model/show', 'model/movie', 'const/index', 'moment'], function(Backbone, ShowModel, MovieModel, Const, moment) {
 	
 	return Backbone.Model.extend({
 	
@@ -30,7 +30,7 @@ define('model/search', ['backbone', 'model/show', 'model/media', 'const/index', 
 				return new ShowModel(this.attributes);
 			}
 			else if(type === Const.Type.Movie) {
-				return new MediaModel(this.attributes);
+				return new MovieModel(this.attributes);
 			}
 			else {
 				throw 'Invalid type';
