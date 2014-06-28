@@ -10,7 +10,7 @@ define('view/media/header', ['backbone', 'view/media/header/search'], function(B
 			this.search = new SearchView({ mediaView: this.mediaView });
 		},
 		
-		render: function() {		
+		render: function() {
 			$('#media .row').prepend(this.$el);
 			
 			this.search.render();

@@ -19,15 +19,22 @@ define('router', ['backbone', 'view/home', 'view/media', 'view/settings'], funct
 		},
 		
 		homeAction: function() {
-			new HomeView().render();
+			this.loadView(HomeView);
 		},
 		
 		mediaAction: function(type) {
-			new MediaView({ type: type }).render();
+			this.loadView(MediaView, { type: type });
 		},
 		
 		settingsAction: function() {
-			new SettingsView().render();
+			this.loadView(SettingsView);
+		},
+		
+		loadView: function(view, options) {
+			$('#content').html('');
+			$('.header').remove();
+			
+			new view(options).render();
 		}
 		
 	});
