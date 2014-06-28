@@ -4,7 +4,7 @@ define('model/core', ['backbone', 'const/index'], function(Backbone, Const) {
 		
 		watchedStatusClassName: function() {
 			var className = 'unwatched';
-		
+					
 			if(this.has('stats')) {
 				var stats = this.get('stats');
 				
@@ -31,6 +31,15 @@ define('model/core', ['backbone', 'const/index'], function(Backbone, Const) {
 			}
 			
 			return '';
+		},
+		
+		year: function() {
+			if(this.has('firstAired')) {
+				return this.get('firstAired').format('YYYY');
+			}
+			else if(this.has('year')) {
+				return this.get('year');
+			}
 		}
 		
 	});

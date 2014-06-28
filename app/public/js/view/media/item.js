@@ -58,7 +58,7 @@ define('view/media/item', ['backbone', 'jquery.unveil'], function(Backbone, jqUn
 				.text(this.model.unWatchedCount());
 			
 			this.$el.find('.attr label').text(this.model.get('title'));
-			this.$el.find('.attr span').text(this.model.has('firstAired') ? this.model.get('firstAired').format('YYYY') : '');
+			this.$el.find('.attr span').text(this.model.year());
 		}
 		
 	});
