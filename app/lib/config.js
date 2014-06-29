@@ -14,7 +14,17 @@ module.exports = function() {
 			value = null;
 						
 		for(var i in keyParts) {
-			value = this._config[keyParts[i]] || value;
+			if(value && typeof value[keyParts[i]] != 'undefined') {
+				value = value[keyParts[i]];
+			}
+				
+			if(typeof this._config[keyParts[i]] != 'undefined') {
+				value = this._config[keyParts[i]];
+			}
+			
+			if(typeof value != 'object') {
+				break;
+			}
 		}
 		
 		return value;
