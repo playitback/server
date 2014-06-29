@@ -23,6 +23,8 @@
 		"underscore": "1.6.0",
 		"mocha": "1.20.1",
 		"winston": "0.7.3",
+		"dropbox-datastore-node": "0.2.0",
+		"xhr2": "0.0.7",
 		"themoviedb": "https://github.com/playitback/themoviedb/tarball/master",
 		"pirateship": "https://github.com/playitback/pirateship/tarball/master"
 	}
