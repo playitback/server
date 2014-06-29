@@ -1,9 +1,9 @@
 module.exports = function() {
 	
-	this.config = {};
+	this._config = {};
 	
 	try {
-		this.config = require('../config/' + this.env);
+		this._config = require('../config/' + this.env);
 	}
 	catch(e) {
 		throw 'Configuration for environment (' + this.env + ') doesn\'t exist.';
@@ -12,12 +12,14 @@ module.exports = function() {
 	this.get = function(key) {
 		var keyParts = key.split('.'),
 			value = null;
-			
-		for(var key in keyParts) {
-			value = this.config[key] || value;
+						
+		for(var i in keyParts) {
+			value = this._config[keyParts[i]] || value;
 		}
 		
 		return value;
 	};
+	
+	return this;
 	
 }
