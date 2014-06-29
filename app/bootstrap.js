@@ -15,6 +15,11 @@ module.exports = function() {
 		
 	
 	// Log
-	this.log.add(winston.transports.File, { filename: 'playback.log' });
+	this.log.add(winston.transports.File, { filename: 'playback.log', level: 'debug' });
+	
+	if(this.env === 'dev') {
+		this.log.remove(winston.transports.Console);
+		this.log.add(winston.transports.Console, { level: 'debug' });
+	}
 	
 };
