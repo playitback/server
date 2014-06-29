@@ -86,7 +86,7 @@ define('view/media/dialog/show', ['view/media/dialog/media', 'model/show', 'coll
 			nextEpisodeField.find('span').text('');
 			
 			metaMainFields
-				.append(firstAiredField);
+				.append(firstAiredField)
 				.append(nextEpisodeField);
 		},
 		

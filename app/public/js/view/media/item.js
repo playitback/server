@@ -45,11 +45,19 @@ define('view/media/item', ['backbone', 'jquery.unveil', 'spinner'], function(Bac
 		},
 		
 		createEvents: function() {
+			var self = this;
+		
 			this.model
 				.on('sync', this.modelSync.bind(this));
 			
 			this.model
 				.on('request', this.modelRequest.bind(this));
+				
+			this.$el
+				.off('click')
+				.on('click', function() {
+					self.model.dialog().render();
+				});
 		},
 		
 		modelRequest: function() {
