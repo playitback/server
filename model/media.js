@@ -273,6 +273,14 @@ module.exports = function() {
 					});
 				}
 			}
+		},
+		classMethods: {
+			findAllAvailableAndWanted: function(callback) {
+				this.findAll({ where: { state: State.Wanted, ['availableDate', '<', new Date()] } })
+					.success(function(media) {
+						callback(media);
+					});
+			}
 		}
 	});
 	
