@@ -55,6 +55,10 @@ module.exports = function() {
 			type:			Sequelize.ENUM(WatchStatus.Watched, WatchStatus.UnWatched),
 			defaultValue:	WatchStatus.UnWatched
 		},
+		availableDate: {
+			type:			Sequelize.DATE,
+			allowNull:		false
+		},
 		
 		// Movie only
 		title: {
@@ -63,22 +67,10 @@ module.exports = function() {
 				notNullIfMovie: notNullIfMovie
 			}
 		},
-		year: {
-			type:			Sequelize.INTEGER,
-			validate: {
-				notNullIfMovie: notNullIfMovie
-			}
-		},
 		
 		// TV only (episode)
 		number: {
 			type:			 Sequelize.INTEGER,
-			validate: {
-				notNullIfTvShow: notNullIfTvShow
-			}
-		},
-		airDate: {
-			type:			Sequelize.DATE,
 			validate: {
 				notNullIfTvShow: notNullIfTvShow
 			}
@@ -204,16 +196,16 @@ module.exports = function() {
 				}
 								
 				if(mapped.type === Type.Movie) {
-					mapped.title 	= result.title;
-					mapped.year 	= result.release_date.split('-')[0];
+					mapped.title 			= result.title;
+					mapped.availableDate 	= moment(result.release_date).toDate();
 				}
 				
 				// TV
 				else if(mapped.type === Type.TV) {
-					mapped.airDate 	= moment(result.air_date).toDate();
-					mapped.number	= result.episode_number;
-					mapped.name		= result.name;
-					mapped.overview	= result.overview;
+					mapped.availableDate 	= moment(result.air_date).toDate();
+					mapped.number			= result.episode_number;
+					mapped.name				= result.name;
+					mapped.overview			= result.overview;
 				}
 							
 				return mapped;
