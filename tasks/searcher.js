@@ -5,7 +5,11 @@ module.exports = function() {
 	// !Private
 	
 	var run = function() {
-		
+		this.model.Media.findAllAvailableAndWanted(function(availableMedia) {
+			availableMedia.forEach(function(media) {
+				media.download();
+			});
+		});
 	};
 	
 	
