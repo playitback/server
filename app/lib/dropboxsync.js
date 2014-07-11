@@ -51,7 +51,7 @@ module.exports = function() {
 	
 		self.Setting.valueForKey(self.Setting.Key.DropboxToken, function(value) {		
 			if(value) {
-				self.log.debug(tag + 'Value found');
+				self.log.debug(tag + 'token not found');
 				
 				createClientWithToken(value);
 			}
