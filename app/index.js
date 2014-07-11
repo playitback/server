@@ -17,6 +17,7 @@ var App = function() {
 	
 	this.config			= require('./lib/config').call(this);
 	this.model 			= require('../model').call(this);
+	this.tasks			= require('../tasks').call(this);
 	this.broadcast		= require('./lib/broadcast').call(this);
 	
 	this.theMovieDb 	= new TheMovieDB({ apiKey: this.config.get('theMovieDb.apiKey') }); // @TODO: load from config
