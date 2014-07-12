@@ -276,7 +276,7 @@ module.exports = function() {
 		},
 		classMethods: {
 			findAllAvailableAndWanted: function(callback) {
-				this.findAll({ where: { state: State.Wanted, ['availableDate', '<', new Date()] } })
+				this.findAll({ where: { state: State.Wanted, availableDate: { lte: new Date() } } })
 					.success(function(media) {
 						callback(media);
 					});
