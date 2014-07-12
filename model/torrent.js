@@ -1,10 +1,13 @@
 var Sequelize = require('sequelize'),
-	piratebay = require('../app/lib/provider/download/thepiratebay');
+	piratebay = require('pirateship');
 
 module.exports = function() {
 
 	return this.sequelize.define('Torrent', {
-		
+		magnet: {
+			type: Sequelize.STRING,
+			allowNull: false
+		}
 	}, {
 		classMethods: {
 			fetchRemoteWithQuery: function(query, callback, persist) {
@@ -12,8 +15,10 @@ module.exports = function() {
 					persist = false;
 				}
 				
+				var _self = this;
+				
 				piratebay.search(0, query, function(results) {
-					self.buildWithPirateBayData(results, persist, function(torrents) {
+					_self.buildWithPirateBayResults(results, persist, function(torrents) {
 						callback(torrents);	
 					});
 				},
@@ -41,7 +46,9 @@ module.exports = function() {
 				}
 			},
 			buildWithPirateBayResult: function(data, persist, callback) {
-				
+				return {
+					magnet: data.magnet
+				}
 			}
 		},
 		instanceMethods: {

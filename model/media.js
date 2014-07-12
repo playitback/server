@@ -242,17 +242,17 @@ module.exports = function() {
 				torrent.download();
 			},
 			loadBestTorrent: function() {
-				var self = this;
-			
+				var _self = this;
+						
 				this.fetchSuitableTorrents(function() {
-					self.torrentWithHighestScore(function(torrent) {
+					_self.torrentWithHighestScore(function(torrent) {
 						callback(torrent);
 					});
 				});
 			},
-			fetchSuitableTorrents: function(callback) {
+			fetchSuitableTorrents: function(callback) {			
 				this.torrentQuery(function(query) {
-					this.model.Torrent.fetchRemoteWithQuery(query, function() {
+					self.model.Torrent.fetchRemoteWithQuery(query, function() {
 						callback();
 					}, true);
 				});
