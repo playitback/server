@@ -209,6 +209,12 @@ module.exports = function() {
 				}
 							
 				return mapped;
+			},
+			findAllAvailableAndWanted: function(callback) {
+				this.findAll({ where: { state: State.Wanted, availableDate: { lte: new Date() } } })
+					.success(function(media) {
+						callback(media);
+					});
 			}
 		},
 		instanceMethods: {
@@ -272,14 +278,6 @@ module.exports = function() {
 						});
 					});
 				}
-			}
-		},
-		classMethods: {
-			findAllAvailableAndWanted: function(callback) {
-				this.findAll({ where: { state: State.Wanted, availableDate: { lte: new Date() } } })
-					.success(function(media) {
-						callback(media);
-					});
 			}
 		}
 	});

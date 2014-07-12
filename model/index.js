@@ -36,10 +36,10 @@ module.exports = function() {
 	// Helpers
 	
 	this.modelWithType = function(type) {
-		if(type === this.Media.Type.TV) {
+		if(type === self.Media.Type.TV) {
 			return this.Show;
 		}
-		else if(type === this.Media.Type.Movie) {
+		else if(type === self.Media.Type.Movie) {
 			return this.Media;
 		}
 		else {
