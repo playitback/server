@@ -5,20 +5,20 @@ var Sequelize 	= require('sequelize'),
 module.exports = function() {
 	
 	var Type = {
-		Movie: 			'movie',
-		TV: 			'tv'
+		Movie: 			'movie',			// A movie file
+		TV: 			'tv'				// A TV episode
 	};
 	
 	var State = {
-		Wanted: 		'wanted',
-		Snatched:		'snatched',
-		RenameFailed: 	'renameFailed',
-		Downloaded:		'downloaded'
+		Wanted: 		'wanted',			// Added, but not yet released or downloaded
+		Downloading:	'downloading',		// Currently being downloaded
+		RenameFailed: 	'renameFailed',		// Download finished, but failed to move it to downloaded dir
+		Downloaded:		'downloaded'		// Downloaded and moved to media directory
 	};
 	
 	var WatchStatus = {
-		Watched:		'watched',
-		UnWatched:		'unwatched'
+		Watched:		'watched',			// The media has been watched
+		UnWatched:		'unwatched'			// The media hasn't been watched, default
 	};
 	
 	var notNullIfTvShow = function(value) {
@@ -48,7 +48,7 @@ module.exports = function() {
 			allowNull: 		false
 		},
 		state: {
-			type: 			Sequelize.ENUM(State.Wanted, State.Snatched, State.RenameFailed, State.Downloaded),
+			type: 			Sequelize.ENUM(State.Wanted, State.Downloading, State.RenameFailed, State.Downloaded),
 			defaultValue:	State.Wanted
 		},
 		watchStatus: {
