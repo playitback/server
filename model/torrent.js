@@ -7,26 +7,31 @@ module.exports = function() {
 		magnet: {
 			type: Sequelize.STRING,
 			allowNull: false
+		},
+		score: {
+			type: Sequelize.INTEGER
 		}
 	}, {
 		classMethods: {
-			fetchRemoteWithQuery: function(query, callback, persist) {
+			fetchSuitableWithMedia: function(media, callback, persist) {
 				if(typeof persist === 'undefined') {
 					persist = false;
 				}
 				
 				var _self = this;
 				
-				piratebay.search(0, query, function(results) {
-					_self.buildWithPirateBayResults(results, persist, function(torrents) {
-						callback(torrents);	
+				media.torrentQuery(function(query) {
+					piratebay.search(0, query, function(results) {
+						_self.buildWithResults(results, persist, function(torrents) {
+							callback(torrents);	
+						});
+					},
+					function() {
+						callback([]);
 					});
-				},
-				function() {
-					callback([]);
 				});
 			},
-			buildWithPirateBayResults: function(data, persist, callback) {
+			buildWithResults: function(data, persist, callback) {
 				if(data.length === 0) {
 					callback([]);
 					
@@ -36,7 +41,7 @@ module.exports = function() {
 				var torrents = [];
 			
 				for(var i in data) {
-					this.buildWithPirateBayResult(data[i], persist, function(torrent) {
+					this.buildWithRemoteData(data[i], persist, function(torrent) {
 						torrents.push(torrent);
 						
 						if(torrents === data.length) {
@@ -45,10 +50,14 @@ module.exports = function() {
 					});
 				}
 			},
-			buildWithPirateBayResult: function(data, persist, callback) {
+			buildWithRemoteData: function(data, persist, callback) {
 				return {
-					magnet: data.magnet
+					magnet: data.magnet,
+					score: this.calculateScoreWithRemoteData(data)
 				}
+			},
+			calculateScoreWithRemoteData: function(data) {
+				
 			}
 		},
 		instanceMethods: {

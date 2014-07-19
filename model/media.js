@@ -251,11 +251,9 @@ module.exports = function() {
 				});
 			},
 			fetchSuitableTorrents: function(callback) {			
-				this.torrentQuery(function(query) {
-					self.model.Torrent.fetchRemoteWithQuery(query, function() {
-						callback();
-					}, true);
-				});
+				self.model.Torrent.fetchSuitableWithMedia(this, function() {
+					callback();
+				}, true);
 			},
 			torrentWithHighestScore: function(callback) {
 				this.model.Torrent.find({ where: { mediaId: this.id }, orderBy: 'score', limit: 1 }).success(function(torrent) {

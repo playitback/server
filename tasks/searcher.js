@@ -5,7 +5,11 @@ module.exports = function() {
 	// !Private
 	
 	var run = function() {
-		this.model.Media.findAllAvailableAndWanted(function(availableMedia) {			
+		var self = this;
+	
+		this.model.Media.findAllAvailableAndWanted(function(availableMedia) {
+			self.log.debug('Found ' + availableMedia.length + ' media file(s) waiting to be searched');
+			
 			availableMedia.forEach(function(media) {
 				media.download();
 			});
@@ -27,7 +31,9 @@ module.exports = function() {
 	};
 	
 	this.start = function() {
-		this.job = new CronJob('00 00 * * * *', run.call(this));
+		this.job = new CronJob('00 00 * * * *', run.bind(this));
+		
+		run.call(this);
 	};
 	
 	
