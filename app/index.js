@@ -23,7 +23,6 @@ var App = function() {
 	this.broadcast		= require('./lib/broadcast').call(this);
 	this.model 			= require('../model').call(this);
 	this.tasks			= require('../tasks').call(this);
-	this.api			= require('../api').call(this);
 	
 	// Initialize API libraries
 	this.theMovieDb 	= new TheMovieDB({ apiKey: this.config.get('theMovieDb.apiKey') }); // @TODO: load from config
