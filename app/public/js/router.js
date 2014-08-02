@@ -1,4 +1,6 @@
-define('router', ['backbone', 'view/home', 'view/media', 'view/settings'], function(Backbone, HomeView, MediaView, SettingsView) {
+define('router', [
+	'backbone', 'view/home', 'view/media/index', 'view/settings', 'view/media/info', 'view/media/season'], 
+	function(Backbone, HomeView, MediaView, SettingsView, MediaInfoView, MediaSeasonView) {
 	
 	this.setCurrentSection = function(section) {
 		$('ul.main li').removeClass('current');
@@ -8,10 +10,13 @@ define('router', ['backbone', 'view/home', 'view/media', 'view/settings'], funct
 	return Backbone.Router.extend({
 		
 		routes: {
-			'':					'homeAction',
-			'home':				'homeAction',
-			'media/:type':		'mediaAction',
-			'settings':			'settingsAction'
+			'':																'homeAction',
+			'home':															'homeAction',
+			'media/:type':													'mediaAction',
+			'media/:type/:mediaId':											'mediaViewAction',
+			'media/:type/:mediaId/season/:seasonId': 						'mediaSeasonAction',
+			'media/:type/:mediaId/season/:seasonId/episode/:episodeId':		'mediaViewAction',
+			'settings':														'settingsAction'
 		},
 		
 		initialize: function() {
@@ -24,6 +29,14 @@ define('router', ['backbone', 'view/home', 'view/media', 'view/settings'], funct
 		
 		mediaAction: function(type) {
 			this.loadView(MediaView, { type: type });
+		},
+		
+		mediaViewAction: function(type, mediaId, seasonId, episodeId) {
+			this.loadView(MediaInfoView, { type: type, mediaId: mediaId, seasonId: seasonId, episodeId: episodeId });
+		},
+		
+		mediaSeasonAction: function(type, mediaId, seasonId) {
+			this.loadView(MediaInfoView, { type: type, mediaId: mediaId, seasonId: seasonId });
 		},
 		
 		settingsAction: function() {

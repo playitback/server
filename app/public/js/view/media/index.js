@@ -1,4 +1,4 @@
-define('view/media', ['backbone', 'view/media/header', 'collection/show', 'collection/movie', 'view/media/item', 'const/index'], function(Backbone, HeaderView, ShowCollection, MovieCollection, ItemView, Const) {
+define('view/media/index', ['backbone', 'view/media/header', 'collection/show', 'collection/movie', 'view/media/item', 'const/index'], function(Backbone, HeaderView, ShowCollection, MovieCollection, ItemView, Const) {
 	
 	return Backbone.View.extend({
 		

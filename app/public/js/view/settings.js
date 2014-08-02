@@ -1,4 +1,4 @@
-define('view/settings', ['backbone'], function(Backbone) {
+define('view/settings', ['backbone', 'form'], function(Backbone, Form) {
 	
 	return Backbone.View.extend({
 		
@@ -8,6 +8,24 @@ define('view/settings', ['backbone'], function(Backbone) {
 			$('section#content')
 				.html('')
 				.append(this.$el);
+				
+			this.initializeForm();
+		},
+		
+		initializeForm: function() {
+			var settingForm = new Form()
+				.setBuilder(function() {
+					this.add('setting', 'entity');
+				});
+		
+			var form = new Form()
+				.setBuilder(function() {
+					this.add('settings', 'collection', {
+						type: settingForm
+					});
+				});
+				
+			this.$el.append(form.render());
 		}
 		
 	});
