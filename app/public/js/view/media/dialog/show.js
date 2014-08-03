@@ -1,4 +1,4 @@
-define('view/media/dialog/show', ['view/media/dialog/media', 'model/show', 'collection/season', 'collection/media'], function(MediaDialog, ShowModel, SeasonCollection, MediaCollection) {
+define('view/media/dialog/show', ['view/media/dialog/media'], function(MediaDialog) {
 	
 	var ViewMode = {
 		Show: 	'show',
@@ -21,7 +21,6 @@ define('view/media/dialog/show', ['view/media/dialog/media', 'model/show', 'coll
 		viewMode: ViewMode.Show,
 	
 		initialize: function() {
-			this.show 		= new ShowModel();
 			this.seasons 	= new SeasonCollection();
 			this.episodes 	= new MediaCollection();
 		},
@@ -32,7 +31,6 @@ define('view/media/dialog/show', ['view/media/dialog/media', 'model/show', 'coll
 			);
 		
 			this.createEvents();
-			this.fetchShow();
 		},
 		
 		createEvents: function() {
@@ -86,7 +84,7 @@ define('view/media/dialog/show', ['view/media/dialog/media', 'model/show', 'coll
 			nextEpisodeField.find('span').text('');
 			
 			metaMainFields
-				.append(firstAiredField);
+				.append(firstAiredField)
 				.append(nextEpisodeField);
 		},
 		

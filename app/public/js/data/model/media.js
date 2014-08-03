@@ -5,9 +5,7 @@ define('model/media', ['model/core'], function(CoreModel) {
 	 */
 	
 	return CoreModel.extend({
-	
-		
-		
+			
 	});
 	
 });
