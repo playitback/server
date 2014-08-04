@@ -9,6 +9,8 @@ requirejs.config({
 	}
 });
 
-requirejs(['router'], function(Router) {
-	this.router = new Router();
+requirejs(['router', 'jquery'], function(Router) {
+	require(['jquery.bootstrap'], function() {
+		this.router = new Router();
+	});
 });

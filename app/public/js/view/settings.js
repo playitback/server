@@ -1,28 +1,35 @@
-define('view/settings', ['backbone', 'backbone.forms', 'const/settings', 'bootstrap'], function(Backbone, BackboneForm, Settings) {
+define('view/settings', ['backbone', 'backbone.forms', 'const/settings', 'collection/settings'], function(Backbone, BackboneForm, Settings, SettingsCollection) {
 	
 	return Backbone.View.extend({
 		
 		id: 'settings',
 		
 		initialize: function() {
-			this.tabs = $('<ul></ul>', { 'class': 'nav nav-tabs', role: 'tablist' });
+			this.settings 	= new SettingsCollection();
+			this.tabs 		= $('<ul></ul>', { 'class': 'nav nav-tabs', role: 'tablist' });
 		},
 		
 		render: function() {
+			var self = this;
+		
+			this.container = $('<div></div>', { 'class': 'tab-content' });
+		
 			$('section#content')
 				.html('')
 				.append(this.$el);
 				
 			this.$el.append(this.tabs);
-						
-			for(var tabKey in Settings) {
-				var tab 		= Settings[tabKey],
-					tabId		= 'tab-' + tabKey,
+			this.$el.append(this.container);
+			
+			var first = true;
+			
+			_.each(Settings, function(tab, tabKey) {
+				var tabId		= 'tab-' + tabKey,
 					tabContent 	= $('<div></div>', { id: tabId, 'class': 'tab-pane' }),
 					schema		= {};
 					
-				this.tabs.append(
-					$('<li></li>', { 'class': (this.tabs.find('ul').length === 0 ? 'active' : null) })
+				self.tabs.append(
+					$('<li></li>', { 'class': (first ? 'active' : null) })
 						.append(
 							$('<a></a>', { 'href': '#' + tabId, role: 'tab', 'data-toggle': 'tab', text: tab.title })
 						)
@@ -35,10 +42,40 @@ define('view/settings', ['backbone', 'backbone.forms', 'const/settings', 'bootst
 				
 				tabContent.append(Settings[tabKey].form.$el);
 				
-				this.$el.append(tabContent);
+				self.container.append(tabContent);
 				
-				tabContent.toggle(this.tabs.find('ul').length === 0);
-			}
+				tabContent.toggle(first);
+				
+				first = false;
+
+			});
+			
+			this.tabs.find('li a').click(function(e) {
+				$(this).tab('show');
+				
+				self.container.find('.tab-pane').hide();
+				self.container.find('.tab-pane#' + $(this).attr('href').substr(1)).show();
+				
+				e.preventDefault();
+				
+				return false;
+			});
+			
+			loadSettings();
+		},
+		
+		loadSettings: function() {
+			var self = this;
+		
+			this.settings.fetch({
+				success: function() {
+					self.initializeDropboxAuthenticate();
+				}
+			});
+		},
+		
+		initializeDropboxAuthenticate: function() {
+			var dropboxSetting = this.settings.where({ key: '' });
 		}
 		
 	});

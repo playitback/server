@@ -117,7 +117,11 @@ define('const/settings', [], {
 			sync_enabled: {
 				title: 'Status',
 				type: 'Checkbox',
-				help: 'If enabled, will sync all your media library with Dropbox. Will allow other applications access your library'
+				help: 'If enabled, will sync all your media library with Dropbox. Will allow other applications access your library',
+				key: '',
+				value: function() {
+					
+				}
 			}
 		}
 	}
