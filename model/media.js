@@ -231,9 +231,18 @@ module.exports = function() {
 				});
 			},
 			download: function(torrent) {
+				self.log.debug('Download torrent for ' + this.title || this.name);
+				
 				if(typeof torrent === 'undefined' || !torrent) {
 					torrent = this.loadBestTorrent(function(torrent) {
-						torrent.download();
+						self.log.debug('Torrent loaded ' + torrent);
+						
+						if(torrent) {
+							torrent.download();
+						}
+						else {
+							self.log.debug('No torrents found');
+						}
 					});
 					
 					return;
@@ -241,7 +250,7 @@ module.exports = function() {
 				
 				torrent.download();
 			},
-			loadBestTorrent: function() {
+			loadBestTorrent: function(callback) {
 				var _self = this;
 						
 				this.fetchSuitableTorrents(function() {
@@ -250,14 +259,19 @@ module.exports = function() {
 					});
 				});
 			},
-			fetchSuitableTorrents: function(callback) {			
+			fetchSuitableTorrents: function(callback) {	
 				self.model.Torrent.fetchSuitableWithMedia(this, function() {
 					callback();
 				}, true);
 			},
 			torrentWithHighestScore: function(callback) {
-				this.model.Torrent.find({ where: { mediaId: this.id }, orderBy: 'score', limit: 1 }).success(function(torrent) {
-					callback(torrent);
+				this.getTorrents({ orderBy: 'score', limit: 1}).success(function(torrent) {
+					if(torrent.length == 0) {
+						callback(null);
+					}
+					else {
+						callback(torrent[0]);
+					}
 				});
 			},
 			torrentQuery: function(callback) {
