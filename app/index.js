@@ -27,6 +27,15 @@ var App = function() {
 	// Initialize API libraries
 	this.theMovieDb 	= new TheMovieDB({ apiKey: this.config.get('theMovieDb.apiKey') }); // @TODO: load from config
 	
+	this.log.remove(winston.transports.Console);
+	this.log.addColors({
+		debug: 'blue',
+		info: 'green',
+		warn: 'yellow',
+		error: 'red'
+	})
+	this.log.add(winston.transports.Console, { level: 'debug', colorize:true });
+	
 	// Listen for events
 	this.app.listen(3030);
 	this.log.debug('Playback server started and running on port 3030');
