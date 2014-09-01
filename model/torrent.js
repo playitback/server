@@ -3,6 +3,8 @@ var Sequelize = require('sequelize'),
 
 module.exports = function() {
 
+	var app = this;
+	
 	return this.sequelize.define('Torrent', {
 		magnet: {
 			type: Sequelize.STRING,
@@ -12,17 +14,29 @@ module.exports = function() {
 			type: Sequelize.INTEGER
 		}
 	}, {
+		getterMethods: {
+			magnet: function() {
+				return JSON.parse(this.magnet);
+			}
+		},
+		setterMethods: {
+			magnet: function() {
+				return JSON.stringify(this.magnet);
+			}
+		},
 		classMethods: {
 			fetchSuitableWithMedia: function(media, callback, persist) {
 				if(typeof persist === 'undefined') {
 					persist = false;
 				}
 				
-				var _self = this;
+				var self = this;
 				
 				media.torrentQuery(function(query) {
 					piratebay.search(0, query, function(results) {
-						_self.buildWithResults(results, persist, function(torrents) {
+						app.log.debug('Found ' + results.length + ' results for ' + query);
+						
+						self.buildWithResults(results, persist, function(torrents) {
 							callback(torrents);	
 						});
 					},
@@ -37,24 +51,26 @@ module.exports = function() {
 					
 					return;
 				}
+				
+				console.log('Torrent.buildWithResults');
 			
 				var torrents = [];
 			
 				for(var i in data) {
 					this.buildWithRemoteData(data[i], persist, function(torrent) {
 						torrents.push(torrent);
-						
-						if(torrents === data.length) {
+												
+						if(torrents.length === data.length) {
 							callback(torrents);
 						}
 					});
 				}
 			},
 			buildWithRemoteData: function(data, persist, callback) {
-				return {
+				callback(app.model.Torrent.create({
 					magnet: data.magnet,
 					score: this.calculateScoreWithRemoteData(data)
-				}
+				}));
 			},
 			calculateScoreWithRemoteData: function(data) {
 				
@@ -62,7 +78,7 @@ module.exports = function() {
 		},
 		instanceMethods: {
 			download: function() {
-				
+				app.log.debug('Download torrent');
 			}
 		}
 	});

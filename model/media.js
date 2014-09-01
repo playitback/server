@@ -252,6 +252,8 @@ module.exports = function() {
 			},
 			loadBestTorrent: function(callback) {
 				var _self = this;
+				
+				self.log.debug('Media.loadBestTorrent');
 						
 				this.fetchSuitableTorrents(function() {
 					_self.torrentWithHighestScore(function(torrent) {
@@ -260,16 +262,24 @@ module.exports = function() {
 				});
 			},
 			fetchSuitableTorrents: function(callback) {	
+				self.log.debug('Media.fetchSuitableTorrents');
+			
 				self.model.Torrent.fetchSuitableWithMedia(this, function() {
 					callback();
 				}, true);
 			},
 			torrentWithHighestScore: function(callback) {
+				self.log.debug('Media.torrentWithHighestScore');
+			
 				this.getTorrents({ orderBy: 'score', limit: 1}).success(function(torrent) {
 					if(torrent.length == 0) {
+						self.log.debug('No torrent found with suitable highest score');
+						
 						callback(null);
 					}
 					else {
+						self.log.debug('Found torrent with suitable highest score');
+						
 						callback(torrent[0]);
 					}
 				});
