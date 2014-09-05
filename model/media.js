@@ -233,56 +233,26 @@ module.exports = function() {
 			download: function(torrent) {
 				self.log.debug('Download torrent for ' + this.title || this.name);
 				
+				var _self = self;
+				
 				if(typeof torrent === 'undefined' || !torrent) {
-					torrent = this.loadBestTorrent(function(torrent) {
-						self.log.debug('Torrent loaded ' + torrent);
-						
-						if(torrent) {
-							torrent.download();
-						}
-						else {
-							self.log.debug('No torrents found');
-						}
+					self.model.Torrent.fetchSuitableWithMedia(this, function() {
+						self.getTorrents({ orderBy: 'score', limit: 1}).success(function(torrent) {
+							if(torrent.length == 0) {
+								self.log.debug('No torrent found with suitable highest score');
+							}
+							else {
+								self.log.debug('Found torrent with suitable highest score');
+								
+								torrent[0].download();
+							}
+						});
 					});
 					
 					return;
 				}
 				
 				torrent.download();
-			},
-			loadBestTorrent: function(callback) {
-				var _self = this;
-				
-				self.log.debug('Media.loadBestTorrent');
-						
-				this.fetchSuitableTorrents(function() {
-					_self.torrentWithHighestScore(function(torrent) {
-						callback(torrent);
-					});
-				});
-			},
-			fetchSuitableTorrents: function(callback) {	
-				self.log.debug('Media.fetchSuitableTorrents');
-			
-				self.model.Torrent.fetchSuitableWithMedia(this, function() {
-					callback();
-				}, true);
-			},
-			torrentWithHighestScore: function(callback) {
-				self.log.debug('Media.torrentWithHighestScore');
-			
-				this.getTorrents({ orderBy: 'score', limit: 1}).success(function(torrent) {
-					if(torrent.length == 0) {
-						self.log.debug('No torrent found with suitable highest score');
-						
-						callback(null);
-					}
-					else {
-						self.log.debug('Found torrent with suitable highest score');
-						
-						callback(torrent[0]);
-					}
-				});
 			},
 			torrentQuery: function(callback) {
 				if(this.type === Type.Movie) {
