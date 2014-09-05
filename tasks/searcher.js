@@ -6,14 +6,15 @@ module.exports = function() {
 	
 	var run = function() {
 		var self = this;
-	
-		this.model.Media.findAllAvailableAndWanted(function(availableMedia) {
-			self.log.debug('Found ' + availableMedia.length + ' media file(s) waiting to be searched');
+		
+		this.model.Media.findAll({ where: { state: this.model.Media.State.Wanted, availableDate: { lte: new Date() } } })
+			.success(function(availableMedia) {
+				self.log.debug('Found ' + availableMedia.length + ' media file(s) waiting to be searched');
 			
-			availableMedia.forEach(function(media) {
-				media.download();
+				availableMedia.forEach(function(media) {
+					media.download();
+				});
 			});
-		});
 	};
 	
 	

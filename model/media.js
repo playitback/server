@@ -41,7 +41,7 @@ module.exports = function() {
 		}
 	};
 	
-	var self = this;
+	var app = this;
 	var Media = this.sequelize.define('Media', {
 		type: {
 			type:			Sequelize.ENUM(Type.Movie, Type.TV),
@@ -95,7 +95,7 @@ module.exports = function() {
 			WatchStatus: 	WatchStatus,
 			
 			getMediaForIndex: function(callback) {
-				var _self = this;
+				var self = this;
 			
 				this.findAll({ where: { type: Type.Movie }}).success(function(medias) {
 					var response 		= [],
@@ -120,16 +120,16 @@ module.exports = function() {
 			},
 			
 			createWithRemoteId: function(remoteId, callback) {
-				var _self = this;
+				var self = this;
 				
-				self.theMovieDb.getMovie(remoteId, function(err, result) {
+				app.theMovieDb.getMovie(remoteId, function(err, result) {
 					if(err) {
 						callback(err);
 						
 						return;
 					}
 					
-					_self.createWithRemoteResult(result, function(show) {
+					self.createWithRemoteResult(result, function(show) {
 						callback(show);
 					});
 				});
@@ -145,10 +145,10 @@ module.exports = function() {
 				}
 			
 				var media 	= [],
-					_self	= this;
+					self	= this;
 				
 				results.forEach(function(result) {
-					_self.createWithRemoteResult(result, function(episode) {
+					self.createWithRemoteResult(result, function(episode) {
 						media.push(episode);
 						
 						if(media.length === results.length) {
@@ -158,20 +158,22 @@ module.exports = function() {
 				});
 			},
 			createWithRemoteResult: function(result, callback) {
-				var _self = this;
+				var self = this;
 								
-				result.type = typeof result.episode_number === 'number' ? Type.TV : Type.Movie;
+				result.type = typeof result.episode_number === 'number' ? 
+					Type.TV : 
+					Type.Movie;
 			
 				this.create(this.mapWithRemoteResult(result)).success(function(media) {
 					if(typeof result.still_path === 'string') {
-						self.model.Poster.createWithRemoteResult(result).success(function(poster) {
+						app.model.Poster.createWithRemoteResult(result).success(function(poster) {
 							media.setStill(poster).success(function() {
 								callback(media);
 							});
 						});
 					}
 					else if(typeof result.poster_path === 'string') {
-						self.model.Poster.createWithRemoteResult(result).success(function(poster) {
+						app.model.Poster.createWithRemoteResult(result).success(function(poster) {
 							media.setPoster(poster).success(function() {
 								callback(media);
 							});
@@ -220,7 +222,7 @@ module.exports = function() {
 		instanceMethods: {
 			indexInfo: function(callback) {
 				var _response 	= this.values,	
-					_self		= this;
+					self		= this;
 							
 				this.getPoster().success(function(poster) {
 					if(poster) {
@@ -231,18 +233,18 @@ module.exports = function() {
 				});
 			},
 			download: function(torrent) {
-				self.log.debug('Download torrent for ' + this.title || this.name);
+				app.log.debug('Download torrent for ' + this.title || this.name);
 				
-				var _self = self;
+				var self = this;
 				
 				if(typeof torrent === 'undefined' || !torrent) {
-					self.model.Torrent.fetchSuitableWithMedia(this, function() {
+					app.model.Torrent.fetchSuitableWithMedia(this, function() {
 						self.getTorrents({ orderBy: 'score', limit: 1}).success(function(torrent) {
 							if(torrent.length == 0) {
-								self.log.debug('No torrent found with suitable highest score');
+								app.log.debug('No torrent found with suitable highest score');
 							}
 							else {
-								self.log.debug('Found torrent with suitable highest score');
+								app.log.debug('Found torrent with suitable highest score');
 								
 								torrent[0].download();
 							}

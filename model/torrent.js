@@ -1,5 +1,6 @@
 var Sequelize = require('sequelize'),
-	piratebay = require('pirateship');
+	piratebay = require('pirateship'),
+	score = require('../app/lib/score');
 
 module.exports = function() {
 
@@ -53,27 +54,36 @@ module.exports = function() {
 				}
 				
 				console.log('Torrent.buildWithResults');
-			
-				var torrents = [];
-			
+				
+				var data = this.buildWithRemoteData(data);
+						
+				app.model.Torrent.bulkCreate(data)
+					.success(function(torrents) {
+						callback(torrents);
+					});
+			},
+			buildWithRemoteData: function(data) {
+				var response = [];
+				
 				for(var i in data) {
-					this.buildWithRemoteData(data[i], persist, function(torrent) {
-						torrents.push(torrent);
-												
-						if(torrents.length === data.length) {
-							callback(torrents);
-						}
+					var remote = data[i];
+					
+					var score = this.calculateScoreWithRemoteData(remote);
+					
+					if(score < 20) {
+						continue;
+					}
+				
+					response.push({
+						magnet: remote.magnet,
+						score: score
 					});
 				}
-			},
-			buildWithRemoteData: function(data, persist, callback) {
-				callback(app.model.Torrent.create({
-					magnet: data.magnet,
-					score: this.calculateScoreWithRemoteData(data)
-				}));
+			
+				return response;
 			},
 			calculateScoreWithRemoteData: function(data) {
-				
+				return score(data
 			}
 		},
 		instanceMethods: {
