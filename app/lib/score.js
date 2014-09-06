@@ -50,7 +50,7 @@ module.exports = function(media, data) {
 	};
 	
 	var score = 0;
-	
+		
 	score += nameScore(data.magnet.dn, data.year);
 	score += sizeScore();
 	score += providerScore();

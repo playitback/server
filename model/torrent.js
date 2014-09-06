@@ -37,7 +37,7 @@ module.exports = function() {
 					piratebay.search(0, query, function(results) {
 						app.log.debug('Found ' + results.length + ' results for ' + query);
 						
-						self.buildWithResults(results, persist, function(torrents) {
+						self.buildWithResults(media, results, persist, function(torrents) {
 							callback(torrents);	
 						});
 					},
@@ -46,7 +46,7 @@ module.exports = function() {
 					});
 				});
 			},
-			buildWithResults: function(data, persist, callback) {
+			buildWithResults: function(media, data, persist, callback) {
 				if(data.length === 0) {
 					callback([]);
 					
@@ -55,20 +55,19 @@ module.exports = function() {
 				
 				console.log('Torrent.buildWithResults');
 				
-				var data = this.buildWithRemoteData(data);
+				var data = this.buildWithRemoteData(media, data);
 						
 				app.model.Torrent.bulkCreate(data)
 					.success(function(torrents) {
 						callback(torrents);
 					});
 			},
-			buildWithRemoteData: function(data) {
+			buildWithRemoteData: function(media, data) {
 				var response = [];
-				
+								
 				for(var i in data) {
 					var remote = data[i];
-					
-					var score = this.calculateScoreWithRemoteData(remote);
+					var score = this.calculateScoreWithRemoteData(media, remote);
 					
 					if(score < 20) {
 						continue;
@@ -82,8 +81,8 @@ module.exports = function() {
 			
 				return response;
 			},
-			calculateScoreWithRemoteData: function(data) {
-				return score(data
+			calculateScoreWithRemoteData: function(media, data) {
+				return score(media, data);
 			}
 		},
 		instanceMethods: {
