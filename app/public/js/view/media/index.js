@@ -15,7 +15,7 @@ define('view/media/index', ['backbone', 'view/media/header', 'collection/show', 
 		},
 		
 		render: function() {
-			$('section#content')
+			$('div#content')
 				.html('')
 				.append(this.$el);
 				

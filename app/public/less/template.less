@@ -11,67 +11,55 @@ html, body {
 }
 
 body {
-	background: #2B2B2B;
+	background: #3C3C3C;
 	
-	ul.main {
-		background: rgba(255, 255, 255, 0.07);
-		z-index: 100;
-		list-style: none;
-		padding: 0;
-		position: fixed;
-		
-		li {
-			width: 100%;
-			height: 100px;
-			background-position: center center;
-			background-repeat: no-repeat;
-			cursor: pointer;
+	#wrapper {
+		header {
+			background: #E78347;
+			height: 89px;
+			margin-left: -15px;
+			margin-right: -15px;
 			
-			a {
-				display: block;
-				height: 100px;
+			h1 {
+				float: left;
+				width: 226px;
+				height: 47px;
+				margin-left: 25px;
+				
+				.at2x('/img/template/header_logo.png', 226px, 47px);
 			}
+			
+			ul.main {
+				float: right;
+				width: 410px;
+				height: 89px;
+				margin: 0;
+				
+				li {
+					float: left;
+					height: 89px;
+					border-left: 2px solid #D7763B;
+					
+					a {
+						display: block;
+						padding: 0 30px;
+						line-height: 89px;
+						color: #ffffff;
+						font-size: 20px;
+						font-weight: 400;
 						
-			&.home {
-				.at2x('/img/template/menu/home_icon.png', 46px, 46px);
-			}
-			
-			&.tvshows {
-				.at2x('/img/template/menu/tv_icon.png', 48px, 48px);
-			}
-			
-			&.movies {
-				.at2x('/img/template/menu/movie_icon.png', 49px, 34px);
-			}
-			
-			&.settings {
-				.at2x('/img/template/menu/settings_icon.png', 48px, 48px);
-			}
-			
-			&.current {
-				border-right: 3px solid #3BA2FF;
-			}
-			
-			&:hover {
-				background-color: rgba(255, 255, 255, 0.05);
-			}
-			
-			&.logo {
-				.at2x('/img/template/logo.png', 34px, 44px);
-				
-				background-color: #FF992F;
-				cursor: default;
-				
-				&:hover {
-					background-color: none !important;
+						&:hover, &.current {
+							background: #D7763B;
+							text-decoration: none;
+						}
+					}
 				}
 			}
 		}
 	}
+
 	
 	section#content {
-		height: 100%;
-		position: relative;
-		color: #ffffff;
+		padding: 20px;
 	}
 }

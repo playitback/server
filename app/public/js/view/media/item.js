@@ -38,7 +38,7 @@ define('view/media/item', ['backbone', 'jquery.unveil', 'spinner'], function(Bac
 					)
 			);
 		
-			$('section#content #media .row.items').append(this.$el);
+			$('div#content #media .row.items').append(this.$el);
 			
 			this.updateUI();
 			this.createEvents();
