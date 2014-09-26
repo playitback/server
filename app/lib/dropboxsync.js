@@ -74,10 +74,7 @@ module.exports = function() {
 		if(!remoteModel) {
 			self.log.debug(tag + 'Object doesn\'t exist on Dropbox. Creating.');
 			
-			table.insert({ 
-				remoteId: object.remoteId,
-				model: object.Model.tableName
-			});
+			remoteModel.createWithRemoteId(object.remoteId, function() {});
 		}
 		else {
 			self.log.debug(tag + 'Object exists on Dropbox. Ignoring.');

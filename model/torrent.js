@@ -7,24 +7,41 @@ module.exports = function() {
 	var app = this;
 	
 	return this.sequelize.define('Torrent', {
-		magnet: {
+		exactTopic: {
 			type: Sequelize.STRING,
 			allowNull: false
+		},
+		fileName: {
+			type: Sequelize.STRING,
+			allowNull: false
+		},
+		trackerUrl: {
+			type: Sequelize.STRING,
+			allowNull: false
+		},
+		infoHash: {
+			type: Sequelize.STRING,
+			allowNull: false
+		},
+		seeders: {
+			type: Sequelize.INTEGER,
+			defaultValue: 0
+		},
+		leachers: {
+			type: Sequelize.INTEGER,
+			defaultValue: 0
+		},
+		size: {
+			type: Sequelize.INTEGER,
+			defaultValue: 0
+		},
+		sizeUnit: {
+			type: Sequelize.STRING
 		},
 		score: {
 			type: Sequelize.INTEGER
 		}
 	}, {
-		getterMethods: {
-			magnet: function() {
-				return JSON.parse(this.magnet);
-			}
-		},
-		setterMethods: {
-			magnet: function() {
-				return JSON.stringify(this.magnet);
-			}
-		},
 		classMethods: {
 			fetchSuitableWithMedia: function(media, callback, persist) {
 				if(typeof persist === 'undefined') {
@@ -56,11 +73,11 @@ module.exports = function() {
 				console.log('Torrent.buildWithResults');
 				
 				var data = this.buildWithRemoteData(media, data);
-						
-				app.model.Torrent.bulkCreate(data)
+														
+				/*app.model.Torrent.bulkCreate(data)
 					.success(function(torrents) {
 						callback(torrents);
-					});
+					});*/
 			},
 			buildWithRemoteData: function(media, data) {
 				var response = [];
@@ -68,13 +85,20 @@ module.exports = function() {
 				for(var i in data) {
 					var remote = data[i];
 					var score = this.calculateScoreWithRemoteData(media, remote);
-					
+										
 					if(score < 20) {
 						continue;
 					}
 				
 					response.push({
-						magnet: remote.magnet,
+						exactTopic: remote.magnet.et,
+						fileName: remote.magnet.dn,
+						trackers: remote.magnet.tr.join(','),
+						infoHash: remote.magnet.infoHash,
+						seeders: remote.seeds,
+						leachers: remote.leaches,
+						size: remote.size,
+						sizeUnit: remote.sizeUnit,
 						score: score
 					});
 				}

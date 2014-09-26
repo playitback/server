@@ -43,6 +43,8 @@ module.exports = function(media, data) {
 	var seederScore = function(seeders, leechers) {
 		var score = 0;
 		
+		console.log('seeder', seeders, 'leechers', leechers);
+		
 		score += seeders * 100 / 15;
 		score += leechers * 100 / 30;
 		
@@ -52,10 +54,12 @@ module.exports = function(media, data) {
 	var score = 0;
 		
 	score += nameScore(data.magnet.dn, data.year);
+	console.log('nameScore', score);
 	score += sizeScore();
 	score += providerScore();
 	score += duplicateScore(data.magnet.dn, media.name);
-	score += seederScore(media.seeders, media.leechers);
+	console.log('duplicateScore', score);
+	score += seederScore(data.seeds, data.leaches);
 	
 	return score;
 	
