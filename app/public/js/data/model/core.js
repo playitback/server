@@ -1,4 +1,4 @@
-define('model/core', ['backbone', 'const/index', 'view/media/dialog/movie', 'view/media/dialog/show'], function(Backbone, Const, MovieDialog, ShowDialog) {
+define('model/core', ['backbone', 'const/index'], function(Backbone, Const) {
 	
 	return Backbone.Model.extend({
 		
@@ -40,19 +40,6 @@ define('model/core', ['backbone', 'const/index', 'view/media/dialog/movie', 'vie
 			else if(this.has('year')) {
 				return this.get('year');
 			}
-		},
-		
-		dialog: function() {
-			if(this.has('type')) {
-				if(this.get('type') === Const.Type.TV) {
-					new ShowDialog({ model: this });
-				}
-				else if(this.get('type') === Const.Type.Movie) {
-					new MovieDialog({ model: this });
-				}
-			}
-			
-			return null;
 		}
 		
 	});

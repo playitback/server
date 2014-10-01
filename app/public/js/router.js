@@ -10,12 +10,12 @@ define('router', [
 	return Backbone.Router.extend({
 		
 		routes: {
-			'':																'homeAction',
+			'':																	'homeAction',
 			'home':															'homeAction',
-			'media/:type':													'mediaAction',
+			'media/:type':														'mediaAction',
 			'media/:type/:mediaId':											'mediaViewAction',
 			'media/:type/:mediaId/season/:seasonId': 						'mediaSeasonAction',
-			'media/:type/:mediaId/season/:seasonId/episode/:episodeId':		'mediaViewAction',
+			'media/:type/:mediaId/season/:seasonId/episode/:episodeId':	'mediaViewAction',
 			'settings':														'settingsAction'
 		},
 		

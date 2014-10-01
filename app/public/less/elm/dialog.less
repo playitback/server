@@ -1,0 +1,26 @@
+#dialog {
+	position: fixed;
+	top: 0;
+	right: 0;
+	left: 0;
+	bottom: 0;
+	background: rgba(0, 0, 0, 0.61);
+	
+	.content {
+		position: absolute;
+		left: 50%;
+		top: 50%;
+		background: #ffffff;
+	}
+	
+	&.search {
+		.content {
+			form {
+				input[type=search] {
+					width: 200px;
+					height: 45px;
+				}
+			}
+		}
+	}
+}

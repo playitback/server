@@ -1,6 +1,10 @@
-define('view/media/index', ['backbone', 'view/media/header', 'collection/show', 'collection/movie', 'view/media/item', 'const/index'], function(Backbone, HeaderView, ShowCollection, MovieCollection, ItemView, Const) {
+define('view/media/index', [
+	'view/abstract/root', 'view/media/header', 'collection/show', 'collection/movie', 
+	'view/media/item', 'const/index', 'view/media/dialog/search'], 
+	function(RootView, HeaderView, ShowCollection, MovieCollection, ItemView, Const,
+	SearchDialog) {
 	
-	return Backbone.View.extend({
+	return RootView.extend({
 		
 		id: 'media',
 		
@@ -10,7 +14,7 @@ define('view/media/index', ['backbone', 'view/media/header', 'collection/show', 
 			this.header 				= new HeaderView({ mediaView: this });
 			this.collection 			= this.collection();
 			
-			this.bindedMediaAdded 		= this.mediaAdded.bind(this);
+			this.bindedMediaAdded 	= this.mediaAdded.bind(this);
 			this.bindedMediaRemoved 	= this.mediaRemoved.bind(this);
 		},
 		
@@ -25,6 +29,18 @@ define('view/media/index', ['backbone', 'view/media/header', 'collection/show', 
 			
 			this.$el
 				.attr('class', this.type)
+				.append(
+					$('<div></div>', { 'class': 'row controls' })
+						.append(
+							$('<div></div>', { 'class': 'col-md-10 filter' })
+						)
+						.append(
+							$('<div></div>', { 'class': 'col-md-2' })
+								.append(
+									$('<a></a>', { 'class': 'add button' })
+								)
+						)
+				)
 				.append(
 					$('<div></div>', { 'class': 'row items' })
 				)
@@ -63,12 +79,14 @@ define('view/media/index', ['backbone', 'view/media/header', 'collection/show', 
 		
 		createEvents: function() {
 			this.collection
-				.off('add', this.bindedMediaAdded)
-				.on('add', this.bindedMediaAdded);
+				.off('add', this.mediaAdded, this)
+				.on('add', this.mediaAdded, this);
 				
 			this.collection
-				.off('remove', this.bindedMediaRemoved)
-				.on('remove', this.bindedMediaRemoved);
+				.off('remove', this.mediaRemoved, this)
+				.on('remove', this.mediaRemoved, this);
+				
+			this.$el.find('.controls a.add').click($.proxy(this.addMediaClicked, this));
 		},
 		
 		fetchMedia: function() {
@@ -107,6 +125,10 @@ define('view/media/index', ['backbone', 'view/media/header', 'collection/show', 
 			if(typeof media.itemView != 'undefined') {
 				media.itemView.remove();
 			}
+		},
+		
+		addMediaClicked: function() {
+			new SearchDialog().show();
 		}
 		
 	});
