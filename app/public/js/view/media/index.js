@@ -32,10 +32,10 @@ define('view/media/index', [
 				.append(
 					$('<div></div>', { 'class': 'row controls' })
 						.append(
-							$('<div></div>', { 'class': 'col-md-10 filter' })
+							$('<div></div>', { 'class': 'col-md-10 left filter' })
 						)
 						.append(
-							$('<div></div>', { 'class': 'col-md-2' })
+							$('<div></div>', { 'class': 'col-md-2 right' })
 								.append(
 									$('<a></a>', { 'class': 'add button' })
 								)
@@ -128,7 +128,7 @@ define('view/media/index', [
 		},
 		
 		addMediaClicked: function() {
-			new SearchDialog().show();
+			new SearchDialog({ type: this.type }).show();
 		}
 		
 	});

@@ -1,4 +1,6 @@
-define('model/search', ['backbone', 'model/show', 'model/movie', 'const/index', 'moment'], function(Backbone, ShowModel, MovieModel, Const, moment) {
+define('model/search', [
+	'backbone', 'model/show', 'model/movie', 'const/index', 'moment'], 
+	function(Backbone, ShowModel, MovieModel, Const, moment) {
 	
 	return Backbone.Model.extend({
 	
@@ -11,6 +13,10 @@ define('model/search', ['backbone', 'model/show', 'model/movie', 'const/index', 
 		},
 		
 		label: function() {
+			return this.get('title');
+		},
+		
+		year: function() {
 			var year = '';
 			
 			if(this.has('year')) {
@@ -19,8 +25,8 @@ define('model/search', ['backbone', 'model/show', 'model/movie', 'const/index', 
 			else if(this.has('firstAired')) {
 				year = this.get('firstAired').format('YYYY');
 			}
-		
-			return this.get('title') + ' <span>' + year + '</span>';
+			
+			return year;
 		},
 		
 		mediaObject: function() {

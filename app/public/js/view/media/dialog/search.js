@@ -1,4 +1,4 @@
-define('view/media/dialog/search', ['view/abstract/dialog'], function(DialogView) {
+define('view/media/dialog/search', ['view/abstract/dialog', 'collection/search'], function(DialogView, SearchCollection) {
 	
 	var template = $('<div></div>')
 		.append(
@@ -11,12 +11,98 @@ define('view/media/dialog/search', ['view/abstract/dialog'], function(DialogView
 			$('<ul></ul>')
 		);
 	
+	var resultTemplate = $('<li></li>')
+		.append(
+			$('<label></label>')
+		)
+		.append(
+			$('<span></span>')
+		);
+	
 	return DialogView.extend({
 	
 		className: 'search',
 		
 		render: function() {
+			if(typeof this.options.type != 'string') {
+				throw 'Invalid search type defined: ' + this.options.type;
+			}
+		
+			this.collection = new SearchCollection({ type: this.options.type });
+		
 			this.content.append(template.clone());
+			
+			this.createEvents();
+		},
+		
+		createEvents: function() {
+			var self = this;
+		
+			this.content.find('form input').on('keyup', function() {
+				if($(this).val().length > 3) {
+					self.performSearch($(this).val());
+				}
+			});
+				
+			this.collection
+				.off('remove', this.handleResultRemove, this)
+				.on('remove', this.handleResultRemove, this);
+		},
+		
+		performSearch: function(query) {
+			var self = this;
+		
+			if(typeof this.previousRequest != 'undefined') {
+				this.previousRequest.abort();
+			}
+		
+			this.previousRequest = this.collection.fetch({
+				data: {
+					query: query
+				},
+				success: function() {
+					self.clearResults();
+					self.updateResults();
+				}
+			});
+		},
+		
+		// Setting remove: true doesn't call the remove method - daft
+		clearResults: function() {
+			var toBeRemoved = [];
+			
+			for(var i = 0; i <= this.collection.length; i++) {
+				this.collection.remove(this.collection.at(i));
+			}
+		},
+		
+		updateResults: function() {
+			for(var i = 0; i <= this.collection.length; i++) {
+				this.handleResultAdd(this.collection.at(i));
+			}
+		},
+		
+		handleResultAdd: function(result) {
+			var resultView = resultTemplate.clone();
+			
+			resultView.find('label').text(result.label());
+			resultView.find('span').text(result.year());
+		
+			this.content.find('ul').append(resultView);
+			
+			result.resultView = resultView;
+			
+			this.center();
+		},
+		
+		handleResultRemove: function(result) {
+			if(typeof result.resultView == 'undefined') {
+				return;
+			}
+		
+			result.resultView.remove();
+			
+			this.center();
 		}
 		
 	});
