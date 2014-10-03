@@ -17,7 +17,7 @@
 		.content {
 			form {
 				input[type=search] {
-					width: 300px;
+					width: 600px;
 					height: 45px;
 				}
 			}
@@ -25,18 +25,25 @@
 			ul {
 				overflow: auto;
 				max-height: 300px;
+				border-top: 1px solid #e3e3e3;
+				display: none;
 			
 				li {
-					line-height: 25px;
+					line-height: 30px;
 					padding: 0 15px;
 				
 					label {
-						
+						font-weight: normal;
 					}
 					
 					span {
 						float: right;
 						color: #9c9c9c;
+					}
+					
+					&:hover {
+						background: #e3e3e3;
+						cursor: pointer;
 					}
 				}
 			}

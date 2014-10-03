@@ -1,4 +1,4 @@
-define('model/movie', ['model/media'], function(MediaModel) {
+define('model/movie', ['model/media', 'moment'], function(MediaModel, moment) {
 	
 	return MediaModel.extend({
 	
@@ -7,7 +7,13 @@ define('model/movie', ['model/media'], function(MediaModel) {
 		},
 		
 		parse: function(response) {
-			return response.movie || response;
+			response = response.movie || response;
+		
+			if(typeof response.availableDate != 'undefined') {
+				response.availableDate = moment(response.availableDate);
+			}
+					
+			return response;
 		}
 		
 	});

@@ -83,12 +83,20 @@ define('view/media/dialog/search', ['view/abstract/dialog', 'collection/search']
 		},
 		
 		handleResultAdd: function(result) {
-			var resultView = resultTemplate.clone();
+			if(typeof result === 'undefined') {
+				return;
+			}
 			
+			console.log(result);
+		
+			var resultView = resultTemplate.clone();
+						
 			resultView.find('label').text(result.label());
 			resultView.find('span').text(result.year());
 		
-			this.content.find('ul').append(resultView);
+			this.content.find('ul')
+				.append(resultView)
+				.show();
 			
 			result.resultView = resultView;
 			

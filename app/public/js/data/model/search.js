@@ -8,6 +8,9 @@ define('model/search', [
 			if(typeof response.firstAired === 'string') {
 				response.firstAired = moment(response.firstAired);
 			}
+			else if(typeof response.availableDate === 'string') {
+				response.availableDate = moment(response.availableDate);
+			}
 		
 			return response;
 		},
@@ -24,6 +27,9 @@ define('model/search', [
 			}
 			else if(this.has('firstAired')) {
 				year = this.get('firstAired').format('YYYY');
+			}
+			else if(this.has('availableDate') && this.get('availableDate')) {
+				year = this.get('availableDate').format('YYYY');
 			}
 			
 			return year;
