@@ -32,6 +32,10 @@ define('view/abstract/dialog', ['view/abstract/root'], function(RootView) {
 				left: (($(window).width() / 2) - (this.content.width() / 2)),
 				top: (($(window).height() / 2) - (this.content.height() / 2))
 			});
+		},
+		
+		close: function() {
+			this.$el.fadeOut();
 		}
 		
 	});

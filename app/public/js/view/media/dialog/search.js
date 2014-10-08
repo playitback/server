@@ -28,6 +28,7 @@ define('view/media/dialog/search', ['view/abstract/dialog', 'collection/search']
 				throw 'Invalid search type defined: ' + this.options.type;
 			}
 		
+			this.mediaView = this.options.mediaView;
 			this.collection = new SearchCollection({ type: this.options.type });
 		
 			this.content.append(template.clone());
@@ -87,8 +88,7 @@ define('view/media/dialog/search', ['view/abstract/dialog', 'collection/search']
 				return;
 			}
 			
-			console.log(result);
-		
+			var self = this;
 			var resultView = resultTemplate.clone();
 						
 			resultView.find('label').text(result.label());
@@ -99,6 +99,10 @@ define('view/media/dialog/search', ['view/abstract/dialog', 'collection/search']
 				.show();
 			
 			result.resultView = resultView;
+			
+			resultView.on('click', function() {
+				self.addResult(result);
+			});
 			
 			this.center();
 		},
@@ -111,6 +115,19 @@ define('view/media/dialog/search', ['view/abstract/dialog', 'collection/search']
 			result.resultView.remove();
 			
 			this.center();
+		},
+		
+		addResult: function(result) {
+			this.$el.find('form input').val('');
+			
+			if(this.mediaView.type == result.get('type')) {
+				this.mediaView.addMedia(result.mediaObject());
+			}
+			else {
+				result.mediaObject().save();
+			}
+			
+			this.close();
 		}
 		
 	});

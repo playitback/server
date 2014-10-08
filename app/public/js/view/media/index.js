@@ -13,9 +13,6 @@ define('view/media/index', [
 		
 			this.header 				= new HeaderView({ mediaView: this });
 			this.collection 			= this.collection();
-			
-			this.bindedMediaAdded 	= this.mediaAdded.bind(this);
-			this.bindedMediaRemoved 	= this.mediaRemoved.bind(this);
 		},
 		
 		render: function() {
@@ -128,7 +125,7 @@ define('view/media/index', [
 		},
 		
 		addMediaClicked: function() {
-			new SearchDialog({ type: this.type }).show();
+			new SearchDialog({ type: this.type, mediaView: this }).show();
 		}
 		
 	});
