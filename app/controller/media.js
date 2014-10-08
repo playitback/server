@@ -96,8 +96,9 @@ module.exports = {
 					targetSize--;
 				}
 				else {
-					results.push(self.model.modelWithType(remoteResult.media_type).mapWithRemoteResult(remoteResult));
-																									
+					results.push(self.model.modelWithType(remoteResult.media_type)
+						.mapWithRemoteResult(remoteResult));
+																															
 					if(results.length === targetSize) {
 						self.response({ results: results });
 					}

@@ -4,10 +4,10 @@ module.exports = function(routes) {
 		throw 'Invalid routes definition. Must be an object.';
 	}
 	
-	var self = this;
+	var app = this;
 	
 	function handle404() {
-		self.res.status(404).render('404');
+		app.res.status(404).render('404');
 	}
 	
 	function ucFirst(string) {
@@ -22,7 +22,7 @@ module.exports = function(routes) {
 		if(typeof status === 'undefined') {
 			status = 200;
 		}
-				
+						
 		this.res.json(status, data);
 	};
 	
@@ -50,14 +50,14 @@ module.exports = function(routes) {
 	};
 	
 	for(var uri in routes) {
-		this.app.all(uri, function(req, res) {		
+		this.app.all(uri, function(req, res) {
 			var route = routes[req.route.path],
 				parts = route.split('@');
 								
-			self.req = req;
-			self.res = res;
+			app.req = req;
+			app.res = res;
 			
-			var controllerName 	= parts.length > 0 ? parts[0] : null,
+			var controllerName = parts.length > 0 ? parts[0] : null,
 				actionName		= parts.length > 1 ? parts[1] : 'index';
 								
 			if(!controllerName) {
@@ -72,12 +72,14 @@ module.exports = function(routes) {
 				controller = require('../controller/' + controllerName);
 			}
 			catch(e) {				
-				self.errorResponse(400);
+				app.errorResponse(400);
 				
 				return;
 			}
 						
 			var action = controller[actionName + 'Action'];
+			
+			console.log(controllerName, actionName);
 			
 			if(typeof action != 'function') {
 				action = controller[req.method.toLowerCase() + ucFirst(actionName)];
@@ -90,12 +92,12 @@ module.exports = function(routes) {
 			}
 			
 			try {
-				action.call(self);
+				action.call(app);
 			}
 			catch(e) {
 				console.log('error: ' + e);
 			
-				self.errorResponse.call(self, e);
+				app.errorResponse.call(app, e);
 			}
 		});
 	}
