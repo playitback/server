@@ -74,7 +74,7 @@ module.exports = {
 			throw 'missing_required_param';
 		}
 						
-		this.theMovieDb.searchMulti(query, function(err, remoteResults) {
+		this.addSubHttpRequest(this.theMovieDb.searchMulti(query, function(err, remoteResults) {
 			var results = [];
 			
 			if(err) {
@@ -104,7 +104,7 @@ module.exports = {
 					}
 				}
 			});
-		});
+		}));
 	}
 	
 };

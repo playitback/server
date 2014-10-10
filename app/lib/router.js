@@ -4,7 +4,8 @@ module.exports = function(routes) {
 		throw 'Invalid routes definition. Must be an object.';
 	}
 	
-	var app = this;
+	var app = this,
+		subHttpRequests = [];
 	
 	function handle404() {
 		app.res.status(404).render('404');
@@ -12,6 +13,12 @@ module.exports = function(routes) {
 	
 	function ucFirst(string) {
 		return string.substring(0,1).toUpperCase() + string.substring(1);
+	}
+	
+	function cancelSubHttpRequests() {
+		for(var key in subHttpRequests) {
+			subHttpRequests[key].abort();
+		}
 	}
 	
 	this.view = function(name) {
@@ -49,8 +56,32 @@ module.exports = function(routes) {
 		return null;
 	};
 	
+	this.addSubHttpRequest = function(request) {
+		var self = this;
+		
+		var removeRequest = function() {
+			subHttpRequests.splice(subHttpRequests.indexOf(this), 1);
+		};
+	
+		request.on('abort', function() {
+			removeRequest();
+		});
+		request.on('complete', function() {
+			removeRequest();
+		});
+		request.on('error', function() {
+			removeRequest();
+		});
+		
+		subHttpRequests.push(request);
+	}
+	
 	for(var uri in routes) {
 		this.app.all(uri, function(req, res) {
+			req.on('aborted', function() {
+				cancelSubHttpRequests();
+			});
+		
 			var route = routes[req.route.path],
 				parts = route.split('@');
 								
@@ -78,9 +109,7 @@ module.exports = function(routes) {
 			}
 						
 			var action = controller[actionName + 'Action'];
-			
-			console.log(controllerName, actionName);
-			
+						
 			if(typeof action != 'function') {
 				action = controller[req.method.toLowerCase() + ucFirst(actionName)];
 			}
