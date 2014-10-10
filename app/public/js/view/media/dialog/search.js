@@ -6,6 +6,12 @@ define('view/media/dialog/search', ['view/abstract/dialog', 'collection/search']
 				.append(
 					$('<input />', { type: 'search', name: 'query', placeholder: 'Enter your search query here...' })
 				)
+				.append(
+					$('<i></i>', { 'class': 'icon' })
+				)
+				.append(
+					$('<a></a>', { 'class': 'clear' })
+				)
 		)
 		.append(
 			$('<ul></ul>')
