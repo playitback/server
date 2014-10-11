@@ -62,10 +62,10 @@ define('view/media/dialog/search', ['view/abstract/dialog', 'collection/search']
 			if(typeof this.previousRequest != 'undefined') {
 				this.previousRequest.abort();
 			}
-		
+					
 			this.previousRequest = this.collection.fetch({
+				remove: false,
 				data: {
-					query: query
 					query: query,
 					type: this.options.type
 				},
@@ -86,16 +86,18 @@ define('view/media/dialog/search', ['view/abstract/dialog', 'collection/search']
 		},
 		
 		updateResults: function() {
-			for(var i = 0; i <= this.collection.length; i++) {
-				this.handleResultAdd(this.collection.at(i));
-			}
+			var self = this;
+		
+			this.collection.forEach(function(result) {
+				self.handleResultAdd(result);
+			});
 		},
 		
 		handleResultAdd: function(result) {
 			if(typeof result === 'undefined') {
 				return;
 			}
-			
+						
 			var self = this;
 			var resultView = resultTemplate.clone();
 						
