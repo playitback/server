@@ -73,10 +73,28 @@ module.exports = {
 		if(!(query = this.input('query'))) {
 			throw 'missing_required_param';
 		}
-						
-		this.addSubHttpRequest(this.theMovieDb.searchMulti(query, function(err, remoteResults) {
+		
+		var type = this.input('type'),
+			searchFunction;
+				
+		if(!type) {
+			searchFunction = this.theMovieDb.searchMulti;
+		}
+		else {
+			if(type == 'tv') {
+				searchFunction = this.theMovieDb.searchTv;
+			}
+			else if(type == 'movie') {
+				searchFunction = this.theMovieDb.searchMovie;
+			}
+			else {
+				throw 'Invalid type specified';
+			}
+		}
+								
+		this.addSubHttpRequest(searchFunction.call(this.theMovieDb, query, function(err, remoteResults) {
 			var results = [];
-			
+						
 			if(err) {
 				self.errorResponse(err);
 				
@@ -92,6 +110,10 @@ module.exports = {
 			var targetSize = remoteResults.length;
 		
 			remoteResults.forEach(function(remoteResult, i) {
+				if(typeof remoteResult.media_type == 'undefined' && type) {
+					remoteResult.media_type = type;
+				}
+			
 				if(remoteResult.media_type === 'person') {
 					targetSize--;
 				}

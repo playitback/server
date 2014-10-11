@@ -66,6 +66,8 @@ define('view/media/dialog/search', ['view/abstract/dialog', 'collection/search']
 			this.previousRequest = this.collection.fetch({
 				data: {
 					query: query
+					query: query,
+					type: this.options.type
 				},
 				success: function() {
 					self.clearResults();
