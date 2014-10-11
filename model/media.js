@@ -269,14 +269,14 @@ module.exports = function() {
 				else if(this.type === Type.TV) {
 					var episode = this;
 				
-					this.getSeason().success(function(season) {
+					/*this.getSeason().success(function(season) {
 						season.getShow().success(function(show) {
 							var prefixedSeasonNumber = (season.number < 10 ? '0' : '') + season.number,
 								prefixedEpisodeNumber	= (episode.number < 10 ? '0' : '') + episode.number;
 						
 							callback(show.title.replace(' ', '.') + ' ' + 'S' + prefixedSeasonNumber + 'E' + prefixedEpisodeNumber + '|' + season.number + 'x' + prefixedEpisodeNumber + '|' + prefixedSeasonNumber + 'x' + prefixedEpisodeNumber);
 						});
-					});
+					});*/
 				}
 			}
 		}

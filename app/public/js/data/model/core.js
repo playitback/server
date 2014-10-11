@@ -3,22 +3,33 @@ define('model/core', ['backbone', 'const/index'], function(Backbone, Const) {
 	return Backbone.Model.extend({
 		
 		watchedStatusClassName: function() {
-			var className = 'unwatched';
+			var className = 'unwatched',
+				state = this.get('state');
+				
+			if(state == Const.State.Downloaded || this.has('stats')) {
+				// TV Shows - episode watched count
+				if(this.has('stats')) {
+					var stats = this.get('stats');
 					
-			if(this.has('stats')) {
-				var stats = this.get('stats');
-				
-				if(stats.episodeCount === stats.watchedCount) {
-					className = 'watched';
+					if(stats.episodeCount == 0) {
+						className = 'wanted';
+					}
+					else if(stats.episodeCount === stats.watchedCount) {
+						className = 'watched';
+					}
+				}
+				else if(this.has('watchStatus')) {
+					var watchStatus = this.get('watchStatus'),
+						state = this.get('state');
+					
+					if(watchStatus === Const.WatchStatus.Watched) {
+						className = 'watched';
+					}
 				}
 			}
-			else if(this.has('watchStatus')) {
-				var watchStatus = this.get('watchStatus');
-				
-				if(watchStatus === Const.WatchStatus.Watched) {
-					className = 'watched';
-				}
-			}
+			else {
+				className = state;
+			}	
 			
 			return className;
 		},

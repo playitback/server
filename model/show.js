@@ -123,7 +123,7 @@ module.exports = function() {
 			},
 			totalEpisodeCount: function(callback) {
 				self.model.sequelize
-					.query('SELECT COUNT(m.id) AS count FROM Seasons s JOIN Media m ON m.SeasonId = s.Id WHERE s.ShowId = \'' + this.id + '\'', null, { plain: true, raw: true })
+					.query('SELECT COUNT(m.id) AS count FROM Seasons s JOIN Media m ON m.SeasonId = s.Id WHERE s.ShowId = \'' + this.id + '\' AND m.state = \'' + self.model.Media.State.Downloaded + '\'', null, { plain: true, raw: true })
 					.success(function(rows) {
 						callback(rows.count);
 					});
