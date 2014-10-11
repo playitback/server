@@ -10,7 +10,13 @@ requirejs.config({
 });
 
 requirejs(['router', 'jquery'], function(Router) {
-	require(['jquery.bootstrap'], function() {
+	require(['jquery.bootstrap'], function(SettingsCollection) {
 		this.router = new Router();
+		
+		require(['collection/settings'], function(SettingsCollection) {
+			window.settings = new SettingsCollection();
+		
+			window.settings.fetch();	
+		});
 	});
 });

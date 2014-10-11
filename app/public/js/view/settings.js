@@ -1,11 +1,10 @@
-define('view/settings', ['backbone', 'backbone.forms', 'const/settings', 'collection/settings'], function(Backbone, BackboneForm, Settings, SettingsCollection) {
+define('view/settings', ['backbone', 'backbone.forms', 'const/settings'], function(Backbone, BackboneForm, Settings) {
 	
 	return Backbone.View.extend({
 		
 		id: 'settings',
 		
 		initialize: function() {
-			this.settings 	= new SettingsCollection();
 			this.tabs 		= $('<ul></ul>', { 'class': 'nav nav-tabs', role: 'tablist' });
 		},
 		
@@ -14,7 +13,7 @@ define('view/settings', ['backbone', 'backbone.forms', 'const/settings', 'collec
 		
 			this.container = $('<div></div>', { 'class': 'tab-content' });
 		
-			$('section#content')
+			$('#content')
 				.html('')
 				.append(this.$el);
 				
@@ -61,21 +60,11 @@ define('view/settings', ['backbone', 'backbone.forms', 'const/settings', 'collec
 				return false;
 			});
 			
-			loadSettings();
-		},
-		
-		loadSettings: function() {
-			var self = this;
-		
-			this.settings.fetch({
-				success: function() {
-					self.initializeDropboxAuthenticate();
-				}
-			});
+			this.initializeDropboxAuthenticate();
 		},
 		
 		initializeDropboxAuthenticate: function() {
-			var dropboxSetting = this.settings.where({ key: '' });
+			var dropboxSetting = window.settings.where({ key: '' });
 		}
 		
 	});

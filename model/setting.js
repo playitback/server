@@ -3,7 +3,18 @@ var Sequelize = require('sequelize');
 module.exports = function() {
 
 	var Key = {
-		DropboxToken: 'DropboxToken'
+		General: {
+			MediaDirectory:			'General.MediaDirectory',
+			Username: 					'General.Username',
+			Password: 					'General.Password',
+			Port: 						'General.Port',
+			CheckForUpdates: 			'General.CheckForUpdates'
+		},
+		Sync: {
+			Dropbox: {
+				Token: 					'Sync.Dropbox.Token'
+			}
+		}
 	};
 
 	return this.sequelize.define('Setting', {

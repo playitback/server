@@ -36,8 +36,8 @@ module.exports = function() {
 		self.log.debug(tag + 'listenForDropboxSetting');
 		
 		self.Setting.afterCreate(function(setting) {
-			console.log('afterCreate setting', setting);
-			if(setting.key === self.Setting.Key.DropboxToken) {
+			console.log('afterCreate setting');
+			if(setting.key === self.Setting.Key.Sync.Dropbox.Token) {
 				self.log.debug(tag + 'Dropbox setting created');
 				
 				createClientWithToken(this.value);
@@ -49,7 +49,7 @@ module.exports = function() {
 	var loadDropboxToken = function() {
 		self.log.debug(tag + 'loadDropboxToken');
 	
-		self.Setting.valueForKey(self.Setting.Key.DropboxToken, function(value) {		
+		self.Setting.valueForKey(self.Setting.Key.Sync.Dropbox.Token, function(value) {		
 			if(value) {
 				self.log.debug(tag + 'token not found');
 				

@@ -2,7 +2,11 @@ define('collection/settings', ['backbone', 'model/setting'], function(Backbone, 
 	
 	return Backbone.Collection.extend({
 		
-		model: SettingModel
+		model: SettingModel,
+		
+		url: function() {
+			return '/settings';
+		}
 		
 	});
 	
