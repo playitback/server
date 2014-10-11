@@ -48,16 +48,21 @@ define('view/media/item', ['backbone', 'jquery.unveil', 'spinner'], function(Bac
 			var self = this;
 		
 			this.model
-				.on('sync', this.modelSync.bind(this));
+				.on('sync', this.modelSync, this);
 			
 			this.model
-				.on('request', this.modelRequest.bind(this));
+				.on('request', this.modelRequest, this);
 				
 			this.$el
 				.off('click')
 				.on('click', function() {
 					self.model.dialog().render();
 				});
+		},
+		
+		remove: function() {
+			this.model.off('sync', null, this);
+			this.model.off('request', null, this);
 		},
 		
 		modelRequest: function() {
@@ -85,7 +90,6 @@ define('view/media/item', ['backbone', 'jquery.unveil', 'spinner'], function(Bac
 		updateUI: function() {
 			if(this.model.has('poster')) {
 				this.loadPoster();
-				
 			}
 			
 			this.$el.find('.overlay .status')
