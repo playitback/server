@@ -9,6 +9,8 @@ define('view/abstract/dialog', ['view/abstract/root'], function(RootView) {
 		},
 		
 		show: function() {
+			var self = this;
+		
 			this.content = $('<div></div>', { 'class': 'content' });
 		
 			this.$el.append(this.content);
@@ -25,6 +27,15 @@ define('view/abstract/dialog', ['view/abstract/root'], function(RootView) {
 			//this.content.slideUp(30);
 			
 			this.center();
+						
+			this.$el.off('click').click(function() {
+				self.close();
+			});
+			this.content.off('click').click(function(e) {
+				e.preventDefault();
+				
+				return false;
+			});
 		},
 		
 		center: function() {
