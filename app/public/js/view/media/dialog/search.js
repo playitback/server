@@ -63,6 +63,7 @@ define('view/media/dialog/search', ['view/abstract/dialog', 'collection/search']
 				this.previousRequest.abort();
 			}
 					
+			this.collection.reset();
 			this.previousRequest = this.collection.fetch({
 				remove: false,
 				data: {
@@ -76,13 +77,8 @@ define('view/media/dialog/search', ['view/abstract/dialog', 'collection/search']
 			});
 		},
 		
-		// Setting remove: true doesn't call the remove method - daft
 		clearResults: function() {
-			var toBeRemoved = [];
-			
-			for(var i = 0; i <= this.collection.length; i++) {
-				this.collection.remove(this.collection.at(i));
-			}
+			this.content.find('ul').html('');
 		},
 		
 		updateResults: function() {
