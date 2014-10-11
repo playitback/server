@@ -49,6 +49,9 @@ define('view/media/dialog/search', ['view/abstract/dialog', 'collection/search']
 				if($(this).val().length > 3) {
 					self.performSearch($(this).val());
 				}
+				else if($(this).val().length == 0) {
+					self.clearResults();
+				}
 			});
 				
 			this.collection
