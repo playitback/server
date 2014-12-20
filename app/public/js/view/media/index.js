@@ -7,6 +7,7 @@ define('view/media/index', [
 	return RootView.extend({
 		
 		id: 'media',
+		fetched: false,
 		
 		initialize: function(options) {
 			this.type 					= options && options.type || null;
@@ -91,13 +92,15 @@ define('view/media/index', [
 					
 			this.collection.fetch({
 				success: function() {
+					self.fetched = true;
+
 					self.showNoMedia();
 				}
 			});
 		},
 		
 		showNoMedia: function() {
-			this.$el.find('.no-items').toggle(this.collection.length == 0);
+			this.$el.find('.no-items').toggle(this.collection.length == 0 && this.fetched);
 		},
 		
 		addMedia: function(media) {
