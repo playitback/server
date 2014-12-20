@@ -1,5 +1,11 @@
 module.exports = {
 
+	/**
+	 * GET media. Returns media from the users library.
+	 *
+	 * @param	mediaId		Return a specific item from the users library.
+	 * @param	type		The type of media to return.
+	 */
 	getIndex: function() {
 		var mediaId		= this.req.params.mediaId,
 			type		= this.req.params.type,
@@ -28,7 +34,13 @@ module.exports = {
 			self.errorResponse('invalid_parameters');
 		}
 	},
-	
+
+	/**
+	 * POST media. Used when adding a new media item to the users library.
+	 *
+	 * @input	type		The type of media being added; tvshow or movie.
+	 * @input	remoteId	The id of the media being added from the remote source.
+	 */
 	postIndex: function() {
 		var self 		= this,
 			type 		= this.req.body.type,
@@ -66,6 +78,12 @@ module.exports = {
 		});
 	},
 
+	/**
+	 * Searches the remote data sources for media.
+	 *
+	 * @input	query	The search query to use.
+	 * @input	type	The type of media to search for; tv, movie or multi (for combined search).
+	 */
 	getSearch: function() {	
 		var query,
 			self = this;
