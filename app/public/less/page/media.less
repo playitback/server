@@ -3,7 +3,13 @@ div#media {
 	position: relative;
 	
 	.controls {
-		margin: 15px 0 0;
+		padding: 15px 0;
+		position: fixed;
+		top: 89px;
+		left: 0;
+		right: 0;
+		z-index: 9;
+		background: #393939;
 		
 		.left {
 			padding-left: 0;
@@ -32,9 +38,12 @@ div#media {
 	}
 		
 	.items {
+		position: relative;
+		margin: 160px 15px 30px;
+
 		.item {
 			height: 242px;
-			margin-top: 15px;
+			margin-top: 30px;
 			
 			.poster {
 				height: 100%;
