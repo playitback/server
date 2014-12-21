@@ -38,6 +38,43 @@
                 }
             }
         }
+
+        .controls {
+            background: #333333;
+            display: inline-block;
+            line-height: 40px;
+            border-radius: 6px;
+            
+            a {
+                float: left;
+                height: 40px;
+                padding: 0 15px;
+                background-position: center center;
+                cursor: pointer;
+                min-width: 44px;
+
+                &.quality {
+                    background: #D8D8D8;
+                    border-radius: 6px;
+                    color: #606060;
+                    font-weight: bold;
+                    margin: 0 5px 0 0;
+                    font-size: 17px;
+                }
+
+                &.refresh {
+                    .at2x('/img/content/media/info/refresh_icon.png', 21px, 22px);
+                }
+
+                &.unwatched {
+                    .at2x('/img/content/media/info/unwatched_icon.png', 30px, 18px);
+                }
+
+                &:last-child {
+                    margin-right: 5px;
+                }
+            }
+        }
     }
 
 }

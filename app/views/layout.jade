@@ -18,21 +18,19 @@ html(lang="en")
 						a
 					li.settings
 						a(href="/#settings")
-			div#content
+			div#content.row
 			script#media-info(type="text/html")
 				div.poster.col-md-3
 					div.img
 					span(class='status <%= state %>')
 				div.info.col-md-9
-					div.head
+					div.head.row
 						div.name.col-md-10
 							h3!='<%= title %>'
 							span.year!='<%= availableDate.format(\'YYYY\') %>'
 						span.rating.col-md-2
 					div.controls
-						a.quality
-						a.playback
-						a.edit
+						a.quality 1080p
 						a.refresh
-						a.toggle-watched
+						a.toggle-watched.unwatched
 					div.description!='<%= overview %>'
