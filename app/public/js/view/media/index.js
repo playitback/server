@@ -1,7 +1,7 @@
 define('view/media/index', [
-	'view/abstract/root', 'view/media/header', 'collection/show', 'collection/movie', 
+	'view/abstract/root', 'collection/show', 'collection/movie',
 	'view/media/item', 'const/index', 'view/media/dialog/search'], 
-	function(RootView, HeaderView, ShowCollection, MovieCollection, ItemView, Const,
+	function(RootView, ShowCollection, MovieCollection, ItemView, Const,
 	SearchDialog) {
 	
 	return RootView.extend({
@@ -14,7 +14,6 @@ define('view/media/index', [
 
 			this.fetched				= false;
 		
-			this.header 				= new HeaderView({ mediaView: this });
 			this.collection 			= this.collection();
 		},
 		
@@ -24,9 +23,7 @@ define('view/media/index', [
 				.append(this.$el);
 				
 			window.setCurrentSection(this.type);
-				
-			this.header.render();
-			
+
 			this.$el
 				.attr('class', this.type)
 				.append(
