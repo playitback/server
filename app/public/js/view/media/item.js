@@ -84,9 +84,7 @@ define('view/media/item', ['backbone', 'jquery.unveil', 'spinner'], function(Bac
 		updateUI: function() {
 			var self = this;
 
-			if(this.model.has('poster')) {
-				this.loadPoster();
-			}
+			this.loadPoster();
 
 			this.$el.off('click').click(function() {
 				window.location = '/#media/' + self.model.get('type') + '/' + self.model.get('id');
@@ -102,6 +100,10 @@ define('view/media/item', ['backbone', 'jquery.unveil', 'spinner'], function(Bac
 		},
 		
 		loadPoster: function() {
+			if(!this.model.has('poster')) {
+				return;
+			}
+
 			var image 	= new Image(),
 				self	= this;
 			
