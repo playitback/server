@@ -7,7 +7,7 @@ define('model/show', ['model/core', 'moment'], function(CoreModel, moment) {
 		},
 		
 		parse: function(response) {
-			response = response.tvshow || response;
+			response = response.tv || response;
 		
 			if(typeof response.firstAired != 'undefined') {
 				response.firstAired = moment(response.firstAired);
@@ -17,7 +17,7 @@ define('model/show', ['model/core', 'moment'], function(CoreModel, moment) {
 		},
 		
 		url: function() {
-			return '/media/tvshow' + (this.has('id') ? '/' + this.get('id') : '');
+			return '/media/tv' + (this.has('id') ? '/' + this.get('id') : '');
 		}
 		
 	});
