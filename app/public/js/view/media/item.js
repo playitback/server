@@ -52,12 +52,6 @@ define('view/media/item', ['backbone', 'jquery.unveil', 'spinner'], function(Bac
 			
 			this.model
 				.on('request', this.modelRequest, this);
-				
-			this.$el
-				.off('click')
-				.on('click', function() {
-					self.model.dialog().render();
-				});
 		},
 		
 		remove: function() {
@@ -88,9 +82,15 @@ define('view/media/item', ['backbone', 'jquery.unveil', 'spinner'], function(Bac
 		},
 		
 		updateUI: function() {
+			var self = this;
+
 			if(this.model.has('poster')) {
 				this.loadPoster();
 			}
+
+			this.$el.off('click').click(function() {
+				window.location = '/#media/' + self.model.get('type') + '/' + self.model.get('id');
+			});
 			
 			this.$el.find('.overlay .status')
 				.attr('class', 'status') // reset

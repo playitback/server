@@ -11,6 +11,8 @@ define('view/media/index', [
 		
 		initialize: function(options) {
 			this.type 					= options && options.type || null;
+
+			this.fetched				= false;
 		
 			this.header 				= new HeaderView({ mediaView: this });
 			this.collection 			= this.collection();

@@ -5,6 +5,10 @@ define('model/movie', ['model/media', 'moment'], function(MediaModel, moment) {
 		label: function() {
 			return this.get('name');
 		},
+
+		url: function() {
+			return '/media/movie/' + this.id;
+		},
 		
 		parse: function(response) {
 			response = response.movie || response;

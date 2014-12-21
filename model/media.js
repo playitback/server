@@ -13,7 +13,7 @@ module.exports = function() {
 		Wanted: 		'wanted',			// Added, but not yet released or downloaded
 		Downloading:	'downloading',		// Currently being downloaded
 		RenameFailed: 	'renameFailed',		// Download finished, but failed to move it to downloaded dir
-		Downloaded:	'downloaded'		// Downloaded and moved to media directory
+		Downloaded:		'downloaded'		// Downloaded and moved to media directory
 	};
 	
 	var WatchStatus = {
