@@ -10,8 +10,8 @@ module.exports = function() {
 		}
 	}, {
 		classMethods: {
-			createWithRemoteResult: function(result, callback) {
-				return this.create(this.mapWithRemoteResult(result));
+			createWithRemoteResult: function(result, transaction) {
+				return this.create(this.mapWithRemoteResult(result), { transaction: transaction });
 			},
 			
 			mapWithRemoteResult: function(result, key) {

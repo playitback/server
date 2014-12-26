@@ -40,6 +40,16 @@ define('view/media/info', [
 			this.model
 				.off('change')
 				.on('change', this.updateUI, this);
+
+			var controls = this.$el.find('.info .controls');
+
+			controls.find('a.quality')
+				.off('click')
+				.on('click', this.handleQualityClick.bind(this));
+
+			controls.find('a.refresh')
+				.off('click')
+				.on('click', this.handleRefreshClick.bind(this));
 		},
 
 		updateUI: function() {
@@ -82,6 +92,17 @@ define('view/media/info', [
 			}
 
 			throw 'Unable to load media';
+		},
+
+
+		// UI Event Handlers
+
+		handleQualityClick: function() {
+
+		},
+
+		handleRefreshClick: function() {
+
 		}
 
 	});

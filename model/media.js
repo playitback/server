@@ -59,16 +59,15 @@ module.exports = function() {
 			type:			Sequelize.DATE,
 			allowNull:		false
 		},
+		remoteId: {
+			type:			Sequelize.STRING,
+			allowNull:		false,
+			unique:			true
+		},
 		
 		// Movie only
 		title: {
 			type: 			Sequelize.STRING,
-			validate: {
-				notNullIfMovie: notNullIfMovie
-			}
-		},
-		remoteId: {
-			type:			Sequelize.STRING,
 			validate: {
 				notNullIfMovie: notNullIfMovie
 			}
@@ -125,7 +124,7 @@ module.exports = function() {
 				});
 			},
 			
-			createWithRemoteId: function(remoteId, callback) {
+			createWithRemoteId: function(remoteId, transaction, callback) {
 				var self = this;
 				
 				app.theMovieDb.getMovie(remoteId, function(err, result) {
@@ -135,13 +134,13 @@ module.exports = function() {
 						return;
 					}
 					
-					self.createWithRemoteResult(result, function(show) {
+					self.createWithRemoteResult(result, transaction, function(show) {
 						callback(show);
 					});
 				});
 			},
 			
-			createWithRemoteResults: function(results, callback) {
+			createWithRemoteResults: function(results, transaction, callback) {
 				if(typeof results != 'object' || typeof results.length != 'number') {
 					throw 'Invalid results array';
 				}
@@ -154,7 +153,7 @@ module.exports = function() {
 					self	= this;
 				
 				results.forEach(function(result) {
-					self.createWithRemoteResult(result, function(episode) {
+					self.createWithRemoteResult(result, transaction, function(episode) {
 						media.push(episode);
 						
 						if(media.length === results.length) {
@@ -163,60 +162,82 @@ module.exports = function() {
 					});
 				});
 			},
-			createWithRemoteResult: function(result, callback) {
+			createWithRemoteResult: function(result, transaction, callback) {
 				var self = this;
 								
 				result.type = typeof result.episode_number === 'number' ? 
 					Type.TV : 
 					Type.Movie;
-			
-				this.create(this.mapWithRemoteResult(result)).success(function(media) {
-					if(typeof result.still_path === 'string') {
-						app.model.Poster.createWithRemoteResult(result).success(function(poster) {
-							media.setStill(poster).success(function() {
-								callback(media);
+
+				// If transaction if a function, it's the callback
+				if(typeof transaction == 'function') {
+					callback = transaction;
+					transaction = null;
+				}
+
+				var mediaModel = app.modelWithType(result.type);
+
+				mediaModel.find({ where: { remoteId: String(result.id) } }).then(function(media) {
+					// Create or update media object
+					var media = self.mapWithRemoteResult(result, media);
+
+					media.save().then(function(media) {
+						if(typeof result.still_path === 'string') {
+							app.model.Poster.createWithRemoteResult(result, transaction).success(function(poster) {
+								media.setStill(poster, { transaction: transaction }).success(function() {
+									callback(media);
+								});
 							});
-						});
-					}
-					else if(typeof result.poster_path === 'string') {
-						app.model.Poster.createWithRemoteResult(result).success(function(poster) {
-							media.setPoster(poster).success(function() {
-								callback(media);
+						}
+						else if(typeof result.poster_path === 'string') {
+							app.model.Poster.createWithRemoteResult(result, transaction).success(function(poster) {
+								media.setPoster(poster, { transaction: transaction }).success(function() {
+									callback(media);
+								});
 							});
-						});
-					}
-					else {
-						callback(media);
-					}
+						}
+						else {
+							callback(media);
+						}
+					})
+					.catch(function(error) {
+						console.log(error);
+					});
 				});
 			},
-			mapWithRemoteResult: function(result) {
-				var mapped = {
-					remoteId: result.id
-				};
+			mapWithRemoteResult: function(result, media) {
+				if(!media) {
+					var type;
+
+					// Search results
+					if(typeof result.media_type === 'string') {
+						type = result.media_type;
+					}
+					else if(typeof result.type === 'string') {
+						type = result.type;
+					}
+
+					media = app.modelWithType(type).build();
+				}
+
+				media.remoteId 	= result.id;
+				media.type		= type;
+
+				if(type === Type.Movie) {
+					media.title 			= result.title;
+					media.availableDate 	= moment(result.release_date).toDate();
+				}
 				
-				// Search results
-				if(typeof result.media_type === 'string') {
-					mapped.type = result.media_type;
+				// TV - won't have a type as it's an episode
+				else {
+					media.availableDate 	= moment(result.air_date).toDate();
+					media.number			= result.episode_number;
+					media.name				= result.name;
 				}
-				else if(typeof result.type === 'string') {
-					mapped.type = result.type;
-				}
-								
-				if(mapped.type === Type.Movie) {
-					mapped.title 			= result.title;
-					mapped.availableDate 	= moment(result.release_date).toDate();
-				}
-				
-				// TV
-				else if(mapped.type === Type.TV) {
-					mapped.availableDate 	= moment(result.air_date).toDate();
-					mapped.number			= result.episode_number;
-					mapped.name				= result.name;
-					mapped.overview			= result.overview;
-				}
+
+				media.overview = result.overview;
 							
-				return mapped;
+				return media;
 			},
 			findAllAvailableAndWanted: function(callback) {
 				this.findAll({ where: { state: State.Wanted, availableDate: { lte: new Date() } } })

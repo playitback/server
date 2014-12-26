@@ -56,7 +56,7 @@ module.exports = {
 			
 		this.model.sequelize.transaction(function(transaction) {
 			try {
-				self.model.modelWithType(type).createWithRemoteId(remoteId, function(show) {
+				return self.model.modelWithType(type).createWithRemoteId(remoteId, transaction, function(show) {
 					show.indexInfo(function(response) {
 						transaction.commit();
 						
@@ -75,6 +75,10 @@ module.exports = {
 				// Continue exception to request
 				throw e;
 			}
+		}).then(function(result) {
+
+		}).catch(function(err) {
+
 		});
 	},
 
@@ -137,7 +141,7 @@ module.exports = {
 				}
 				else {
 					results.push(self.model.modelWithType(remoteResult.media_type)
-						.mapWithRemoteResult(remoteResult));
+						.mapWithRemoteResult(remoteResult).toJSON());
 																															
 					if(results.length === targetSize) {
 						self.response({ results: results });

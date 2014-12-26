@@ -45,7 +45,7 @@ module.exports = function() {
 				});
 			},
 			
-			createWithRemoteId: function(remoteId, callback) {
+			createWithRemoteId: function(remoteId, transaction, callback) {
 				var _self = this;
 				
 				self.theMovieDb.getTv(remoteId, function(err, result) {
@@ -55,20 +55,25 @@ module.exports = function() {
 						return;
 					}
 					
-					_self.createWithRemoteResult(result, function(show) {
+					_self.createWithRemoteResult(result, transaction, function(show) {
 						callback(show);
 					});
 				});
 			},
 			
-			createWithRemoteResult: function(result, callback) {
-				this.create(this.mapWithRemoteResult(result))
+			createWithRemoteResult: function(result, transaction, callback) {
+				if(typeof transaction == 'function') {
+					callback = transaction;
+					transaction = null;
+				}
+
+				this.create(this.mapWithRemoteResult(result), { transaction: transaction })
 					.success(function(show) {
-						self.model.Poster.createWithRemoteResult(result)
+						self.model.Poster.createWithRemoteResult(result, transaction)
 							.success(function(poster) {
 								show.setPoster(poster)
 									.success(function() {
-										self.model.Season.createWithRemoteResults(show, result.seasons, function(seasons) {
+										self.model.Season.createWithRemoteResults(show, result.seasons, transaction, function(seasons) {
 											show.setSeasons(seasons).success(function() {
 												callback(show);
 											});
