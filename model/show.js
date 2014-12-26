@@ -84,12 +84,12 @@ module.exports = function() {
 			},
 			
 			mapWithRemoteResult: function(result) {
-				return {
+				return this.build({
 					remoteId:		result.id,
 					title: 			result.name,
 					firstAired: 	moment(result.first_air_date).toDate(),
 					type:			self.model.Media.Type.TV
-				};
+				});
 			}
 		},
 		instanceMethods: {
