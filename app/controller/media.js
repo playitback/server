@@ -140,8 +140,11 @@ module.exports = {
 					targetSize--;
 				}
 				else {
-					results.push(self.model.modelWithType(remoteResult.media_type)
-						.mapWithRemoteResult(remoteResult).toJSON());
+					var result = self.model.modelWithType(remoteResult.media_type)
+						.mapWithRemoteResult(remoteResult).toJSON();
+					result.type = type;
+
+					results.push(result);
 																															
 					if(results.length === targetSize) {
 						self.response({ results: results });
