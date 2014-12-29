@@ -53,32 +53,19 @@ module.exports = {
 		if(typeof remoteId != 'number') {
 			throw 'invalid or missing remoteId';
 		}
-			
-		this.model.sequelize.transaction(function(transaction) {
-			try {
-				return self.model.modelWithType(type).createWithRemoteId(remoteId, transaction, function(show) {
-					show.indexInfo(function(response) {
-						transaction.commit();
-						
-						var responseObject = {};
-						
-						responseObject[type] = response;
-					
-						self.response(responseObject);
-					});
+
+		self.model.sequelize.transaction().then(function(transaction) {
+			self.model.modelWithType(type).createWithRemoteId(remoteId, transaction, function(show) {
+				show.indexInfo(function(response) {
+					transaction.commit();
+
+					var responseObject = {};
+
+					responseObject[type] = response;
+
+					self.response(responseObject);
 				});
-			}
-			catch(e) {
-				transaction.rollback();
-				transaction.done();
-				
-				// Continue exception to request
-				throw e;
-			}
-		}).then(function(result) {
-
-		}).catch(function(err) {
-
+			});
 		});
 	},
 

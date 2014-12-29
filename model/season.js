@@ -3,7 +3,7 @@ var Sequelize 	= require('sequelize'),
 
 module.exports = Season = function() {
 	
-	var self = this;
+	var app = this;
 	
 	return this.sequelize.define('Season', {
 		number: {
@@ -15,11 +15,11 @@ module.exports = Season = function() {
 	}, {
 		classMethods: {
 			createWithRemoteResults: function(show, results, transaction, callback) {
-				var _self 	= this,
+				var self 	= this,
 					seasons = [];
 
 				results.forEach(function(result) {
-					_self.createWithRemoteResult(show, result, transaction, function(season) {
+					self.createWithRemoteResult(show, result, transaction, function(season) {
 						seasons.push(season);
 						
 						if(seasons.length === results.length) {
@@ -30,7 +30,7 @@ module.exports = Season = function() {
 			},
 			
 			createWithRemoteResult: function(show, result, transaction, callback) {
-				var _self = this;
+				var self = this;
 
 				// If transaction is a function, it's the callback
 				if(typeof transaction == 'function') {
@@ -38,23 +38,43 @@ module.exports = Season = function() {
 					transaction = null;
 				}
 			
-				_self.create(_self.mapWithRemoteResult(result), { transaction: transaction })
+				this.create(self.mapWithRemoteResult(result), { transaction: transaction })
 					.success(function(season) {
-						self.model.Poster.createWithRemoteResult(result, transaction)
+						app.model.Poster.createWithRemoteResult(result, transaction)
 							.success(function(poster) {
 								season.setPoster(poster, { transaction: transaction })
-									.success(function() {
-										self.theMovieDb.getSeason(show.remoteId, season.number, function(err, remoteSeason) {
-											self.model.Media.createWithRemoteResults(remoteSeason.episodes, transaction, function(episodes) {
+									.then(function() {
+										app.theMovieDb.getSeason(show.remoteId, season.number, function(err, remoteSeason) {
+											app.model.Media.createWithRemoteResults(remoteSeason.episodes, transaction, function(episodes) {
 												season.setEpisodes(episodes)
-													.success(function() {
+													.then(function() {
 														callback(season);
+													})
+													.catch(function(error) {
+														transaction.rollback();
+
+														app.log.error('failed to set episodes on season', season.id, error);
 													});
 											});
 										});
+									})
+									.catch(function(error) {
+										transaction.rollback();
+
+										app.log.error('failed to set poster on season', season.id, error);
 									});
+							})
+							.catch(function(error) {
+								transaction.rollback();
+
+								app.log.debug('failed to create poster', error);
 							});
-					});
+					})
+					.catch(function(error) {
+						transaction.rollback();
+
+						app.log.error('failed to create season with remote id', season.remoteId, error);
+					})
 			},
 			
 			mapWithRemoteResult: function(result) {						

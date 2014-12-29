@@ -3,7 +3,7 @@ var Sequelize 	= require('sequelize'),
 
 module.exports = function() {
 	
-	var self = this;
+	var app = this;
 	var Show = this.sequelize.define('Show', {
 		remoteId: {
 			type: Sequelize.INTEGER,
@@ -16,16 +16,17 @@ module.exports = function() {
 		firstAired: {
 			type: Sequelize.DATE,
 			allowNull: false
+		},
+		overview: {
+			type: Sequelize.STRING,
+			allowNull: true
 		}
 	}, {
 		classMethods: {
 		
 			getMediaForIndex: function(callback) {
-				var _self = this;
-							
-				this.findAll().success(function(medias) {
-					var response 		= [],
-						checkedShows 	= 0;
+				this.findAll().then(function(medias) {
+					var response 		= [];
 																
 					if(medias.length === 0) {
 						callback(response);
@@ -46,41 +47,60 @@ module.exports = function() {
 			},
 			
 			createWithRemoteId: function(remoteId, transaction, callback) {
-				var _self = this;
+				var self = this;
 				
-				self.theMovieDb.getTv(remoteId, function(err, result) {
+				app.theMovieDb.getTv(remoteId, function(err, result) {
 					if(err) {
 						callback(err);
 						
 						return;
 					}
 					
-					_self.createWithRemoteResult(result, transaction, function(show) {
+					self.createWithRemoteResult(result, transaction, function(show) {
 						callback(show);
 					});
 				});
 			},
 			
 			createWithRemoteResult: function(result, transaction, callback) {
-				if(typeof transaction == 'function') {
-					callback = transaction;
-					transaction = null;
-				}
+				var self = this;
 
-				this.create(this.mapWithRemoteResult(result), { transaction: transaction })
-					.success(function(show) {
-						self.model.Poster.createWithRemoteResult(result, transaction)
-							.success(function(poster) {
-								show.setPoster(poster)
-									.success(function() {
-										self.model.Season.createWithRemoteResults(show, result.seasons, transaction, function(seasons) {
-											show.setSeasons(seasons).success(function() {
-												callback(show);
-											});
-										});
+				this.find({ where: { remoteId: String(result.id) } }).then(function(show) {
+					// Create or update show object
+					show = self.mapWithRemoteResult(result, show);
+
+					show.save({transaction: transaction}).then(function (show) {
+						app.model.Poster.createWithRemoteResult(result, transaction).then(function (poster) {
+							show.setPoster(poster, {transaction: transaction}).then(function () {
+								app.model.Season.createWithRemoteResults(show, result.seasons, transaction, function (seasons) {
+									show.setSeasons(seasons, {transaction: transaction}).then(function () {
+										callback(show);
+									})
+									.catch(function(error) {
+										transaction.rollback();
+
+										app.log.error('failed to set seasons on show', show.id, error);
 									});
+								});
+							})
+							.catch(function(error) {
+								transaction.rollback();
+
+								app.log.error('failed to set poster on show', show.id, poster.id, error);
 							});
+						})
+						.catch(function(error) {
+							transaction.rollback();
+
+							app.log.error('failed to create poster for show', show.id, error);
+						});
+					})
+					.catch(function(error) {
+						transaction.rollback();
+
+						app.log.error('failed to create show with remoteId', show.remoteId, error);
 					});
+				});
 			},
 			
 			mapWithRemoteResult: function(result) {
@@ -88,29 +108,29 @@ module.exports = function() {
 					remoteId:		result.id,
 					title: 			result.name,
 					firstAired: 	moment(result.first_air_date).toDate(),
-					type:			self.model.Media.Type.TV
+					overview:		result.overview
 				});
 			}
 		},
 		instanceMethods: {
 			indexInfo: function(callback) {
-				var _response 	= this.values,	
-					_self		= this;
+				var response 	= this.values,
+					self		= this;
 							
 				this.getPoster().success(function(poster) {
 					if(poster) {
-						_response.poster = poster.values;
+						response.poster = poster.values;
 					}
 										
-					_self.watchedStats(function(stats) {
-						_response.stats = stats;
+					self.watchedStats(function(stats) {
+						response.stats = stats;
 						
-						callback(_response);
+						callback(response);
 					});
 				});
 			},
 			watchedStats: function(callback) {
-				var _self = this,
+				var self = this,
 					stats = {
 						watchedCount: 0,
 						episodeCount: 0
@@ -118,8 +138,8 @@ module.exports = function() {
 			
 				this.totalEpisodeCount(function(count) {
 					stats.episodeCount = count;
-					
-					_self.watchedEpisodeCount(function(count) {
+
+					self.watchedEpisodeCount(function(count) {
 						stats.watchedCount = count;
 						
 						callback(stats);
@@ -127,16 +147,24 @@ module.exports = function() {
 				});
 			},
 			totalEpisodeCount: function(callback) {
-				self.model.sequelize
-					.query('SELECT COUNT(m.id) AS count FROM Seasons s JOIN Media m ON m.SeasonId = s.Id WHERE s.ShowId = \'' + this.id + '\' AND m.state = \'' + self.model.Media.State.Downloaded + '\'', null, { plain: true, raw: true })
-					.success(function(rows) {
+				app.model.sequelize
+					.query('SELECT COUNT(m.id) AS count ' +
+						'FROM Seasons s ' +
+						'JOIN Media m ON m.SeasonId = s.Id ' +
+						'WHERE s.ShowId = \'' + this.id + '\' AND ' +
+							'm.state = \'' + app.model.Media.State.Downloaded + '\'', null, { plain: true, raw: true })
+					.then(function(rows) {
 						callback(rows.count);
 					});
 			},
 			watchedEpisodeCount: function(callback) {
-				self.model.sequelize
-					.query('SELECT COUNT(m.id) AS count FROM Seasons s JOIN Media m ON m.SeasonId = s.Id WHERE s.ShowId = \'' + this.id + '\' AND m.watchStatus = \'' + self.model.Media.WatchStatus.Watched + '\'', null, { plain: true, raw: true })
-					.success(function(rows) {
+				app.model.sequelize
+					.query('SELECT COUNT(m.id) AS count ' +
+						'FROM Seasons s ' +
+						'JOIN Media m ON m.SeasonId = s.Id ' +
+						'WHERE s.ShowId = \'' + this.id + '\' AND ' +
+							'm.watchStatus = \'' + app.model.Media.WatchStatus.Watched + '\'', null, { plain: true, raw: true })
+					.then(function(rows) {
 						callback(rows.count);
 					});
 			}

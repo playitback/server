@@ -28,13 +28,9 @@ module.exports = function() {
 				else if(typeof result.poster_path === 'string') {
 					posterUri = result.poster_path;
 				}
-				
-				if(!posterUri) {
-					throw 'Poster URI not found';
-				}
 						
 				return {
-					url: this.cachePosterWithUrl(self.theMovieDb.posterUrl(posterUri))
+					url: posterUri ? this.cachePosterWithUrl(self.theMovieDb.posterUrl(posterUri)) : null
 				};
 			},
 			

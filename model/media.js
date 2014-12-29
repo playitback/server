@@ -133,8 +133,8 @@ module.exports = function() {
 						
 						return;
 					}
-					
-					self.createWithRemoteResult(result, transaction, function(show) {
+
+					self.createWithRemoteResult(result, transaction, function (show) {
 						callback(show);
 					});
 				});
@@ -153,7 +153,7 @@ module.exports = function() {
 					self	= this;
 				
 				results.forEach(function(result) {
-					self.createWithRemoteResult(result, transaction, function(episode) {
+					self.createWithRemoteResult(result, function(episode) {
 						media.push(episode);
 						
 						if(media.length === results.length) {
@@ -170,7 +170,7 @@ module.exports = function() {
 					Type.Movie;
 
 				// If transaction if a function, it's the callback
-				if(typeof transaction == 'function') {
+				if(typeof transaction === 'function') {
 					callback = transaction;
 					transaction = null;
 				}
@@ -179,19 +179,19 @@ module.exports = function() {
 
 				mediaModel.find({ where: { remoteId: String(result.id) } }).then(function(media) {
 					// Create or update media object
-					var media = self.mapWithRemoteResult(result, media);
+					media = self.mapWithRemoteResult(result, media);
 
-					media.save().then(function(media) {
-						if(typeof result.still_path === 'string') {
-							app.model.Poster.createWithRemoteResult(result, transaction).success(function(poster) {
-								media.setStill(poster, { transaction: transaction }).success(function() {
+					media.save({transaction: transaction}).then(function (media) {
+						if (typeof result.still_path === 'string') {
+							app.model.Poster.createWithRemoteResult(result, transaction).success(function (poster) {
+								media.setStill(poster, {transaction: transaction}).success(function () {
 									callback(media);
 								});
 							});
 						}
-						else if(typeof result.poster_path === 'string') {
-							app.model.Poster.createWithRemoteResult(result, transaction).success(function(poster) {
-								media.setPoster(poster, { transaction: transaction }).success(function() {
+						else if (typeof result.poster_path === 'string') {
+							app.model.Poster.createWithRemoteResult(result, transaction).success(function (poster) {
+								media.setPoster(poster, {transaction: transaction}).success(function () {
 									callback(media);
 								});
 							});
@@ -201,7 +201,9 @@ module.exports = function() {
 						}
 					})
 					.catch(function(error) {
-						console.log(error);
+						transaction.rollback();
+
+						app.log.error('Failed to create media', error);
 					});
 				});
 			},
@@ -241,7 +243,7 @@ module.exports = function() {
 			},
 			findAllAvailableAndWanted: function(callback) {
 				this.findAll({ where: { state: State.Wanted, availableDate: { lte: new Date() } } })
-					.success(function(media) {
+					.then(function(media) {
 						callback(media);
 					});
 			}

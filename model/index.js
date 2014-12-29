@@ -26,7 +26,7 @@ module.exports = function() {
 	this.Media.hasOne(this.Poster, { onDelete: 'CASCADE' });				// Movie
 	this.Media.hasMany(this.Torrent, { onDelete: 'CASCADE' });
 	
-	this.sequelize.sync({ }).then(function() {
+	this.sequelize.sync({  }).then(function() {
 		//self.Setting.setValueWithKey('pl1DmfdZ2uIAAAAAAAAL4K9qSvlLJXSShdFboHBZ5nZsUsickQ8i64HO2eqX2PQA', self.Setting.Key.DropboxToken, function() {});
 	
 		self.emit('model-sync');
