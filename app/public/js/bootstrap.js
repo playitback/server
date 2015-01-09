@@ -10,7 +10,7 @@ requirejs.config({
 });
 
 requirejs(['router', 'jquery'], function(Router) {
-	require(['jquery.bootstrap'], function(SettingsCollection) {
+	require(['jquery.bootstrap'], function() {
 		this.router = new Router();
 		
 		require(['collection/settings'], function(SettingsCollection) {
