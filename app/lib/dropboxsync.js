@@ -6,15 +6,15 @@ module.exports = function() {
 		config		= this.config.get('dropbox'),
 		hooks		= ['afterCreate', 'afterDestroy', 'afterUpdate'],
 		models		= ['Show', 'Media'],
-		self		= this;
+		app			= this;
 			
-	this.log.debug(tag + 'Starting dropbox sync');
+	this.log.debug(tag + 'Initialising');
 	
 	// Create a Dropbox Client with an auth token
 	var createClientWithToken = function(token) {
-		self.log.debug(tag + 'createClientWithToken');
+		app.log.debug(tag + 'Create Dropbox client with auth token');
 	
-		self.client = new Dropbox.Client({
+		app.client = new Dropbox.Client({
 			key: config.appKey,
 			token: token
 		});
@@ -24,21 +24,22 @@ module.exports = function() {
 	
 	// Create an unauthorized Dropbox Client
 	var createClient = function() {
-		self.log.debug(tag + 'createClient');
+		app.log.debug(tag + 'createClient');
 	
-		self.client = new Dropbox.Client({
+		app.client = new Dropbox.Client({
 			key: config.appKey
 		});
 	};
 	
 	// Listen for new settings with the dropbox token key
 	var listenForDropboxSetting = function() {
-		self.log.debug(tag + 'listenForDropboxSetting');
+		app.log.debug(tag + 'Listen for dropbox setting');
 		
-		self.Setting.afterCreate(function(setting) {
-			console.log('afterCreate setting');
-			if(setting.key === self.Setting.Key.Sync.Dropbox.Token) {
-				self.log.debug(tag + 'Dropbox setting created');
+		app.Setting.afterCreate(function(setting) {
+			console.log(tag + 'Setting created');
+
+			if(setting.key === app.Setting.Key.Sync.Dropbox.Token) {
+				app.log.debug(tag + 'Dropbox token setting created');
 				
 				createClientWithToken(this.value);
 			}
@@ -47,16 +48,16 @@ module.exports = function() {
 	
 	// Attempt to load a Dropbox Auth token from the settings
 	var loadDropboxToken = function() {
-		self.log.debug(tag + 'loadDropboxToken');
+		app.log.debug(tag + 'Attempt to load Dropbox token');
 	
-		self.Setting.valueForKey(self.Setting.Key.Sync.Dropbox.Token, function(value) {		
+		app.Setting.valueForKey(app.Setting.Key.Sync.Dropbox.Token, function(value) {		
 			if(value) {
-				self.log.debug(tag + 'token not found');
+				app.log.debug(tag + 'Dropbox token not found');
 				
 				createClientWithToken(value);
 			}
 			else {
-				self.log.debug(tag + 'Value not found');
+				app.log.debug(tag + 'Dropbox token not found, wait for updates');
 			
 				createClient();
 				listenForDropboxSetting();
@@ -66,41 +67,41 @@ module.exports = function() {
 	
 	// Updates a model on dropbox
 	var syncModel = function(object) {
-		self.log.debug(tag + 'Syncing model to Dropbox - ' + object.Model.tableName + ' (' + object.id + ')');
+		app.log.debug(tag + 'Syncing model to Dropbox - ' + object.Model.tableName + ' (' + object.id + ')');
 	
-		var table 		= self.datastore.getTable(object.Model.tableName);
+		var table 		= app.datastore.getTable(object.Model.tableName);
 		var remoteModel = table.get(object.remoteId);
 		
 		if(!remoteModel) {
-			self.log.debug(tag + 'Object doesn\'t exist on Dropbox. Creating.');
+			app.log.debug(tag + 'Object doesn\'t exist on Dropbox. Creating.');
 			
 			remoteModel.createWithRemoteId(object.remoteId, function() {});
 		}
 		else {
-			self.log.debug(tag + 'Object exists on Dropbox. Ignoring.');
+			app.log.debug(tag + 'Object exists on Dropbox. Ignoring.');
 		}
 	};
 	
 	// Fetch data from dropbox and update local entity
 	var updateModel = function(model) {
-		self.log.debug(tag + 'Update local model with Dropbox data for table: ' + model.tableName);
+		app.log.debug(tag + 'Update local model with Dropbox data for table: ' + model.tableName);
 	
-		var table 			= self.datastore.getTable(model.tableName);
+		var table 			= app.datastore.getTable(model.tableName);
 		var remoteObjects 	= table.query();
 		
-		self.log.debug(tag + 'Total remote objects: ' + remoteObjects);
+		app.log.debug(tag + 'Total remote objects: ' + remoteObjects);
 		
 		remoteObjects.forEach(function(remoteObject) {
-			self.log.debug(tag + 'Syncing remote object with ID: ' + remoteObject.remoteId);
+			app.log.debug(tag + 'Syncing remote object with ID: ' + remoteObject.remoteId);
 			
-			self.model[model.TableName].find({ where: { remoteId: remoteObject.remoteId } }).success(function(localObject) {
+			app.model[model.TableName].find({ where: { remoteId: remoteObject.remoteId } }).success(function(localObject) {
 				if(!localObject) {
-					self.log.debug(tag + 'Remote object doesn\'t exist locally. Creating.');
+					app.log.debug(tag + 'Remote object doesn\'t exist locally. Creating.');
 					
-					self.model[model.TableName].createWithRemoteId(remoteObject.remoteId, function() {});
+					app.model[model.TableName].createWithRemoteId(remoteObject.remoteId, function() {});
 				}
 				else {
-					self.log.debig(tag + 'Remote object already exists locally. Ignoring.');
+					app.log.debig(tag + 'Remote object already exists locally. Ignoring.');
 				}
 			});
 		});
@@ -108,12 +109,12 @@ module.exports = function() {
 		
 	// Iterate available models, update it from Dropbox and monitor future changes
 	var configureModelWatch = function() {
-		self.log.debug(tag + 'Configure model watch');
+		app.log.debug(tag + 'Configure model watch');
 		
 		for(var m in models) {
-			var model = self[models[m]];
+			var model = app[models[m]];
 			
-			self.log.debug(tag + 'Configure model watch for: ' + model.tableName);
+			app.log.debug(tag + 'Configure model watch for: ' + model.tableName);
 			
 			for(var h in hooks) {
 				model.addHook(hooks[h], syncModel);
@@ -124,21 +125,21 @@ module.exports = function() {
 	};
 	
 	var openDataStore = function() {
-		self.log.debug(tag + 'Opening datastore');
+		app.log.debug(tag + 'Opening datastore');
 	
 		// Open data store for playback
-		self.client.getDatastoreManager().openDefaultDatastore(function (error, datastore) {
-			self.log.debug(tag + 'datastore request finished');
+		app.client.getDatastoreManager().openDefaultDatastore(function (error, datastore) {
+			app.log.debug(tag + 'datastore request finished');
 		
 			if(error) {
-				self.log.error(tag + 'Failed to open data store with error: ' + error);
+				app.log.error(tag + 'Failed to open data store with error: ' + error);
 				
 				return;
 			}
 			
-			self.log.debug(tag + 'Satastore successfully opened');
+			app.log.debug(tag + 'Datastore successfully opened');
 			
-			self.datastore = datastore;
+			app.datastore = datastore;
 		
 			// Update local models
 			configureModelWatch();
@@ -150,7 +151,9 @@ module.exports = function() {
 		});
 	};
 	
-	this.on('model-sync', function() {
+	app.on('model-sync', function() {
+		app.log.debug(tag + 'Model synced, configuring dropbox sync');
+
 		loadDropboxToken();
 	});
 };

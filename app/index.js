@@ -13,9 +13,8 @@ var App = function() {
 	this.app 			= express();
 	this.log			= winston;
 	
-	// Initialize configuration files
+	// Initialize app files
 	require('./bootstrap').call(this);
-	require('./lib/config').call(this);
 	require('./lib/router').call(this, require('./routes'));
 	
 	// Initialize libraries and external entities
