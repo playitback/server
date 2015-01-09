@@ -3,7 +3,7 @@ var Dropbox = require('dropbox');
 module.exports = function() {
 
 	var tag 		= 'DropboxSync: ',
-		config		= this.config.get('dropbox'),
+		config		= this.config.get('networks.dropbox'),
 		hooks		= ['afterCreate', 'afterDestroy', 'afterUpdate'],
 		models		= ['Show', 'Media'],
 		app			= this;
@@ -24,7 +24,7 @@ module.exports = function() {
 	
 	// Create an unauthorized Dropbox Client
 	var createClient = function() {
-		app.log.debug(tag + 'createClient');
+		app.log.debug(tag + 'Create client');
 	
 		app.client = new Dropbox.Client({
 			key: config.appKey

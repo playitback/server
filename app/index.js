@@ -15,7 +15,7 @@ var App = function() {
 	
 	// Initialize app files
 	require('./bootstrap').call(this);
-	require('./lib/router').call(this, require('./routes'));
+	require('./lib/router').call(this, require('./config/routes'));
 	
 	// Initialize libraries and external entities
 	this.config			= require('./lib/config').call(this);
