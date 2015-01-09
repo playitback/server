@@ -1,4 +1,4 @@
-define('view/settings', ['backbone', 'backbone.forms', 'const/settings'], function(Backbone, BackboneForm, Settings) {
+define('view/settings', ['backbone', 'backbone.forms', 'const/settings', 'dropbox'], function(Backbone, BackboneForm, Settings, Dropbox) {
 	
 	return Backbone.View.extend({
 		
@@ -64,7 +64,34 @@ define('view/settings', ['backbone', 'backbone.forms', 'const/settings'], functi
 		},
 		
 		initializeDropboxAuthenticate: function() {
-			var dropboxSetting = window.settings.where({ key: '' });
+			console.log(window.settings);
+
+			var dropboxSetting = window.settings.where({ key: Settings.sync.schema.sync_enabled.key }),
+				dropboxToggle = Settings.sync.$el.find('input[name="sync_enabled"]');
+
+			dropboxToggle.on('change', function() {
+				if($(this).is(':checked')) {
+					var client = new Dropbox.Client({ key: '2ntaq9oocp8j9he' });
+
+					client.authenticate(function (error) {
+						if (error) {
+							alert('Failed to authenticate your dropbox account.');
+
+							dropboxToggle.attr('checked', false);
+						}
+						else {
+							dropboxSetting.save({ value: client.credentials().token }, {
+								success: function() {
+
+								},
+								error: function() {
+
+								}
+							});
+						}
+					});
+				}
+			});
 		}
 		
 	});

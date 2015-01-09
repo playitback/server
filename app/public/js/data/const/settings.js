@@ -118,9 +118,13 @@ define('const/settings', [], {
 				title: 'Status',
 				type: 'Checkbox',
 				help: 'If enabled, will sync all your media library with Dropbox. Will allow other applications access your library',
-				key: '',
+				key: 'Sync.Dropbox.Token',
 				value: function() {
-					
+					return window.settings.where({ key: this.key })
+				},
+				setValue: function(value, callback) {
+					window.settings.set(this.key, value);
+					window.settings.save()
 				}
 			}
 		}
