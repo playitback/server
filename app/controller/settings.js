@@ -4,9 +4,13 @@ module.exports = {
 		var self = this;
 	
 		this.model.Setting.findAll()
-			.success(function(settings) {
+			.done(function(settings) {
 				self.response({ settings: settings });
 			});
+	},
+
+	postIndex: function() {
+
 	}
 
 };
