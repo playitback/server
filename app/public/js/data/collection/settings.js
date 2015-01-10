@@ -6,6 +6,10 @@ define('collection/settings', ['backbone', 'model/setting'], function(Backbone, 
 		
 		url: function() {
 			return '/settings';
+		},
+
+		parse: function(response) {
+			return response.settings || response;
 		}
 		
 	});

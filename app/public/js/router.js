@@ -16,11 +16,12 @@ define('router', [
 			'media/:type/:mediaId':											'mediaViewAction',
 			'media/:type/:mediaId/season/:seasonId': 						'mediaViewAction',
 			'media/:type/:mediaId/season/:seasonId/episode/:episodeId':		'mediaViewAction',
-			'settings':														'settingsAction'
+			'settings':														'settingsAction',
+			'settings/:type':												'settingsAction'
 		},
 		
 		initialize: function() {
-			Backbone.history.start();
+
 		},
 		
 		homeAction: function() {
@@ -35,8 +36,8 @@ define('router', [
 			this.loadView(MediaInfoView, { type: type, mediaId: mediaId, seasonId: seasonId, episodeId: episodeId });
 		},
 		
-		settingsAction: function() {
-			this.loadView(SettingsView);
+		settingsAction: function(type) {
+			this.loadView(SettingsView, { type: type });
 		},
 		
 		loadView: function(view, options) {

@@ -1,10 +1,23 @@
-define('view/settings', ['backbone', 'backbone.forms', 'const/settings', 'dropbox'], function(Backbone, BackboneForm, Settings, Dropbox) {
-	
+define('view/settings', [
+		'backbone',
+		'backbone.forms',
+		'const/settings',
+		'dropbox',
+		'model/setting'
+],
+function(Backbone, BackboneForm, Settings, _Dropbox, SettingModel) {
+
 	return Backbone.View.extend({
 		
 		id: 'settings',
+
+		/** @var string hashTab The tab from the urls hash */
+		hashTab: null,
+		/** @var SettingsModel dropboxSetting The dropbox auth token setting model */
+		dropboxSetting: null,
 		
-		initialize: function() {
+		initialize: function(options) {
+			this.hashTab	= options && options.type || null;
 			this.tabs 		= $('<ul></ul>', { 'class': 'nav nav-tabs', role: 'tablist' });
 		},
 		
@@ -59,37 +72,93 @@ define('view/settings', ['backbone', 'backbone.forms', 'const/settings', 'dropbo
 				
 				return false;
 			});
+
+			// If we have a tab from the hash, click it
+			if (this.hashTab) {
+				this.tabs.find('li a[href="#tab-' + this.hashTab + '"]').trigger('click');
+			}
 			
 			this.initializeDropboxAuthenticate();
 		},
 		
 		initializeDropboxAuthenticate: function() {
-			console.log(window.settings);
+			var self = this;
 
-			var dropboxSetting = window.settings.where({ key: Settings.sync.schema.sync_enabled.key }),
-				dropboxToggle = Settings.sync.$el.find('input[name="sync_enabled"]');
+			this.dropboxSetting = app.settings.findWhere({ key: Settings.sync.schema.sync_enabled.key });
+			
+			// Create if not already created
+			if (!this.dropboxSetting) {
+				this.dropboxSetting = new SettingModel({ key: Settings.sync.schema.sync_enabled.key });
+			}
 
+			this.loadQueryStringDropboxToken();
+
+			/** @var jqObject dropboxToggle The field used to toggle dropbox enabled */
+			var dropboxToggle = Settings.sync.form.$el.find('input[name="sync_enabled"]');
+			/** @var Dropbpx.Client dropboxClient */
+			var dropboxClient = new Dropbox.Client({ key: 'uosa4j4l4tv9qug', token: this.dropboxSetting.get('value') });
+
+			// Mark checkbox based on authenticated status
+			dropboxToggle.attr('checked', dropboxClient.isAuthenticated());
+
+			// Listen for changes to checkbox and authenticate or remove dependant on value
 			dropboxToggle.on('change', function() {
 				if($(this).is(':checked')) {
-					var client = new Dropbox.Client({ key: '2ntaq9oocp8j9he' });
-
-					client.authenticate(function (error) {
+					dropboxClient.authenticate(function (error) {
 						if (error) {
 							alert('Failed to authenticate your dropbox account.');
 
 							dropboxToggle.attr('checked', false);
 						}
 						else {
-							dropboxSetting.save({ value: client.credentials().token }, {
-								success: function() {
-
-								},
-								error: function() {
-
-								}
-							});
+							self.updateDropboxToken(client.credentials().token);
 						}
 					});
+				}
+				else {
+					self.updateDropboxToken(null);
+				}
+			});
+		},
+
+		loadQueryStringDropboxToken: function() {
+			var hash = window.location.hash;
+
+			if ('string' == typeof hash && hash.indexOf('?access_token=') > -1) {
+				var queryHash = hash.split('?');
+
+				if ('object' == typeof queryHash && 'number' == typeof queryHash.length && queryHash.length > 1) {
+					queryHash = queryHash[1];
+
+					var queryParts = queryHash.split('&');
+
+					if ('object' == typeof queryParts && 'number' == typeof queryParts.length && queryParts.length > 0) {
+						for (var i in queryParts) {
+							var queryPart = queryParts[i];
+
+							if ('string' == typeof queryPart) {
+								var keyValue = queryPart.split('=');
+
+								if ('object' == typeof keyValue && 'number' == typeof keyValue.length && queryParts.length >= 2) {
+									if (keyValue[0] == 'access_token') {
+										this.dropboxSetting.set('value', keyValue[1]);
+										this.updateDropboxToken(keyValue[1]);
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+
+		updateDropboxToken: function(token) {
+			this.dropboxSetting.save({ value: token }, {
+				success: function() {
+
+				},
+				error: function() {
+
 				}
 			});
 		}

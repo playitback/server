@@ -5,6 +5,7 @@ module.exports = {
 	'/media/:type':									'media@index',
 	'/media/:type/:mediaId':						'media@index',
 	'/media/:type/:mediaId/season/:seasonId':		'media@season',
-	'/settings':									'settings@index'
+	'/settings':									'settings@index',
+	'/setting/:type':								'settings@index'
 	
 };

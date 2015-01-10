@@ -52,7 +52,7 @@ module.exports = function() {
 	
 		app.Setting.valueForKey(app.Setting.Key.Sync.Dropbox.Token, function(value) {		
 			if(value) {
-				app.log.debug(tag + 'Dropbox token not found');
+				app.log.debug(tag + 'Dropbox token found');
 				
 				createClientWithToken(value);
 			}
