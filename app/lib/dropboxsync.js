@@ -81,8 +81,12 @@ module.exports = function() {
 			app.log.debug(tag + 'Object exists on Dropbox. Ignoring.');
 		}
 	};
-	
-	// Fetch data from dropbox and update local entity
+
+	/**
+	 * Fetch data from dropbox and update local entity
+	 *
+	 * @param	Sequelize.Model	model	The model to be updated, stored in app.model
+	 */
 	var updateModel = function(model) {
 		app.log.debug(tag + 'Update local model with Dropbox data for table: ' + model.tableName);
 	
@@ -101,13 +105,15 @@ module.exports = function() {
 					app.model[model.TableName].createWithRemoteId(remoteObject.remoteId, function() {});
 				}
 				else {
-					app.log.debig(tag + 'Remote object already exists locally. Ignoring.');
+					app.log.debug(tag + 'Remote object already exists locally. Ignoring.');
 				}
 			});
 		});
 	};
-		
-	// Iterate available models, update it from Dropbox and monitor future changes
+
+	/**
+	 * Iterate available models, update it from Dropbox and monitor future changes
+	 */
 	var configureModelWatch = function() {
 		app.log.debug(tag + 'Configure model watch');
 		
@@ -123,7 +129,21 @@ module.exports = function() {
 			updateModel(model);
 		}
 	};
-	
+
+	/**
+	 * Iterate all syncable models and update them locally with the data from Dropbox
+	 */
+	var updateRemoteModels = function() {
+		for(var m in models) {
+			var model = app[models[m]];
+
+			updateModel(model);
+		}
+	};
+
+	/**
+	 * Create a Dropbox Datastore object and begin the sync process
+	 */
 	var openDataStore = function() {
 		app.log.debug(tag + 'Opening datastore');
 	
@@ -146,14 +166,15 @@ module.exports = function() {
 			
 			// Listen for future remote changes
 			datastore.recordsChanged.addListener(function() {
-				
+				updateRemoteModels();
 			});
 		});
 	};
-	
+
+	// Listen for the models to succesfully sync with the
 	app.on('model-sync', function() {
 		app.log.debug(tag + 'Model synced, configuring dropbox sync');
 
-		loadDropboxToken();
+		//loadDropboxToken();
 	});
 };

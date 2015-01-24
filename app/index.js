@@ -24,7 +24,7 @@ var App = function() {
 	this.tasks			= require('../tasks').call(this);
 	
 	// Initialize API libraries
-	this.theMovieDb 	= new TheMovieDB({ apiKey: this.config.get('theMovieDb.apiKey') }); // @TODO: load from config
+	this.theMovieDb 	= new TheMovieDB({ apiKey: this.config.get('networks.theMovieDb.apiKey') }); // @TODO: load from config
 	
 	this.log.remove(winston.transports.Console);
 	this.log.addColors({

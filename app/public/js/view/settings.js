@@ -85,7 +85,7 @@ function(Backbone, BackboneForm, Settings, _Dropbox, SettingModel) {
 			var self = this;
 
 			this.dropboxSetting = app.settings.findWhere({ key: Settings.sync.schema.sync_enabled.key });
-			
+
 			// Create if not already created
 			if (!this.dropboxSetting) {
 				this.dropboxSetting = new SettingModel({ key: Settings.sync.schema.sync_enabled.key });

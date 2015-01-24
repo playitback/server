@@ -3,19 +3,16 @@
     margin: 119px 15px 30px;
 
     .poster {
+        position: relative;
+
         .img {
             height: 409px;
             background-size: cover;
+            background-position: center;
         }
 
         .status {
-            position: absolute;
-            right: 5px;
-            top: 5px;
-            width: 80px;
-            min-height: 40px;
-            border-radius: 4px;
-            background: #B5B5B5;
+            .status;
         }
     }
 
@@ -23,10 +20,13 @@
         color: #ffffff;
 
         .head {
+            margin-bottom: 15px;
+
             .name {
                 h3 {
                     display: inline-block;
                     font-size: 40px;
+                    margin: 0;
                 }
 
                 span.year {
@@ -37,43 +37,61 @@
                     font-size: 25px;
                 }
             }
+
+            .rating {
+                float: right;
+                height: 40px;
+            }
+
+
         }
 
         .controls {
-            background: #333333;
-            display: inline-block;
+            display: block;
             line-height: 40px;
-            border-radius: 6px;
-            
-            a {
-                float: left;
-                height: 40px;
-                padding: 0 15px;
-                background-position: center center;
-                cursor: pointer;
-                min-width: 44px;
 
-                &.quality {
-                    background: #D8D8D8;
-                    border-radius: 6px;
-                    color: #606060;
-                    font-weight: bold;
-                    margin: 0 5px 0 0;
-                    font-size: 17px;
-                }
+            .inner {
+                background: #333333;
+                line-height: 40px;
+                border-radius: 6px;
+                margin-bottom: 15px;
+                display: block;
 
-                &.refresh {
-                    .at2x('/img/content/media/info/refresh_icon.png', 21px, 22px);
-                }
+                a {
+                    float: left;
+                    height: 40px;
+                    padding: 0 15px;
+                    background-position: center center;
+                    cursor: pointer;
+                    min-width: 44px;
 
-                &.unwatched {
-                    .at2x('/img/content/media/info/unwatched_icon.png', 30px, 18px);
-                }
+                    &.quality {
+                        background: #D8D8D8;
+                        border-radius: 6px;
+                        color: #606060;
+                        font-weight: bold;
+                        margin: 0 5px 0 0;
+                        font-size: 17px;
+                    }
 
-                &:last-child {
-                    margin-right: 5px;
+                    &.refresh {
+                        .at2x('/img/content/media/info/refresh_icon.png', 21px, 22px);
+                    }
+
+                    &.unwatched {
+                        .at2x('/img/content/media/info/unwatched_icon.png', 30px, 18px);
+                    }
+
+                    &:last-child {
+                        margin-right: 5px;
+                    }
                 }
             }
+        }
+
+        .release {
+            line-height: 40px;
+            text-align: center;
         }
     }
 

@@ -60,45 +60,8 @@ div#media {
 				height: 241px;
 				right: 15px;
 				
-				.status {				
-					position: absolute;
-					right: 7px;
-					top: 7px;
-					height: 17px;
-					padding: 0 4px;
-					line-height: 17px;
-					min-width: 17px;
-					border-radius: 9px;
-					background-color: #FF992F;
-					display: block;
-					color: white;
-					text-transform: uppercase;
-					font-size: 10px;
-					text-align: center;
-					
-					/* Not yet available for download. */
-					&.wanted {
-						display: none;
-					}
-					
-					/* Snatched and downloaded */
-					&.downloading {
-						background: #B5B5B5;
-					}
-					
-					/* Dowload complete and ready to be watched */
-					&.downloaded {
-						.at2x('/img/content/media/item/seen_icon.png', 13px, 11px);
-					
-						background: #B5B5B5;
-					}
-					
-					/* Watched */
-					&.watched {
-						.at2x('/img/content/media/item/seen_icon.png', 13px, 11px);
-						
-						background-color: #DA7915;
-					}
+				.status {
+					.status;
 				}
 			}
 			

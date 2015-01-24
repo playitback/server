@@ -53,6 +53,8 @@ define('view/media/info', [
 		},
 
 		updateUI: function() {
+			this.model.attributes.status = this.model.__proto__.status.bind(this.model);
+
 			this.$el.html('');
 			this.$el.append(this.template(this.model.attributes));
 
