@@ -3,7 +3,9 @@ var Sequelize 	= require('sequelize'),
 	moment		= require('moment');
 
 module.exports = function() {
-	
+
+	var TAG = 'model.media ';
+
 	var Type = {
 		Movie: 			'movie',			// A movie file
 		TV: 			'tv'				// A TV episode
@@ -203,7 +205,7 @@ module.exports = function() {
 					.catch(function(error) {
 						transaction.rollback();
 
-						app.log.error('Failed to create media', error);
+						app.log.error(TAG + 'Failed to create media', error);
 					});
 				});
 			},
@@ -262,18 +264,20 @@ module.exports = function() {
 				});
 			},
 			download: function(torrent) {
-				app.log.debug('Download torrent for ' + this.title || this.name);
+				app.log.debug(TAG + 'Download torrent for ' + this.title || this.name);
 				
 				var self = this;
 				
 				if(typeof torrent === 'undefined' || !torrent) {
 					app.model.Torrent.fetchSuitableWithMedia(this, function() {
-						self.getTorrents({ orderBy: 'score', limit: 1}).success(function(torrent) {
+						self.getTorrents({ orderBy: 'score', limit: 1 }).then(function(torrent) {
+							console.log(torrent);
+
 							if(torrent.length == 0) {
-								app.log.debug('No torrent found with suitable highest score');
+								app.log.debug(TAG + 'No torrent found with suitable highest score');
 							}
 							else {
-								app.log.debug('Found torrent with suitable highest score');
+								app.log.debug(TAG + 'Found torrent with suitable highest score');
 								
 								torrent[0].download();
 							}

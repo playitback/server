@@ -1,66 +1,172 @@
 var nameScores = require('../const/name_scores');
 
+/**
+ * Based on https://github.com/RuudBurger/CouchPotatoServer/blob/master/couchpotato/core/plugins/score/scores.py
+ *
+ * @param media
+ * @param data
+ * @returns {number}
+ */
+
 module.exports = function(media, data) {
-	
+
+	var TAG = 'const.score ';
+
+	/**
+	 * Check for words from the name_scores and calculate count for each of the words found.
+	 * Same for year.
+	 *
+	 * @param name
+	 * @param year
+	 * @returns {number}
+	 */
 	var nameScore = function(name, year) {
+		name = name.toLocaleLowerCase();
+
 		var score = 0;
 		
 		// Check for specific words in the name
 		for(var key in nameScores) {
-			if(name.indexOf(key) !== false) {
+			if(name.indexOf(key.toLowerCase()) > -1) {
 				score += nameScores[key];
 			}
 		}
 		
 		// Check for a matching year
-		if(name.indexOf(year) !== false) {
+		if(name.indexOf(year) > -1) {
 			score += 5;
 		}
 		
 		return score;
 	};
-	
-	var sizeScore = function() {
+
+	/**
+	 * Calculate a score based on number of words in the torrent in comparison to the movie name.
+	 *
+	 * @param torrentName
+	 * @param movieName
+	 * @returns {number}
+	 */
+	var nameRatioScore = function(torrentName, movieName) {
+		var torrentWords = torrentName.split(/\W+/);
+		var movieWords = movieName.split(/\W+/);
+
+		return 10 - (torrentWords.length - movieWords.length);
+	};
+
+	/**
+	 * Calculate a score based on words in the torrent name.
+	 *
+	 * @param torrentName
+	 * @param movieName
+	 * @returns {number}
+	 */
+	var namePositionScore = function(torrentName, movieName, movieYear) {
 		var score = 0;
-		
+
+		// Strip any non alpha-numeric characters and spaces
+		torrentName = torrentName.replace(/[^A-Za-z0-9_\s]+/, '');
+		movieName = movieName.replace(/[^A-Za-z0-9_\s]+/, '');
+
+		var torrentWords = torrentName.split(/\W+/);
+		var qualities = {};
+
+		// Give points for movies beginning with the correct name
+		if (torrentName.trim().indexOf(movieName) == 0) {
+			score += 10;
+		}
+
+		// If year is second in line, give more points
+		if (torrentName.replace(movieName, '').indexOf(movieYear) == 0) {
+			score += 10;
+		}
+
+		// Give -point to crap between year and quality
+
+
 		return score;
 	};
-	
+
+	/**
+	 * If a size is set, don't adjust score. Otherwise return -20
+	 *
+	 * @param size
+	 * @returns {number}
+	 */
+	var sizeScore = function(size) {
+		return (typeof size == 'number' && size > 0 ? 0 : -20);
+	};
+
+	/**
+	 * Returns a specific score for certain providers.
+	 * Not in use.
+	 *
+	 * @returns {number}
+	 */
 	var providerScore = function() {
 		var score = 0;
 		
 		return score;
 	};
-	
+
+	/**
+	 * Checks for duplicate words in the torrent name and calculates a score based on remaining words
+	 *
+	 * @param torrentName
+	 * @param movieName
+	 * @returns {number}
+	 */
 	var duplicateScore = function(torrentName, movieName) {
-		var score = 0;
+		var torrentNameSplit = torrentName.split(/\W+/),
+			movieNameSplit = movieName.split(/\W+/),
+			duplicateCount = 0;
+
+		for (var w in torrentNameSplit) {
+			if (torrentName.indexOf(torrentNameSplit[w]) > -1) {
+				duplicateCount++;
+			}
+		}
 		
-		var torrentNameSplit = torrentName.split(' ');
-		
-		return score;
+		return (duplicateCount - movieNameSplit.length) * -4;
 	};
-	
+
+	/**
+	 * Calculate score based on words being ignored
+	 * Not currently used.
+	 *
+	 * @returns {number}
+	 */
+	var partialIgnoredScore = function() {
+		return 0;
+	};
+
+	/**
+	 * Calculate score based on number of seeders and leechers.
+	 *
+	 * @param seeders
+	 * @param leechers
+	 * @returns {number}
+	 */
 	var seederScore = function(seeders, leechers) {
 		var score = 0;
-		
-		console.log('seeder', seeders, 'leechers', leechers);
-		
+
 		score += seeders * 100 / 15;
 		score += leechers * 100 / 30;
 		
 		return score;
 	};
-	
+
 	var score = 0;
-		
+
 	score += nameScore(data.magnet.dn, data.year);
-	console.log('nameScore', score);
-	score += sizeScore();
+	score += nameRatioScore(data.magnet.dn, media.get('title'));
+	score += namePositionScore(data.magnet.dn, media.get('title'), media.get('availableDate').getFullYear());
+	score += sizeScore(data.size);
 	score += providerScore();
-	score += duplicateScore(data.magnet.dn, media.name);
-	console.log('duplicateScore', score);
+	score += duplicateScore(data.magnet.dn, media.get('title'));
+	score += partialIgnoredScore();
 	score += seederScore(data.seeds, data.leaches);
-	
+
 	return score;
 	
 }

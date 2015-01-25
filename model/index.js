@@ -25,14 +25,15 @@ module.exports = function() {
 	this.Media.hasOne(this.Poster, { as: 'Still', onDelete: 'CASCADE' }); 	// TV
 	this.Media.hasOne(this.Poster, { onDelete: 'CASCADE' });				// Movie
 	this.Media.hasMany(this.Torrent, { onDelete: 'CASCADE' });
+	this.Torrent.hasOne(this.Media);
 	
-	this.sequelize.sync({  }).then(function() {
+	this.sequelize.sync({ force: true }).then(function() {
 		//self.Setting.setValueWithKey('pl1DmfdZ2uIAAAAAAAAL4K9qSvlLJXSShdFboHBZ5nZsUsickQ8i64HO2eqX2PQA', self.Setting.Key.DropboxToken, function() {});
 	
 		self.emit('model-sync');
 	});
 	//this.sequelize.sync({ force: true });
-	
+
 	// Helpers
 	
 	this.modelWithType = function(type) {

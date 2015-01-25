@@ -4,18 +4,20 @@ var Sequelize = require('sequelize'),
 
 module.exports = function() {
 
-	var app = this;
+	var app = this,
+		TAG = 'model.torrent';
 	
 	return this.sequelize.define('Torrent', {
 		exactTopic: {
 			type: Sequelize.STRING,
-			allowNull: false
+			allowNull: false,
+			unique: true
 		},
 		fileName: {
 			type: Sequelize.STRING,
 			allowNull: false
 		},
-		trackerUrl: {
+		trackers: {
 			type: Sequelize.STRING,
 			allowNull: false
 		},
@@ -47,18 +49,24 @@ module.exports = function() {
 				if(typeof persist === 'undefined') {
 					persist = false;
 				}
-				
+
+				app.log.debug(TAG + 'fetchSuitableWithMedia persist: ' + persist);
+
 				var self = this;
 				
 				media.torrentQuery(function(query) {
+					app.log.debug(TAG + 'fetchSuitableWithMedia torrent search query: ' + query);
+
 					piratebay.search(0, query, function(results) {
-						app.log.debug('Found ' + results.length + ' results for ' + query);
+						app.log.debug(TAG + 'fetchSuitableWithMedia Found ' + results.length + ' results for ' + query);
 						
 						self.buildWithResults(media, results, persist, function(torrents) {
 							callback(torrents);	
 						});
 					},
-					function() {
+					function(error) {
+						app.log.debug(TAG + 'fetchSuitableWithMedia Pirate bay error: ' + error);
+
 						callback([]);
 					});
 				});
@@ -69,15 +77,36 @@ module.exports = function() {
 					
 					return;
 				}
-				
-				console.log('Torrent.buildWithResults');
-				
+
+				app.log.debug(TAG + 'buildWithResults ' + data.length);
+
 				var data = this.buildWithRemoteData(media, data);
-														
-				/*app.model.Torrent.bulkCreate(data)
-					.success(function(torrents) {
-						callback(torrents);
-					});*/
+
+				if (data.length > 0) {
+					app.model.sequelize.transaction(function(transaction) {
+						var created = 0;
+
+						for (var i in data) {
+							var torrent = app.model.Torrent.build(data[i]);
+
+							torrent.setMedia(media);
+							torrent.save({ transaction: transaction }).then(function() {
+								created++;
+
+								if (created == data.length) {
+									transaction.commit();
+
+									callback();
+								}
+							})
+							.catch(function(err) {
+								transaction.rollback();
+
+								callback();
+							});
+						}
+					});
+				}
 			},
 			buildWithRemoteData: function(media, data) {
 				var response = [];
@@ -86,12 +115,14 @@ module.exports = function() {
 					var remote = data[i];
 					var score = this.calculateScoreWithRemoteData(media, remote);
 										
-					if(score < 20) {
+					if(score < 200) {
 						continue;
 					}
+
+					console.log(remote);
 				
 					response.push({
-						exactTopic: remote.magnet.et,
+						exactTopic: remote.magnet.xt,
 						fileName: remote.magnet.dn,
 						trackers: remote.magnet.tr.join(','),
 						infoHash: remote.magnet.infoHash,
