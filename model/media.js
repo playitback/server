@@ -1,6 +1,7 @@
 var Sequelize 	= require('sequelize'),
 	_			= require('underscore'),
-	moment		= require('moment');
+	moment		= require('moment'),
+	fs			= require('fs');
 
 module.exports = function() {
 
@@ -271,8 +272,6 @@ module.exports = function() {
 				if(typeof torrent === 'undefined' || !torrent) {
 					app.model.Torrent.fetchSuitableWithMedia(this, function() {
 						self.getTorrents({ orderBy: 'score', limit: 1 }).then(function(torrent) {
-							console.log(torrent);
-
 							if(torrent.length == 0) {
 								app.log.debug(TAG + 'No torrent found with suitable highest score');
 							}
@@ -305,6 +304,9 @@ module.exports = function() {
 						});
 					});*/
 				}
+			},
+			createDownloadDirectory: function(callback) {
+				fs.exists()
 			}
 		}
 	});
