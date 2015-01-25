@@ -21,11 +21,12 @@ var App = function() {
 	this.config			= require('./lib/config').call(this);
 	this.broadcast		= require('./lib/broadcast').call(this);
 	this.model 			= require('../model').call(this);
-	this.tasks			= require('../tasks').call(this);
 	this.settings 		= require('./lib/setting').call(this);
+	this.tasks			= require('../tasks').call(this);
+	this.config			= require('./lib/config').call(this); // TODO: figure out why this.config is being reset
 	
 	// Initialize API libraries
-	this.theMovieDb 	= new TheMovieDB({ apiKey: this.config.get('networks.theMovieDb.apiKey') }); // @TODO: load from config
+	this.theMovieDb 	= new TheMovieDB({ apiKey: this.config.get('networks.theMovieDb.apiKey') });
 	
 	this.log.remove(winston.transports.Console);
 	this.log.addColors({

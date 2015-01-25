@@ -305,8 +305,15 @@ module.exports = function() {
 					});*/
 				}
 			},
+			downloadDirectory: function() {
+				return app.settings.get(app.model.Setting.Key.General.MediaDirectory) + '/Downloads/' + this.get('type');
+			},
 			createDownloadDirectory: function(callback) {
-				fs.exists()
+				var downloadDirectory = this.downloadDirectory();
+
+				fs.mkdir(downloadDirectory, function(err) {
+					callback(!err || (err && err.code == 'EEXIST'));
+				});
 			}
 		}
 	});

@@ -8,11 +8,11 @@ module.exports = function() {
 	catch(e) {
 		throw 'Configuration for environment (' + this.env + ') doesn\'t exist.';
 	}
-	
+
 	this.get = function(key) {
 		var keyParts = key.split('.'),
 			value = null;
-						
+
 		for(var i in keyParts) {
 			if(value && typeof value[keyParts[i]] != 'undefined') {
 				value = value[keyParts[i]];
@@ -21,12 +21,12 @@ module.exports = function() {
 			if(typeof this._config[keyParts[i]] != 'undefined') {
 				value = this._config[keyParts[i]];
 			}
-			
+
 			if(typeof value != 'object') {
 				break;
 			}
 		}
-		
+
 		return value;
 	};
 	

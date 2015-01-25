@@ -1,11 +1,12 @@
 var Sequelize = require('sequelize'),
 	piratebay = require('pirateship'),
-	score = require('../app/lib/score');
+	score = require('../app/lib/score'),
+	Transmission = require('transmission');
 
 module.exports = function() {
 
 	var app = this,
-		TAG = 'model.torrent';
+		TAG = 'model.torrent ';
 	
 	return this.sequelize.define('Torrent', {
 		exactTopic: {
@@ -146,7 +147,48 @@ module.exports = function() {
 		instanceMethods: {
 			download: function() {
 				app.log.debug('Download torrent');
-				// TODO
+
+				var magnetUrl = this.magnetUrl();
+
+				this.getMedia().then(function(media) {
+					media.createDownloadDirectory(function(exists) {
+						var transmission = new Transmission({
+							host: 'localhost',
+							port: 9091,
+							url: 'transmission/rpc'
+						});
+
+						console.log(magnetUrl);
+
+						transmission.addUrl(magnetUrl, {
+							'download-dir': media.downloadDirectory()
+						}, function (err) {
+							if (err) {
+								app.log.error(TAG + 'Failed to download torrent with error: ' + err);
+							}
+							else {
+								app.log.debug(TAG + 'Torrent added successfully');
+
+								media.updateAttributes({state: app.model.Media.State.Downloading}).then(function () {
+
+								});
+							}
+						});
+					});
+				});
+			},
+			magnetUrl: function() {
+				var url = 'magnet:?' +
+					'xt=' + this.get('exactTopic') + '&' +
+					'dn=' + this.get('fileName');
+
+				var trackers = this.get('trackers').split(',');
+
+				trackers.forEach(function(tracker) {
+					url += '&tr=' + encodeURIComponent(tracker);
+				});
+
+				return url;
 			}
 		}
 	});

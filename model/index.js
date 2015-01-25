@@ -24,7 +24,8 @@ module.exports = function() {
 	this.Season.hasOne(this.Poster, { onDelete: 'CASCADE' });
 	this.Media.hasOne(this.Poster, { as: 'Still', onDelete: 'CASCADE' }); 	// TV
 	this.Media.hasOne(this.Poster, { onDelete: 'CASCADE' });				// Movie
-	this.Media.hasMany(this.Torrent, { onDelete: 'CASCADE' });
+	this.Media.hasMany(this.Torrent, { onDelete: 'CASCADE', foreignKey: 'MediaId' });
+	this.Torrent.belongsTo(this.Media, { as: 'Media' });
 
 	this.sequelize.sync({  }).then(function() {
 		//self.Setting.setValueWithKey('pl1DmfdZ2uIAAAAAAAAL4K9qSvlLJXSShdFboHBZ5nZsUsickQ8i64HO2eqX2PQA', self.Setting.Key.DropboxToken, function() {});

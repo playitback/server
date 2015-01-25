@@ -2,21 +2,6 @@ var Sequelize = require('sequelize');
 
 module.exports = function() {
 
-	var Key = {
-		General: {
-			MediaDirectory:			'General.MediaDirectory',
-			Username: 					'General.Username',
-			Password: 					'General.Password',
-			Port: 						'General.Port',
-			CheckForUpdates: 			'General.CheckForUpdates'
-		},
-		Sync: {
-			Dropbox: {
-				Token: 					'Sync.Dropbox.Token'
-			}
-		}
-	};
-
 	return this.sequelize.define('Setting', {
 		key: {
 			type: Sequelize.STRING,
@@ -28,7 +13,8 @@ module.exports = function() {
 		}
 	}, {
 		classMethods: {
-			Key: Key,
+			Key: require('../app/const/settings'),
+			Defaults: require('../app/const/settings.defaults'),
 			
 			valueForKey: function(key, callback) {
 				if(typeof key != 'string') {
@@ -39,7 +25,7 @@ module.exports = function() {
 					throw 'Invalid callback specified';
 				}
 				
-				this.find({ where: { key: key }}).success(function(setting) {
+				this.find({ where: { key: key }}).then(function(setting) {
 					callback(setting ? setting.value : null);
 				});
 			},
@@ -47,21 +33,20 @@ module.exports = function() {
 			setValueWithKey: function(value, key, callback) {
 				var self = this;
 			
-				this.find({ where: { key: key }}).success(function(setting) {
+				this.find({ where: { key: key }}).then(function(setting) {
 					if(setting) {
 						setting.value = value;
 						
-						setting.save()
-							.success(function() {
-								callback(setting);
-							});
+						setting.save().then(function() {
+							callback(setting);
+						});
 					}
 					else {
 						self.create({
 							key: key,
 							value: value
 						})
-						.success(function(setting) {
+						.then(function(setting) {
 							callback(setting);
 						});
 					}
