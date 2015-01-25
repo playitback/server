@@ -83,14 +83,13 @@ module.exports = function() {
 				var data = this.buildWithRemoteData(media, data);
 
 				if (data.length > 0) {
-					app.model.sequelize.transaction(function(transaction) {
+					app.model.sequelize.transaction().then(function(transaction) {
 						var created = 0;
 
 						for (var i in data) {
 							var torrent = app.model.Torrent.build(data[i]);
 
-							torrent.setMedia(media);
-							torrent.save({ transaction: transaction }).then(function() {
+							media.addTorrent(torrent, { transaction: transaction }).then(function() {
 								created++;
 
 								if (created == data.length) {
