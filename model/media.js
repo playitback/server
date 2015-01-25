@@ -1,9 +1,10 @@
 var Sequelize 	= require('sequelize'),
 	_			= require('underscore'),
 	moment		= require('moment'),
-	fs			= require('fs');
+	fs			= require('fs'),
+	path 		= require('path');
 
-module.exports = function() {
+module.exports = function(app) {
 
 	var TAG = 'model.media ';
 
@@ -44,7 +45,6 @@ module.exports = function() {
 		}
 	};
 	
-	var app = this;
 	var Media = this.sequelize.define('Media', {
 		type: {
 			type:			Sequelize.ENUM(Type.Movie, Type.TV),
@@ -66,6 +66,9 @@ module.exports = function() {
 			type:			Sequelize.STRING,
 			allowNull:		false,
 			unique:			true
+		},
+		transmissionId: {
+			type:			Sequelize.INTEGER
 		},
 		
 		// Movie only
@@ -311,8 +314,33 @@ module.exports = function() {
 			createDownloadDirectory: function(callback) {
 				var downloadDirectory = this.downloadDirectory();
 
-				fs.mkdir(downloadDirectory, function(err) {
-					callback(!err || (err && err.code == 'EEXIST'));
+				this.mkdirParent(downloadDirectory, '0777', function(err) {
+					var success = !err || (err && err.code == 'EEXIST');
+
+					if (!success) {
+						app.log.warn(TAG + 'Download directory doesn\'t exist and can\'t be created');
+					}
+
+					callback(success);
+				});
+			},
+			mkdirParent: function(dirPath, mode, callback) {
+				var self = this;
+
+				//Call the standard fs.mkdir
+				fs.mkdir(dirPath, mode, function(error) {
+					//When it fail in this way, do the custom steps
+					if (error && error.errno === 34) {
+						//Create all the parents recursively
+						self.mkdirParent(path.dirname(dirPath), mode, function() {
+							//And then the directory
+							self.mkdirParent(dirPath, mode, callback);
+						});
+					}
+					else {
+						//Manually run the callback since we used our own callback to do all these
+						callback && callback(error);
+					}
 				});
 			}
 		}

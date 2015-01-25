@@ -3,23 +3,23 @@ var express 		= require('express'),
 	bodyParser		= require('body-parser'),
 	winston			= require('winston');
 
-module.exports = function() {
+module.exports = function(app) {
 
 	// Express
-	this.app.use(express.static(__dirname + '/public'));
-	this.app.use('/css', expressLess(__dirname + '/public/less'));
-	this.app.set('view engine', 'jade');
-	this.app.set('views', __dirname + '/views');
-	this.app.use(bodyParser.urlencoded());
-	this.app.use(bodyParser.json());
+	app.server.use(express.static(__dirname + '/public'));
+	app.server.use('/css', expressLess(__dirname + '/public/less'));
+	app.server.set('view engine', 'jade');
+	app.server.set('views', __dirname + '/views');
+	app.server.use(bodyParser.urlencoded());
+	app.server.use(bodyParser.json());
 		
 	
 	// Log
-	this.log.add(winston.transports.File, { filename: 'playback.log', level: 'debug' });
+	app.log.add(winston.transports.File, { filename: 'playback.log', level: 'debug' });
 	
-	if(this.env === 'dev') {
-		this.log.remove(winston.transports.Console);
-		this.log.add(winston.transports.Console, { level: 'debug' });
+	if(app.env === 'dev') {
+		app.log.remove(winston.transports.Console);
+		app.log.add(winston.transports.Console, { level: 'debug' });
 	}
 	
 };

@@ -1,12 +1,13 @@
-module.exports = function() {
+module.exports = function(app) {
 
-	var tag = 'tasks ';
+	var tag = 'tasks ',
+		self = this;
 	
-	this.on('model-sync', function() {
-		this.log.debug(tag + 'init tasks');
+	app.on('model-sync', function() {
+		app.log.debug(tag + 'init tasks');
 
-		this.searcher 		= require('./searcher').call(this);
-		this.downloader 	= require('./downloader').call(this);
+		self.searcher 		= require('./searcher')(app);
+		self.downloader 	= require('./downloader')(app);
 	});
 	
 }

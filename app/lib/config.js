@@ -1,25 +1,27 @@
-module.exports = function() {
+module.exports = function(app) {
 	
-	this._config = {};
+	var config = {};
 	
 	try {
-		this._config = require('../config/' + this.env);
+		config = require('../config/' + app.env);
 	}
 	catch(e) {
-		throw 'Configuration for environment (' + this.env + ') doesn\'t exist.';
+		throw 'Configuration for environment (' + app.env + ') doesn\'t exist.';
 	}
 
 	this.get = function(key) {
 		var keyParts = key.split('.'),
 			value = null;
 
+		console.log('get config with key', key);
+
 		for(var i in keyParts) {
 			if(value && typeof value[keyParts[i]] != 'undefined') {
 				value = value[keyParts[i]];
 			}
-				
-			if(typeof this._config[keyParts[i]] != 'undefined') {
-				value = this._config[keyParts[i]];
+
+			if(typeof config[keyParts[i]] != 'undefined') {
+				value = config[keyParts[i]];
 			}
 
 			if(typeof value != 'object') {
@@ -29,7 +31,7 @@ module.exports = function() {
 
 		return value;
 	};
-	
+
 	return this;
 	
-}
+};

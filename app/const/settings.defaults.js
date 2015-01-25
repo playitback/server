@@ -5,6 +5,6 @@
 var keys = require('./settings');
 
 var Defaults = {};
-Defaults[keys.General.MediaDirectory] = process.cwd() + '/media/Downloads';
+Defaults[keys.General.MediaDirectory] = process.cwd() + '/media';
 
 module.exports = Defaults;

@@ -2,10 +2,11 @@
  * Created by nickbabenko on 25/01/15.
  */
 
-module.exports = function() {
+var defaults = require('../const/settings.defaults');
 
-    var settings = {},
-        app = this;
+module.exports = function(app) {
+
+    var settings = {};
 
     var initialize = function() {
         // Load all settings to the local key=>val store
@@ -17,14 +18,14 @@ module.exports = function() {
     };
 
     this.get = function(key) {
-        return settings[key] || null;
+        return settings[key] || defaults[key] || null;
     };
 
     this.set = function(key, value, callback) {
         // Load record
-        app.model.Setting.find({ where: { key: key }}).then(function(setting) {
+        app.model.Setting.find({where: {key: key}}).then(function (setting) {
             if (setting) {
-                setting.updateAttributes({ value: value }).then(function() {
+                setting.updateAttributes({value: value}).then(function () {
                     // Set locally for next get call
                     settings[key] = value;
 

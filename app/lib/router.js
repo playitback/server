@@ -1,11 +1,11 @@
-module.exports = function(routes) {
+module.exports = function(app, routes) {
 
 	if(typeof routes != 'object') {
 		throw 'Invalid routes definition. Must be an object.';
 	}
 	
-	var app = this,
-		subHttpRequests = [];
+	var subHttpRequests = [],
+		router = this;
 	
 	function handle404() {
 		app.res.status(404).render('404');
@@ -38,7 +38,7 @@ module.exports = function(routes) {
 			status = 400;
 		}
 				
-		if(this.req.header('Accept').indexOf('text/html') > -1) {
+		if(router.req.header('Accept').indexOf('text/html') > -1) {
 			this.view('400');
 		}
 		else {
@@ -77,7 +77,7 @@ module.exports = function(routes) {
 	}
 	
 	for(var uri in routes) {
-		this.app.all(uri, function(req, res) {
+		app.server.all(uri, function(req, res) {
 			req.on('aborted', function() {
 				cancelSubHttpRequests();
 			});
@@ -85,8 +85,8 @@ module.exports = function(routes) {
 			var route = routes[req.route.path],
 				parts = route.split('@');
 								
-			app.req = req;
-			app.res = res;
+			router.req = req;
+			router.res = res;
 			
 			var controllerName = parts.length > 0 ? parts[0] : null,
 				actionName		= parts.length > 1 ? parts[1] : 'index';
@@ -102,8 +102,8 @@ module.exports = function(routes) {
 			try {
 				controller = require('../controller/' + controllerName);
 			}
-			catch(e) {				
-				app.errorResponse(400);
+			catch(e) {
+				router.errorResponse(400);
 				
 				return;
 			}
@@ -121,14 +121,16 @@ module.exports = function(routes) {
 			}
 			
 			try {
-				action.call(app);
+				action.call(router);
 			}
 			catch(e) {
 				console.log('error: ' + e);
 			
-				app.errorResponse.call(app, e);
+				router.errorResponse.call(router, e);
 			}
 		});
 	}
+
+	return this;
 
 }

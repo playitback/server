@@ -3,10 +3,9 @@ var Sequelize = require('sequelize'),
 	score = require('../app/lib/score'),
 	Transmission = require('transmission');
 
-module.exports = function() {
+module.exports = function(app) {
 
-	var app = this,
-		TAG = 'model.torrent ';
+	var TAG = 'model.torrent ';
 	
 	return this.sequelize.define('Torrent', {
 		exactTopic: {
@@ -123,8 +122,6 @@ module.exports = function() {
 						continue;
 					}
 
-					console.log(remote);
-				
 					response.push({
 						exactTopic: remote.magnet.xt,
 						fileName: remote.magnet.dn,
@@ -152,25 +149,30 @@ module.exports = function() {
 
 				this.getMedia().then(function(media) {
 					media.createDownloadDirectory(function(exists) {
+						if (!exists) {
+							return;
+						}
+
 						var transmission = new Transmission({
 							host: 'localhost',
 							port: 9091,
-							url: 'transmission/rpc'
+							url: '/transmission/rpc'
 						});
-
-						console.log(magnetUrl);
 
 						transmission.addUrl(magnetUrl, {
 							'download-dir': media.downloadDirectory()
-						}, function (err) {
+						}, function (err, torrent) {
 							if (err) {
-								app.log.error(TAG + 'Failed to download torrent with error: ' + err);
+								app.log.error(TAG + 'Failed to add torrent to Transmission with error: ' + err);
 							}
 							else {
-								app.log.debug(TAG + 'Torrent added successfully');
+								app.log.debug(TAG + 'Torrent added successfully', torrent.id);
 
-								media.updateAttributes({state: app.model.Media.State.Downloading}).then(function () {
-
+								media.updateAttributes({
+									state: app.model.Media.State.Downloading,
+									transmissionId: torrent.id
+								}).then(function () {
+									// TODO: notify UI
 								});
 							}
 						});

@@ -1,7 +1,15 @@
 var express 	= require('express'),
 	TheMovieDB	= require('themoviedb'),
 	winston		= require('winston'),
-	events		= require('events');
+	events		= require('events'),
+	Config		= require('./lib/config'),
+	Model		= require('../model'),
+	Settings	= require('./lib/setting'),
+	Tasks		= require('../tasks'),
+	Bootstrap	= require('./bootstrap'),
+	Router		= require('./lib/router'),
+	routes 		= require('./config/routes');
+
 
 var App = function() {
 	
@@ -10,21 +18,20 @@ var App = function() {
 	
 	// Initialize external parameters
 	this.env			= process.env.ENV || 'dev';	
-	this.app 			= express();
+	this.server 		= express();
 	this.log			= winston;
 	
 	// Initialize app files
-	require('./bootstrap').call(this);
-	require('./lib/router').call(this, require('./config/routes'));
+	new Bootstrap(this);
+	new Router(this, routes);
 	
 	// Initialize libraries and external entities
-	this.config			= require('./lib/config').call(this);
-	this.broadcast		= require('./lib/broadcast').call(this);
-	this.model 			= require('../model').call(this);
-	this.settings 		= require('./lib/setting').call(this);
-	this.tasks			= require('../tasks').call(this);
-	this.config			= require('./lib/config').call(this); // TODO: figure out why this.config is being reset
-	
+	this.config			= new Config(this);
+	this.model 			= new Model(this);
+	this.settings 		= new Settings(this);
+	this.tasks			= new Tasks(this);
+	//this.broadcast		= require('./lib/broadcast')(this);
+
 	// Initialize API libraries
 	this.theMovieDb 	= new TheMovieDB({ apiKey: this.config.get('networks.theMovieDb.apiKey') });
 	
@@ -38,7 +45,7 @@ var App = function() {
 	this.log.add(winston.transports.Console, { level: 'debug', colorize:true });
 	
 	// Listen for events
-	this.app.listen(3030);
+	this.server.listen(3030);
 	this.log.debug('Playback server started and running on port 3030');
 		
 };
