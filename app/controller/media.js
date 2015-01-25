@@ -14,7 +14,7 @@ module.exports = {
 	
 		if(typeof type != 'undefined') {
 			if(typeof mediaId != 'undefined') {
-				this.model.modelWithType(type).find(mediaId).success(function(media) {
+				this.app.model.modelWithType(type).find(mediaId).success(function(media) {
 					media.indexInfo(function(media) {
 						response[type] = media;
 						
@@ -23,7 +23,7 @@ module.exports = {
 				});
 			}
 			else {			
-				this.model.modelWithType(type).getMediaForIndex(function(media) {
+				this.app.model.modelWithType(type).getMediaForIndex(function(media) {
 					response[type] = media;
 					
 					self.response(response);
@@ -87,21 +87,21 @@ module.exports = {
 			searchFunction;
 				
 		if(!type) {
-			searchFunction = this.theMovieDb.searchMulti;
+			searchFunction = this.app.theMovieDb.searchMulti;
 		}
 		else {
 			if(type == 'tv') {
-				searchFunction = this.theMovieDb.searchTv;
+				searchFunction = this.app.theMovieDb.searchTv;
 			}
 			else if(type == 'movie') {
-				searchFunction = this.theMovieDb.searchMovie;
+				searchFunction = this.app.theMovieDb.searchMovie;
 			}
 			else {
 				throw 'Invalid type specified';
 			}
 		}
 								
-		this.addSubHttpRequest(searchFunction.call(this.theMovieDb, query, function(err, remoteResults) {
+		this.addSubHttpRequest(searchFunction.call(this.app.theMovieDb, query, function(err, remoteResults) {
 			var results = [];
 						
 			if(err) {

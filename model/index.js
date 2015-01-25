@@ -25,7 +25,7 @@ module.exports = function(app) {
 	this.Media.hasMany(this.Torrent, { onDelete: 'CASCADE', foreignKey: 'MediaId' });
 	this.Torrent.belongsTo(this.Media, { as: 'Media' });
 
-	this.sequelize.sync({  }).then(function() {
+	this.sequelize.sync({ }).then(function() {
 		//self.Setting.setValueWithKey('pl1DmfdZ2uIAAAAAAAAL4K9qSvlLJXSShdFboHBZ5nZsUsickQ8i64HO2eqX2PQA', self.Setting.Key.DropboxToken, function() {});
 	
 		app.emit('model-sync');
@@ -35,10 +35,10 @@ module.exports = function(app) {
 	// Helpers
 	
 	this.modelWithType = function(type) {
-		if(type === self.Media.Type.TV) {
+		if(type === this.Media.Type.TV) {
 			return this.Show;
 		}
-		else if(type === self.Media.Type.Movie) {
+		else if(type === this.Media.Type.Movie) {
 			return this.Media;
 		}
 		else {

@@ -3,7 +3,7 @@ module.exports = {
 	getIndex: function() {
 		var self = this;
 	
-		this.model.Setting.findAll().then(function(settings) {
+		this.app.model.Setting.findAll().then(function(settings) {
 			self.response({ settings: settings });
 		});
 	},
@@ -12,7 +12,7 @@ module.exports = {
 		var type = this.req.params.type,
 			self = this;
 
-		this.model.Setting.find({ where: { key: type }}).then(function(setting) {
+		this.app.model.Setting.find({ where: { key: type }}).then(function(setting) {
 			if (!setting) {
 				setting = self.model.Setting.build({ key: type });
 			}

@@ -6,6 +6,8 @@ module.exports = function(app, routes) {
 	
 	var subHttpRequests = [],
 		router = this;
+
+	this.app = app;
 	
 	function handle404() {
 		app.res.status(404).render('404');
@@ -124,6 +126,7 @@ module.exports = function(app, routes) {
 				action.call(router);
 			}
 			catch(e) {
+				throw e;
 				console.log('error: ' + e);
 			
 				router.errorResponse.call(router, e);

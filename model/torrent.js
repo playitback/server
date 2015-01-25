@@ -1,7 +1,7 @@
 var Sequelize = require('sequelize'),
 	piratebay = require('pirateship'),
 	score = require('../app/lib/score'),
-	Transmission = require('transmission');
+	Transmission = require('../app/lib/transmission');
 
 module.exports = function(app) {
 
@@ -153,11 +153,7 @@ module.exports = function(app) {
 							return;
 						}
 
-						var transmission = new Transmission({
-							host: 'localhost',
-							port: 9091,
-							url: '/transmission/rpc'
-						});
+						var transmission = new Transmission(app);
 
 						transmission.addUrl(magnetUrl, {
 							'download-dir': media.downloadDirectory()
