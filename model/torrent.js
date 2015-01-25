@@ -89,7 +89,7 @@ module.exports = function() {
 						for (var i in data) {
 							var torrent = app.model.Torrent.build(data[i]);
 
-							media.addTorrent(torrent, { transaction: transaction }).then(function() {
+							media.addTorrent(torrent).then(function() {
 								created++;
 
 								if (created == data.length) {
@@ -99,9 +99,13 @@ module.exports = function() {
 								}
 							})
 							.catch(function(err) {
-								transaction.rollback();
+								created++;
 
-								callback();
+								if (created == data.length) {
+									transaction.rollback();
+
+									callback();
+								}
 							});
 						}
 					});
@@ -142,6 +146,7 @@ module.exports = function() {
 		instanceMethods: {
 			download: function() {
 				app.log.debug('Download torrent');
+				// TODO
 			}
 		}
 	});
