@@ -2,7 +2,7 @@ var Sequelize 	= require('sequelize'),
 	_			= require('underscore'),
 	moment		= require('moment'),
 	fs			= require('fs'),
-	path 		= require('path');
+	fsUtil 		= require('../app/lib/fs.util');
 
 module.exports = function(app) {
 
@@ -181,7 +181,7 @@ module.exports = function(app) {
 					transaction = null;
 				}
 
-				var mediaModel = app.modelWithType(result.type);
+				var mediaModel = app.model.mediaModelWithType(result.type);
 
 				mediaModel.find({ where: { remoteId: String(result.id) } }).then(function(media) {
 					// Create or update media object
@@ -209,6 +209,8 @@ module.exports = function(app) {
 					.catch(function(error) {
 						transaction.rollback();
 
+							throw error;
+
 						app.log.error(TAG + 'Failed to create media', error);
 					});
 				});
@@ -225,7 +227,7 @@ module.exports = function(app) {
 						type = result.type;
 					}
 
-					media = app.modelWithType(type).build();
+					media = app.model.mediaModelWithType(type).build();
 				}
 
 				media.remoteId 	= result.id;
@@ -255,6 +257,11 @@ module.exports = function(app) {
 			}
 		},
 		instanceMethods: {
+
+			/**
+			 *
+			 * @param callback
+			 */
 			indexInfo: function(callback) {
 				var _response 	= this.values,	
 					self		= this;
@@ -267,6 +274,11 @@ module.exports = function(app) {
 					callback(_response);
 				});
 			},
+
+			/**
+			 *
+			 * @param torrent
+			 */
 			download: function(torrent) {
 				app.log.debug(TAG + 'Download torrent for ' + this.title || this.name);
 				
@@ -291,6 +303,11 @@ module.exports = function(app) {
 				
 				torrent.download();
 			},
+
+			/**
+			 *
+			 * @param callback
+			 */
 			torrentQuery: function(callback) {
 				if(this.type === Type.Movie) {
 					callback(this.title + ' ' + moment(this.availableDate).format('YYYY'));
@@ -308,13 +325,88 @@ module.exports = function(app) {
 					});*/
 				}
 			},
+
+			/**
+			 *
+			 * @returns {string}
+			 */
 			downloadDirectory: function() {
 				return app.settings.get(app.model.Setting.Key.General.MediaDirectory) + '/Downloads/' + this.get('type');
 			},
+
+			/**
+			 *
+			 * @returns {string}
+			 */
+			mediaDirectory: function() {
+				return app.settings.get(app.model.Setting.Key.General.MediaDirectory) + '/' + this.get('type');
+			},
+
+			/**
+			 * Construct the directory to store this media in. Different based on type.
+			 * Movies use the media name, TV episodes use the show name.
+			 *
+			 * @param callback A function to call when the media directory has loaded
+			 */
+			mediaFolder: function(callback) {
+				var self = this;
+
+				if (this.type == Type.Movie) {
+					callback(self.mediaDirectory() + '/' + this.get('title') +
+						' (' + this.get('availableDate').getFullYear() + ')');
+				}
+				else {
+					this.getSeason().then(function(season) {
+						season.getShow().then(function(show) {
+							callback(self.mediaDirectory() + show.get('title') +
+								'(' + show.get('firstAired').getFullYear() + ')');
+						});
+					});
+				}
+			},
+
+			/**
+			 * Returns the filename for this media
+			 */
+			mediaFile: function(file, callback) {
+				var type = this.get('type'),
+					self = this;
+
+				var extension = file.split('.');
+				extension = extension[0];
+
+				if (type == Type.Movie) {
+					callback(this.get('title') + '.' + extension);
+				}
+				else if (type == Type.TV) {
+					this.getSeason().then(function(season) {
+						if (season) {
+							season.getShow().then(function(show) {
+								if (show) {
+									var season = season.get('number');
+									season = (season < 10 ? '0' : '') + season;
+
+									var episode = self.get('number');
+									episode = (episode < 10 ? '0' : '') + episode;
+
+									// TODO configure from settings
+									callback(show.get('title') + '.S' + season + 'E' + episode + '.' +
+										self.get('title').replace(' ', '.') + '.' + extension);
+								}
+							});
+						}
+					});
+				}
+			},
+
+			/**
+			 *
+			 * @param callback
+			 */
 			createDownloadDirectory: function(callback) {
 				var downloadDirectory = this.downloadDirectory();
 
-				this.mkdirParent(downloadDirectory, '0777', function(err) {
+				fsUtil.mkdirParent(downloadDirectory, '0777', function(err) {
 					var success = !err || (err && err.code == 'EEXIST');
 
 					if (!success) {
@@ -324,23 +416,131 @@ module.exports = function(app) {
 					callback(success);
 				});
 			},
-			mkdirParent: function(dirPath, mode, callback) {
-				var self = this;
 
-				//Call the standard fs.mkdir
-				fs.mkdir(dirPath, mode, function(error) {
-					//When it fail in this way, do the custom steps
-					if (error && error.errno === 34) {
-						//Create all the parents recursively
-						self.mkdirParent(path.dirname(dirPath), mode, function() {
-							//And then the directory
-							self.mkdirParent(dirPath, mode, callback);
+			/**
+			 *
+			 * @param callback
+			 */
+			createMediaDirectory: function(callback) {
+				var mediaDirectory = this.mediaDirectory();
+
+				fsUtil.mkdirParent(mediaDirectory, '0777', function(err) {
+					var success = !err || (err && err.code == 'EEXIST');
+
+					if (!success) {
+						app.log.warn(TAG + 'Media directory doesn\'t exist and can\'t be created');
+					}
+
+					callback(success);
+				});
+			},
+
+			/**
+			 * Create the media folder for this media
+			 *
+			 * @param callback
+			 */
+			createMediaFolder: function(callback) {
+				// Get the folder to put the downloaded data in to
+				this.mediaFolder(function(folder) {
+					// Make the directory, recursively
+					fsUtil.mkdirParent(folder, function (success) {
+						if (!success) {
+							app.log.warn(TAG + 'Failed to make media directory during move. type: ' + self.get('type'));
+						}
+
+						callback(success);
+					});
+				});
+			},
+
+			/**
+			 *
+			 * @param remoteTorrent
+			 */
+			moveToMediaDirectory: function(remoteTorrent) {
+				if (typeof remoteTorrent != 'object' || typeof remoteTorrent.files != 'object' ||
+					typeof remoteTorrent.files.length != 'number' || typeof remoteTorrent.percentageDone != 'number') {
+					app.log.warn(TAG + 'Invalid torrent, failed to copy to media directory');
+
+					return;
+				}
+
+				if (remoteTorrent.percentageDone < 100) {
+					app.log.warn(TAG + 'Cannot move an incomplete download');
+
+					return;
+				}
+
+				var self = this,
+					downloadDirectory = this.downloadDirectory();
+
+				this.createMediaFolder(function(success) {
+					if (!success) {
+						return;
+					}
+
+					var _break = false;
+
+					// Iterate, check it exists and move
+					remoteTorrent.files.forEach(function(file) {
+						if (_break) {
+							return;
+						}
+
+						var file = remoteTorrent.files[i],
+							downloadedFile = downloadDirectory + '/' + file.name;
+
+						var extension = file.name.split('.');
+
+						if (extension.length < 2) {
+							app.log.warn(TAG + 'Invalid torrent file. No valid extension.');
+
+							_break = true;
+
+							return;
+						}
+
+						extension = extension[extension.length - 1];
+
+						// TODO expand extension check to search for all possible extensions
+						// TODO add setting to check if we should include all other files
+						if (extension != 'mkv') {
+							_break = true;
+
+							return;
+						}
+
+						fs.exists(downloadedFile, function (exists) {
+							if (!exists) {
+								app.log.warn(TAG + 'Torrent file doesn\'t exist, cannot copy to media directory');
+							}
+							else {
+								var mediaFile = folder + self.mediaFile(file);
+
+								fs.rename(downloadedFile, mediaFile, function (error) {
+									if (error) {
+										app.log.warn(TAG + 'Failed to move media file ' + error);
+									}
+									else {
+										self.updateAttributes({state: State.Downloaded})
+											.then(function (error) {
+												if (error) {
+													app.log.debug(TAG + 'Failed to mark media as downloaded ' +
+													self.get('id'));
+												}
+												else {
+													app.log.debug(TAG + 'Successfully download ' + self.get('type')
+														+ ' ' + self.get('id'));
+
+													// TODO: Notify UI
+												}
+											});
+									}
+								});
+							}
 						});
-					}
-					else {
-						//Manually run the callback since we used our own callback to do all these
-						callback && callback(error);
-					}
+					});
 				});
 			}
 		}

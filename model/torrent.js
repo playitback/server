@@ -142,10 +142,15 @@ module.exports = function(app) {
 			}
 		},
 		instanceMethods: {
+
+			/**
+			 *
+			 */
 			download: function() {
 				app.log.debug('Download torrent');
 
-				var magnetUrl = this.magnetUrl();
+				var magnetUrl = this.magnetUrl(),
+					self = this;
 
 				this.getMedia().then(function(media) {
 					media.createDownloadDirectory(function(exists) {
@@ -168,7 +173,9 @@ module.exports = function(app) {
 									state: app.model.Media.State.Downloading,
 									transmissionId: torrent.id
 								}).then(function () {
-									// TODO: notify UI
+									media.setDownloadingTorrent(self).then(function() {
+										// TODO: notify UI
+									});
 								});
 							}
 						});

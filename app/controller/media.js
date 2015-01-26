@@ -14,7 +14,7 @@ module.exports = {
 	
 		if(typeof type != 'undefined') {
 			if(typeof mediaId != 'undefined') {
-				this.app.model.modelWithType(type).find(mediaId).success(function(media) {
+				this.app.model.mediaModelWithType(type).find(mediaId).success(function(media) {
 					media.indexInfo(function(media) {
 						response[type] = media;
 						
@@ -23,7 +23,7 @@ module.exports = {
 				});
 			}
 			else {			
-				this.app.model.modelWithType(type).getMediaForIndex(function(media) {
+				this.app.model.mediaModelWithType(type).getMediaForIndex(function(media) {
 					response[type] = media;
 					
 					self.response(response);
@@ -54,8 +54,8 @@ module.exports = {
 			throw 'invalid or missing remoteId';
 		}
 
-		self.model.sequelize.transaction().then(function(transaction) {
-			self.model.modelWithType(type).createWithRemoteId(remoteId, transaction, function(show) {
+		self.app.model.sequelize.transaction().then(function(transaction) {
+			self.app.model.mediaModelWithType(type).createWithRemoteId(remoteId, transaction, function(show) {
 				show.indexInfo(function(response) {
 					transaction.commit();
 
@@ -127,7 +127,7 @@ module.exports = {
 					targetSize--;
 				}
 				else {
-					var result = self.model.modelWithType(remoteResult.media_type)
+					var result = self.app.model.mediaModelWithType(remoteResult.media_type)
 						.mapWithRemoteResult(remoteResult).toJSON();
 					result.type = type;
 

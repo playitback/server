@@ -4,6 +4,8 @@ var Sequelize 	= require('sequelize'),
 
 module.exports = function(app) {
 
+	this.app = app;
+
 	this.sequelize = new Sequelize('database', 'username', 'password', {
 		dialect: 'sqlite',
 		storage: 'mediamanager.sqlite'
@@ -23,9 +25,10 @@ module.exports = function(app) {
 	this.Media.hasOne(this.Poster, { as: 'Still', onDelete: 'CASCADE' }); 	// TV
 	this.Media.hasOne(this.Poster, { onDelete: 'CASCADE' });				// Movie
 	this.Media.hasMany(this.Torrent, { onDelete: 'CASCADE', foreignKey: 'MediaId' });
+	this.Media.hasOne(this.Torrent, { as: 'DownloadingTorrent', foreignKey: 'DownloadingTorrentId' });
 	this.Torrent.belongsTo(this.Media, { as: 'Media' });
 
-	this.sequelize.sync({ }).then(function() {
+	this.sequelize.sync({  }).then(function() {
 		//self.Setting.setValueWithKey('pl1DmfdZ2uIAAAAAAAAL4K9qSvlLJXSShdFboHBZ5nZsUsickQ8i64HO2eqX2PQA', self.Setting.Key.DropboxToken, function() {});
 	
 		app.emit('model-sync');
@@ -34,7 +37,7 @@ module.exports = function(app) {
 
 	// Helpers
 	
-	this.modelWithType = function(type) {
+	this.mediaModelWithType = function(type) {
 		if(type === this.Media.Type.TV) {
 			return this.Show;
 		}
@@ -44,7 +47,7 @@ module.exports = function(app) {
 		else {
 			throw 'invalid_type';
 		}
-	}
+	};
 	
 	DropboxSync.call(app);
 
