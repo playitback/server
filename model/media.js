@@ -86,6 +86,7 @@ module.exports = function(app) {
 		transmissionId: {
 			type:			Sequelize.INTEGER
 		},
+		// TODO: Add quality and set default value and configurable from UI when adding media
 		/*quality: {
 			type:			qualityType(),
 			allowNull:		false
