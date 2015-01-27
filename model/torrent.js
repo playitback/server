@@ -117,7 +117,9 @@ module.exports = function(app) {
 				for(var i in data) {
 					var remote = data[i];
 					var score = this.calculateScoreWithRemoteData(media, remote);
-										
+
+					// TODO check fileName for valid keywords from the media's quality
+					// Need to wait on the quality to be set though
 					if(score < 200) {
 						continue;
 					}

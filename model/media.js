@@ -548,17 +548,7 @@ module.exports = function(app) {
 												app.log.warn(TAG + 'Failed to move media file ' + error);
 											}
 											else {
-												self.updateAttributes({state: State.Downloaded})
-													.then(function () {
-														app.log.debug(TAG + 'Successfully download ' + self.get('type')
-														+ ' ' + self.get('id'));
-
-														// TODO: Notify UI
-													})
-													.catch(function(error) {
-														app.log.debug(TAG + 'Failed to mark media as downloaded ' +
-															self.get('id') + ', error: ' + error);
-													});
+												self.moveComplete();
 											}
 										});
 									});
@@ -567,6 +557,26 @@ module.exports = function(app) {
 						});
 					});
 				});
+			},
+
+			/**
+			 * Called when the media file is successfully moved
+			 */
+			moveComplete: function() {
+				var self = this;
+
+				this.updateAttributes({state: State.Downloaded})
+					.then(function () {
+						app.log.debug(TAG + 'Successfully download ' + self.get('type')
+							+ ' ' + self.get('id'));
+
+						// TODO: Tidy up downloads. Also set a setting to configure to do it
+						// TODO: Notify UI
+					})
+					.catch(function(error) {
+						app.log.debug(TAG + 'Failed to mark media as downloaded ' +
+							self.get('id') + ', error: ' + error);
+					});
 			}
 		}
 	});
