@@ -61,7 +61,7 @@ module.exports = function(app) {
 						app.log.debug(TAG + 'fetchSuitableWithMedia Found ' + results.length + ' results for ' + query);
 						
 						self.buildWithResults(media, results, persist, function(torrents) {
-							callback(torrents);	
+							callback(torrents);
 						});
 					},
 					function(error) {

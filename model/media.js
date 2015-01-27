@@ -2,7 +2,8 @@ var Sequelize 	= require('sequelize'),
 	_			= require('underscore'),
 	moment		= require('moment'),
 	fs			= require('fs'),
-	fsUtil 		= require('../app/lib/fs.util');
+	fsUtil 		= require('../app/lib/fs.util'),
+	qualities	= require('../app/const/qualities');
 
 module.exports = function(app) {
 
@@ -44,7 +45,22 @@ module.exports = function(app) {
 			throw new Error('Required for Movies');
 		}
 	};
-	
+
+	// Construct a custom Sequelize.ENUM type using the defined qualities
+	var qualityKeys = [];
+	for (var key in qualities) {
+		qualityKeys.push(key);
+	}
+	var qualityType = function() {
+		return {
+			type: 'ENUM',
+			values: Array.prototype.slice.call(qualityKeys).reduce(function(result, element) {
+				return result.concat(Array.isArray(element) ? element : [element]);
+			}, [])
+		};
+	};
+	qualityType.toString = qualityType.valueOf = function() { return 'ENUM'; };
+
 	var Media = this.sequelize.define('Media', {
 		type: {
 			type:			Sequelize.ENUM(Type.Movie, Type.TV),
@@ -70,6 +86,10 @@ module.exports = function(app) {
 		transmissionId: {
 			type:			Sequelize.INTEGER
 		},
+		/*quality: {
+			type:			qualityType(),
+			allowNull:		false
+		},*/
 		
 		// Movie only
 		title: {
@@ -372,8 +392,8 @@ module.exports = function(app) {
 				var type = this.get('type'),
 					self = this;
 
-				var extension = file.split('.');
-				extension = extension[0];
+				var extension = file.name.split('.');
+				extension = extension[extension.length - 1];
 
 				if (type == Type.Movie) {
 					callback(this.get('title') + '.' + extension);
@@ -441,6 +461,8 @@ module.exports = function(app) {
 			 * @param callback
 			 */
 			createMediaFolder: function(callback) {
+				var self = this;
+
 				// Get the folder to put the downloaded data in to
 				this.mediaFolder(function(folder) {
 					// Make the directory, recursively
@@ -460,7 +482,7 @@ module.exports = function(app) {
 			 */
 			moveToMediaDirectory: function(remoteTorrent) {
 				if (typeof remoteTorrent != 'object' || typeof remoteTorrent.files != 'object' ||
-					typeof remoteTorrent.files.length != 'number' || typeof remoteTorrent.percentageDone != 'number') {
+					typeof remoteTorrent.files.length != 'number' || typeof remoteTorrent.percentDone != 'number') {
 					app.log.warn(TAG + 'Invalid torrent, failed to copy to media directory');
 
 					return;
@@ -476,69 +498,72 @@ module.exports = function(app) {
 					downloadDirectory = this.downloadDirectory();
 
 				this.createMediaFolder(function(success) {
-					if (!success) {
-						return;
-					}
-
-					var _break = false;
-
-					// Iterate, check it exists and move
-					remoteTorrent.files.forEach(function(file) {
-						if (_break) {
+					self.mediaFolder(function(folder) {
+						if (!success) {
 							return;
 						}
 
-						var file = remoteTorrent.files[i],
-							downloadedFile = downloadDirectory + '/' + file.name;
+						var _break = false;
 
-						var extension = file.name.split('.');
-
-						if (extension.length < 2) {
-							app.log.warn(TAG + 'Invalid torrent file. No valid extension.');
-
-							_break = true;
-
-							return;
-						}
-
-						extension = extension[extension.length - 1];
-
-						// TODO expand extension check to search for all possible extensions
-						// TODO add setting to check if we should include all other files
-						if (extension != 'mkv') {
-							_break = true;
-
-							return;
-						}
-
-						fs.exists(downloadedFile, function (exists) {
-							if (!exists) {
-								app.log.warn(TAG + 'Torrent file doesn\'t exist, cannot copy to media directory');
+						// Iterate, check it exists and move
+						remoteTorrent.files.forEach(function (file) {
+							if (_break) {
+								return;
 							}
-							else {
-								var mediaFile = folder + self.mediaFile(file);
 
-								fs.rename(downloadedFile, mediaFile, function (error) {
-									if (error) {
-										app.log.warn(TAG + 'Failed to move media file ' + error);
-									}
-									else {
-										self.updateAttributes({state: State.Downloaded})
-											.then(function (error) {
-												if (error) {
-													app.log.debug(TAG + 'Failed to mark media as downloaded ' +
-													self.get('id'));
-												}
-												else {
-													app.log.debug(TAG + 'Successfully download ' + self.get('type')
+							var downloadedFile = downloadDirectory + '/' + file.name;
+							var extension = file.name.split('.');
+
+							if (extension.length < 2) {
+								app.log.warn(TAG + 'Invalid torrent file. No valid extension.');
+
+								_break = true;
+
+								return;
+							}
+
+							extension = extension[extension.length - 1];
+
+							// TODO expand extension check to search for all possible extensions
+							// TODO add setting to check if we should include all other files
+							if (extension != 'mkv' && extension != 'mp4') {
+								_break = true;
+
+								return;
+							}
+
+							fs.exists(downloadedFile, function (exists) {
+								if (!exists) {
+									app.log.warn(TAG + 'Torrent file doesn\'t exist, cannot copy to media directory');
+								}
+								else {
+									self.mediaFile(file, function(mediaFile) {
+										var mediaFile = folder + '/' + mediaFile;
+
+										app.log.debug(TAG + 'Moving media file from: ' + downloadedFile + ', to: ' +
+											mediaFile);
+
+										fs.rename(downloadedFile, mediaFile, function (error) {
+											if (error) {
+												app.log.warn(TAG + 'Failed to move media file ' + error);
+											}
+											else {
+												self.updateAttributes({state: State.Downloaded})
+													.then(function () {
+														app.log.debug(TAG + 'Successfully download ' + self.get('type')
 														+ ' ' + self.get('id'));
 
-													// TODO: Notify UI
-												}
-											});
-									}
-								});
-							}
+														// TODO: Notify UI
+													})
+													.catch(function(error) {
+														app.log.debug(TAG + 'Failed to mark media as downloaded ' +
+															self.get('id') + ', error: ' + error);
+													});
+											}
+										});
+									});
+								}
+							});
 						});
 					});
 				});

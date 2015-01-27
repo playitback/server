@@ -11,10 +11,10 @@ module.exports = function(app) {
 		app.log.debug(tag + 'run');
 
 		app.model.Media.findAll({ where: { state: app.model.Media.State.Wanted, availableDate: { lte: new Date() } } })
-			.then(function(availableMedia) {
-				app.log.debug(tag + 'Found ' + availableMedia.length + ' media file(s) waiting to be searched');
-			
-				availableMedia.forEach(function(media) {
+			.then(function(wantedMedia) {
+				app.log.debug(tag + 'Found ' + wantedMedia.length + ' media file(s) waiting to be searched');
+
+				wantedMedia.forEach(function(media) {
 					media.download();
 				});
 			});

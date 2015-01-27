@@ -9,6 +9,11 @@ module.exports = {
     mkdirParent: function(dirPath, mode, callback) {
         var self = this;
 
+        if (typeof mode == 'function') {
+            callback = mode;
+            mode = '0777';
+        }
+
         //Call the standard fs.mkdir
         fs.mkdir(dirPath, mode, function(error) {
             //When it fail in this way, do the custom steps

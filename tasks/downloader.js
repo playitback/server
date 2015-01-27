@@ -17,7 +17,7 @@ module.exports = function(app) {
         // Fetch all hashes/ids, so we can link the torrent hash to id
         transmission.callServer({
             arguments : {
-                fields : [ 'hashString', 'id', 'percentDone' ]
+                fields : [ 'hashString', 'id', 'percentDone', 'files' ]
             },
             method : transmission.methods.torrents.get,
             tag : uuid()
@@ -62,7 +62,7 @@ module.exports = function(app) {
 
                             // If the torrent has finished, start rename process
                             if (typeof transmissionInfo.percentDone == 'number' && transmissionInfo.percentDone == 100) {
-                                media.copyToMediaDirectory(torrent);
+                                media.moveToMediaDirectory(transmissionInfo);
                             }
                             else {
                                 app.log.debug(TAG + 'Media not finished');
