@@ -16,7 +16,7 @@ module.exports = {
         allow: [
             '1080p'
         ],
-        ext: [ 'iso', 'img' ],
+        extensions: [ 'iso', 'img' ],
         tags: [ 'bdmv', 'certificate', [ 'complete', 'bluray' ], 'avc', 'mvc' ]
     },
     '1080p': {
@@ -29,7 +29,21 @@ module.exports = {
         height: 1080,
         alternative: [],
         allow: [],
-        ext: [ 'mkv', 'm2ts', 'ts' ],
+        extensions: [ 'mkv', 'm2ts', 'ts' ],
         tags: [ 'm2ts', 'x264', 'h264' ]
+    },
+    '720p': {
+        hd: true,
+        allow3d: true,
+        size: [ 3000, 10000 ],
+        medianSize: 5500,
+        label: '720p',
+        width: 1280,
+        height: 720,
+        alternative: [],
+        allow: [],
+        extensions: [ 'mkv', 'ts' ],
+        tags: [ 'x264', 'h264' ]
     }
 };
+// TODO add SD qualities
