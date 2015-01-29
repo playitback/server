@@ -514,8 +514,8 @@ module.exports = function(app) {
 								return;
 							}
 
-							var downloadedFile = downloadDirectory + '/' + file.name;
-							var extension = file.name.split('.');
+							var downloadedFile = downloadDirectory + '/' + file.name,
+								extension = file.name.split('.');
 
 							if (extension.length < 2) {
 								app.log.warn(TAG + 'Invalid torrent file. No valid extension.');
@@ -527,9 +527,10 @@ module.exports = function(app) {
 
 							extension = extension[extension.length - 1];
 
-							// TODO expand extension check to search for all possible extensions
-							// TODO add setting to check if we should include all other files
-							if (extension != 'mkv' && extension != 'mp4') {
+							var quality = self.qualityProfile();
+
+							if (quality.extensions.indexOf(extension) > -1 &&
+								!app.settings.get(app.Setting.Key.Media.Renamer.MoveRemaining)) {
 								_break = true;
 
 								return;
@@ -575,11 +576,25 @@ module.exports = function(app) {
 
 						// TODO: Tidy up downloads. Also set a setting to configure to do it
 						// TODO: Notify UI
+						// TODO: Send notifications
 					})
 					.catch(function(error) {
 						app.log.debug(TAG + 'Failed to mark media as downloaded ' +
 							self.get('id') + ', error: ' + error);
 					});
+			},
+
+			/**
+			 * Returns the quality profile currently belonging to this media object
+			 *
+			 * @returns {*}
+			 */
+			qualityProfile: function() {
+				var quality = this.get('quality');
+
+				if (typeof quality == 'string' && typeof qualities[quality] == 'object') {
+					return qualities[quality];
+				}
 			}
 		}
 	});
