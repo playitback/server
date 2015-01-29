@@ -12,6 +12,6 @@ Defaults[keys.General.MediaDirectory] = process.cwd() + '/media';
 // Media
 Defaults[keys.Media.DefaultQuality.movie] = '1080p';
 Defaults[keys.Media.DefaultQuality.tv] = '720p';
-Defaults[Keys.Media.Renamer.MoveRemaining] = false;
+Defaults[keys.Media.Renamer.MoveRemaining] = false;
 
 module.exports = Defaults;
