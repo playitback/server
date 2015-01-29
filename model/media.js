@@ -248,6 +248,9 @@ module.exports = function(app) {
 					}
 
 					media = app.model.mediaModelWithType(type).build();
+
+					// Only set quality on initial creation, not update
+					media.quality = app.settings.get(app.model.Setting.Key.Media.DefaultQuality[type]);
 				}
 
 				media.remoteId 	= result.id;
