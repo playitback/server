@@ -36,9 +36,9 @@ module.exports = function() {
 		app.log.debug(TAG + 'Listen for dropbox setting');
 		
 		app.Setting.afterCreate(function(setting) {
-			console.log(TAG + 'Setting created');
+			app.log.debug(TAG + 'Setting created');
 
-			if(setting.key === app.Setting.Key.Sync.Dropbox.Token) {
+			if(setting.key === app.model.Setting.Key.Sync.Dropbox.Token) {
 				app.log.debug(TAG + 'Dropbox token setting created');
 				
 				createClientWithToken(this.value);
