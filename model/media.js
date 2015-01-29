@@ -86,11 +86,10 @@ module.exports = function(app) {
 		transmissionId: {
 			type:			Sequelize.INTEGER
 		},
-		// TODO: Add quality and set default value and configurable from UI when adding media
-		/*quality: {
+		quality: {
 			type:			qualityType(),
 			allowNull:		false
-		},*/
+		},
 		
 		// Movie only
 		title: {
@@ -208,7 +207,7 @@ module.exports = function(app) {
 					// Create or update media object
 					media = self.mapWithRemoteResult(result, media);
 
-					media.save({transaction: transaction}).then(function (media) {
+					media.save({ transaction: transaction }).then(function (media) {
 						if (typeof result.still_path === 'string') {
 							app.model.Poster.createWithRemoteResult(result, transaction).success(function (poster) {
 								media.setStill(poster, {transaction: transaction}).success(function () {
