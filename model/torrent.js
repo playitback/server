@@ -176,7 +176,7 @@ module.exports = function(app) {
 									transmissionId: torrent.id
 								}).then(function () {
 									media.setDownloadingTorrent(self).then(function() {
-										// TODO: notify UI
+										app.notification.notifyOnDownloadStart(media);
 									});
 								});
 							}

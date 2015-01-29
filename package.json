@@ -25,6 +25,7 @@
 		"winston": "0.7.3",
 		"xhr2": "0.0.7",
 		"themoviedb": "https://github.com/playitback/themoviedb/tarball/master",
-		"pirateship": "https://github.com/playitback/pirateship/tarball/master"
+		"pirateship": "https://github.com/playitback/pirateship/tarball/master",
+	  	"node-prowl": "0.1.7"
 	}
 }

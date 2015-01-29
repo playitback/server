@@ -1,15 +1,15 @@
-var express 	= require('express'),
-	TheMovieDB	= require('themoviedb'),
-	winston		= require('winston'),
-	events		= require('events'),
-	Config		= require('./lib/config'),
-	Model		= require('../model'),
-	Settings	= require('./lib/setting'),
-	Tasks		= require('../tasks'),
-	Bootstrap	= require('./bootstrap'),
-	Router		= require('./lib/router'),
-	routes 		= require('./config/routes');
-
+var express 		= require('express'),
+	TheMovieDB		= require('themoviedb'),
+	winston			= require('winston'),
+	events			= require('events'),
+	Config			= require('./lib/config'),
+	Model			= require('../model'),
+	Settings		= require('./lib/setting'),
+	Tasks			= require('../tasks'),
+	Bootstrap		= require('./bootstrap'),
+	Router			= require('./lib/router'),
+	Notification 	= require('./lib/notification'),
+	routes 			= require('./config/routes');
 
 var App = function() {
 	
@@ -30,6 +30,7 @@ var App = function() {
 	this.model 			= new Model(this);
 	this.settings 		= new Settings(this);
 	this.tasks			= new Tasks(this);
+	this.notification	= new Notification(this);
 	//this.broadcast		= require('./lib/broadcast')(this);
 
 	// Initialize API libraries

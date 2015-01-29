@@ -19,6 +19,14 @@ module.exports = {
             MoveRemaining:          'Media.Renamer.MoveRemaining'
         }
     },
+    Notification: {
+        prowl: {
+            Enabled:                'Notification.Prowl.Enabled',
+            DownloadStart:          'Notification.Prowl.DownloadStart',
+            DownloadMoved:          'Notification.Prowl.DownloadMoved',
+            ApiKey:                 'Notification.Prowl.ApiKey'
+        }
+    },
     Sync: {
         Dropbox: {
             Token: 					'Sync.Dropbox.Token'
