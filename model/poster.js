@@ -1,6 +1,6 @@
 var Sequelize = require('sequelize');
 
-module.exports = function() {
+module.exports = function(app) {
 
 	var model = this;
 	
@@ -11,7 +11,7 @@ module.exports = function() {
 	}, {
 		classMethods: {
 			createWithRemoteResult: function(result, transaction) {
-				return this.create(this.mapWithRemoteResult(result), { transaction: transaction });
+				return this.mapWithRemoteResult(result).save({ transaction: transaction });
 			},
 			
 			mapWithRemoteResult: function(result, key) {
@@ -29,9 +29,9 @@ module.exports = function() {
 					posterUri = result.poster_path;
 				}
 						
-				return {
+				return app.model.Poster.build({
 					url: posterUri ? this.cachePosterWithUrl(model.app.theMovieDb.posterUrl(posterUri)) : null
-				};
+				});
 			},
 			
 			cachePosterWithUrl: function(url) {

@@ -15,6 +15,10 @@ Defaults[keys.Media.DefaultQuality.tv] = '720p';
 Defaults[keys.Media.Renamer.MoveRemaining] = false;
 Defaults[keys.Media.Renamer.Cleanup] = true;
 
+// Downloader
+Defaults[keys.Downloader.transmission.Host] = 'localhost';
+Defaults[keys.Downloader.transmission.RpcUrl] = 'transmission';
+
 // Notification
 Defaults[keys.Notification.prowl.Enabled] = true;
 Defaults[keys.Notification.prowl.DownloadStart] = true;

@@ -1,9 +1,8 @@
 var Sequelize 	= require('sequelize'),
 	moment		= require('moment');
 
-module.exports = function() {
+module.exports = function(app) {
 	
-	var app = this;
 	var Show = this.sequelize.define('Show', {
 		remoteId: {
 			type: Sequelize.INTEGER,
@@ -48,7 +47,7 @@ module.exports = function() {
 			
 			createWithRemoteId: function(remoteId, transaction, callback) {
 				var self = this;
-				
+
 				app.theMovieDb.getTv(remoteId, function(err, result) {
 					if(err) {
 						callback(err);
@@ -69,34 +68,23 @@ module.exports = function() {
 					// Create or update show object
 					show = self.mapWithRemoteResult(result, show);
 
-					show.save({transaction: transaction}).then(function (show) {
+					show.save({ transaction: transaction }).then(function (show) {
 						app.model.Poster.createWithRemoteResult(result, transaction).then(function (poster) {
-							show.setPoster(poster, {transaction: transaction}).then(function () {
+							show.setPoster(poster, { transaction: transaction }).then(function () {
 								app.model.Season.createWithRemoteResults(show, result.seasons, transaction, function (seasons) {
-									show.setSeasons(seasons, {transaction: transaction}).then(function () {
+									show.setSeasons(seasons, { transaction: transaction }).then(function () {
 										callback(show);
-									})
-									.catch(function(error) {
-										transaction.rollback();
-
-										app.log.error('failed to set seasons on show', show.id, error);
 									});
 								});
-							})
-							.catch(function(error) {
-								transaction.rollback();
-
-								app.log.error('failed to set poster on show', show.id, poster.id, error);
 							});
-						})
-						.catch(function(error) {
-							transaction.rollback();
-
-							app.log.error('failed to create poster for show', show.id, error);
 						});
 					})
 					.catch(function(error) {
-						transaction.rollback();
+						if (transaction) {
+							transaction.rollback();
+
+							transaction = null;
+						}
 
 						app.log.error('failed to create show with remoteId', show.remoteId, error);
 					});

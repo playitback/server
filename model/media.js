@@ -179,9 +179,9 @@ module.exports = function(app) {
 					self	= this;
 				
 				results.forEach(function(result) {
-					self.createWithRemoteResult(result, function(episode) {
+					self.createWithRemoteResult(result, transaction, function(episode) {
 						media.push(episode);
-						
+
 						if(media.length === results.length) {
 							callback(media);
 						}
@@ -201,9 +201,7 @@ module.exports = function(app) {
 					transaction = null;
 				}
 
-				var mediaModel = app.model.mediaModelWithType(result.type);
-
-				mediaModel.find({ where: { remoteId: String(result.id) } }).then(function(media) {
+				this.find({ where: { remoteId: String(result.id) } }).then(function(media) {
 					// Create or update media object
 					media = self.mapWithRemoteResult(result, media);
 
@@ -227,11 +225,19 @@ module.exports = function(app) {
 						}
 					})
 					.catch(function(error) {
-						transaction.rollback();
+						// Handle for movies, TV shows leave to show model
+						if (result.type == Type.Movie) {
+							if (transaction) {
+								transaction.rollback();
 
+								transaction = null;
+							}
+
+							app.log.error(TAG + 'Failed to create media', error)
+						}
+						else {
 							throw error;
-
-						app.log.error(TAG + 'Failed to create media', error);
+						}
 					});
 				});
 			},
@@ -247,7 +253,7 @@ module.exports = function(app) {
 						type = result.type;
 					}
 
-					media = app.model.mediaModelWithType(type).build();
+					media = this.build();
 
 					// Only set quality on initial creation, not update
 					media.quality = app.settings.get(app.model.Setting.Key.Media.DefaultQuality[type]);

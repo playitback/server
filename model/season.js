@@ -1,10 +1,8 @@
 var Sequelize 	= require('sequelize'),	
 	moment		= require('moment');
 
-module.exports = Season = function() {
-	
-	var app = this;
-	
+module.exports = Season = function(app) {
+
 	return this.sequelize.define('Season', {
 		number: {
 			type: Sequelize.INTEGER
@@ -37,51 +35,40 @@ module.exports = Season = function() {
 					callback = transaction;
 					transaction = null;
 				}
-			
-				this.create(self.mapWithRemoteResult(result), { transaction: transaction })
-					.success(function(season) {
+
+				self.mapWithRemoteResult(result).save({ transaction: transaction })
+					.then(function(season) {
 						app.model.Poster.createWithRemoteResult(result, transaction)
 							.success(function(poster) {
 								season.setPoster(poster, { transaction: transaction })
 									.then(function() {
 										app.theMovieDb.getSeason(show.remoteId, season.number, function(err, remoteSeason) {
 											app.model.Media.createWithRemoteResults(remoteSeason.episodes, transaction, function(episodes) {
-												season.setEpisodes(episodes)
-													.then(function() {
-														callback(season);
-													})
-													.catch(function(error) {
-														transaction.rollback();
-
-														app.log.error('failed to set episodes on season', season.id, error);
-													});
+												season.setEpisodes(episodes).then(function() {
+													callback(season);
+												});
 											});
 										});
-									})
-									.catch(function(error) {
-										transaction.rollback();
-
-										app.log.error('failed to set poster on season', season.id, error);
 									});
-							})
-							.catch(function(error) {
-								transaction.rollback();
-
-								app.log.debug('failed to create poster', error);
 							});
-					})
-					.catch(function(error) {
-						transaction.rollback();
+					});
+			},
 
-						app.log.error('failed to create season with remote id', season.remoteId, error);
-					})
+			mapWithRemoteResults: function(results) {
+				var built = [];
+
+				for (var i in results) {
+					built.push(this.mapWithRemoteResult(results[i]));
+				}
+
+				return built;
 			},
 			
 			mapWithRemoteResult: function(result) {						
-				return {
+				return this.build({
 					number: result.season_number,
 					year: moment(result.air_date).format('YYYY')
-				};
+				});
 			}
 		}
 	});
