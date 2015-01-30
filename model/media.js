@@ -529,10 +529,9 @@ module.exports = function(app) {
 
 							var quality = self.qualityProfile();
 
+							// TODO: This isn't working.
 							if (quality.extensions.indexOf(extension) > -1 &&
 								!app.settings.get(app.Setting.Key.Media.Renamer.MoveRemaining)) {
-								_break = true;
-
 								return;
 							}
 
