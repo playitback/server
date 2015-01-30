@@ -10,20 +10,29 @@ module.exports = {
         Port: 						'General.Port',
         CheckForUpdates: 			'General.CheckForUpdates'
     },
+    Downloader: {
+        transmission: {
+            Host:                   'Downloader.Transmission.Host',
+            RpcUrl:                 'Downloader.Transmission.RpcUrl',
+            Username:               'Downloader.Transmission.Username',
+            Password:               'Downloader.Transmission.Password'
+        }
+    },
     Media: {
         DefaultQuality: {
             movie:                  'Media.DefaultQuality.Movie',
             tv:                     'Media.DefaultQuality.TV'
         },
         Renamer: {
-            MoveRemaining:          'Media.Renamer.MoveRemaining'
+            MoveRemaining:          'Media.Renamer.MoveRemaining',
+            Cleanup:                'Media.Renamed.Cleanup'
         }
     },
     Notification: {
         prowl: {
             Enabled:                'Notification.Prowl.Enabled',
             DownloadStart:          'Notification.Prowl.DownloadStart',
-            DownloadMoved:          'Notification.Prowl.DownloadMoved',
+            DownloadRenamed:        'Notification.Prowl.DownloadRenamed',
             ApiKey:                 'Notification.Prowl.ApiKey'
         }
     },

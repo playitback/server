@@ -547,14 +547,19 @@ module.exports = function(app) {
 										app.log.debug(TAG + 'Moving media file from: ' + downloadedFile + ', to: ' +
 											mediaFile);
 
-										fs.rename(downloadedFile, mediaFile, function (error) {
-											if (error) {
-												app.log.warn(TAG + 'Failed to move media file ' + error);
-											}
-											else {
-												self.moveComplete();
-											}
+										var readStream = fs.createReadStream(downloadedFile),
+											writeStream = fs.createWriteStream(mediaFile);
+
+										readStream.on('error', function(error) {
+											app.log.warn(TAG + 'Failed to move media file ' + error);
 										});
+										writeStream.on('error', function(error) {
+											app.log.warn(TAG + 'Failed to move media file ' + error);
+										});
+										writeStream.on('close', function() {
+											self.copyComplete(remoteTorrent);
+										});
+										readStream.pipe(writeStream);
 									});
 								}
 							});
@@ -566,7 +571,7 @@ module.exports = function(app) {
 			/**
 			 * Called when the media file is successfully moved
 			 */
-			moveComplete: function() {
+			copyComplete: function(remoteTorrent) {
 				var self = this;
 
 				this.updateAttributes({state: State.Downloaded})
@@ -577,7 +582,7 @@ module.exports = function(app) {
 						// TODO: Tidy up downloads. Also set a setting to configure to do it
 						// TODO: Notify UI
 
-						app.notification.notifyOnDownladMoved(self);
+						app.notification.notifyOnDownladRenamed(self);
 					})
 					.catch(function(error) {
 						app.log.debug(TAG + 'Failed to mark media as downloaded ' +
