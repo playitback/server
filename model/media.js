@@ -576,7 +576,8 @@ module.exports = function(app) {
 
 						// TODO: Tidy up downloads. Also set a setting to configure to do it
 						// TODO: Notify UI
-						// TODO: Send notifications
+
+						app.notification.notifyOnDownladMoved(self);
 					})
 					.catch(function(error) {
 						app.log.debug(TAG + 'Failed to mark media as downloaded ' +
