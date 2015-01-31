@@ -44,6 +44,7 @@ module.exports = Season = function(app) {
 					callback = transaction;
 					transaction = null;
 				}
+				
 
 				self.mapWithRemoteResult(result).save({ transaction: transaction })
 					.then(function(season) {
