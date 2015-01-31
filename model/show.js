@@ -48,15 +48,15 @@ module.exports = function(app) {
 			createWithRemoteId: function(remoteId, transaction, callback) {
 				var self = this;
 
-				app.theMovieDb.getTv(remoteId, function(err, result) {
-					if(err) {
-						callback(err);
+				app.theMovieDb.getTv(remoteId, function(error, result) {
+					if(error) {
+						callback(error, null);
 						
 						return;
 					}
 					
-					self.createWithRemoteResult(result, transaction, function(show) {
-						callback(show);
+					self.createWithRemoteResult(result, transaction, function(error, show) {
+						callback(error, show);
 					});
 				});
 			},
@@ -66,15 +66,19 @@ module.exports = function(app) {
 
 				this.find({ where: { remoteId: String(result.id) } }).then(function(show) {
 					// Create or update show object
-					show = self.mapWithRemoteResult(result, show);
-
-					show.save({ transaction: transaction }).then(function (show) {
+					self.create(self.mapWithRemoteResult(result, show), { transaction: transaction }).then(function (show) {
 						app.model.Poster.createWithRemoteResult(result, transaction).then(function (poster) {
 							show.setPoster(poster, { transaction: transaction }).then(function () {
-								app.model.Season.createWithRemoteResults(show, result.seasons, transaction, function (seasons) {
-									show.setSeasons(seasons, { transaction: transaction }).then(function () {
-										callback(show);
-									});
+								app.model.Season.createWithRemoteResults(show, result.seasons, transaction, function (error, seasons) {
+									if (error || !seasons) {
+										callback(error, null);
+									}
+									else {
+										show.setSeasons(seasons, {transaction: transaction}).then(function () {
+											console.log('added seasons to show');
+											callback(null, show);
+										});
+									}
 								});
 							});
 						});
@@ -86,18 +90,20 @@ module.exports = function(app) {
 							transaction = null;
 						}
 
-						app.log.error('failed to create show with remoteId', show.remoteId, error);
+						app.log.error('failed to create show with remoteId', result.id, error);
+
+						callback(error, null);
 					});
 				});
 			},
 			
 			mapWithRemoteResult: function(result) {
-				return this.build({
+				return {
 					remoteId:		result.id,
 					title: 			result.name,
 					firstAired: 	moment(result.first_air_date).toDate(),
 					overview:		result.overview
-				});
+				};
 			}
 		},
 		instanceMethods: {

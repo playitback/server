@@ -16,12 +16,21 @@ module.exports = Season = function(app) {
 				var self 	= this,
 					seasons = [];
 
+				console.log('create seasons', results.length);
 				results.forEach(function(result) {
-					self.createWithRemoteResult(show, result, transaction, function(season) {
-						seasons.push(season);
-						
-						if(seasons.length === results.length) {
-							callback(seasons);
+					self.createWithRemoteResult(show, result, transaction, function(error, season) {
+						console.log('created season', error);
+						if (error) {
+							callback(error, null);
+						}
+						else {
+							seasons.push(season);
+
+							console.log(seasons.length, results.length);
+
+							if (seasons.length === results.length) {
+								callback(null, seasons);
+							}
 						}
 					});
 				});
@@ -44,8 +53,14 @@ module.exports = Season = function(app) {
 									.then(function() {
 										app.theMovieDb.getSeason(show.remoteId, season.number, function(err, remoteSeason) {
 											app.model.Media.createWithRemoteResults(remoteSeason.episodes, transaction, function(episodes) {
-												season.setEpisodes(episodes).then(function() {
-													callback(season);
+												console.log('created episodes');
+												season.setEpisodes(episodes, { transaction: transaction }).then(function() {
+													console.log('added episodes to season');
+													callback(null, season);
+												})
+												.catch(function(error) {
+													console.log('failed to add episodes to season', error);
+													callback(error, null);
 												});
 											});
 										});

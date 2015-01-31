@@ -235,9 +235,8 @@ module.exports = function(app) {
 
 							app.log.error(TAG + 'Failed to create media', error)
 						}
-						else {
-							throw error;
-						}
+
+						callback(null);
 					});
 				});
 			},

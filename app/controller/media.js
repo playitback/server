@@ -55,16 +55,21 @@ module.exports = {
 		}
 
 		self.app.model.sequelize.transaction().then(function(transaction) {
-			self.app.model.mediaModelWithType(type).createWithRemoteId(remoteId, transaction, function(show) {
-				show.indexInfo(function(response) {
-					transaction.commit();
+			self.app.model.mediaModelWithType(type).createWithRemoteId(remoteId, transaction, function(error, show) {
+				if (!error && show) {
+					show.indexInfo(function (response) {
+						transaction.commit();
 
-					var responseObject = {};
+						var responseObject = {};
 
-					responseObject[type] = response;
+						responseObject[type] = response;
 
-					self.response(responseObject);
-				});
+						self.response(responseObject);
+					});
+				}
+				else {
+					self.response(error);
+				}
 			});
 		});
 	},
@@ -128,7 +133,7 @@ module.exports = {
 				}
 				else {
 					var result = self.app.model.mediaModelWithType(remoteResult.media_type)
-						.mapWithRemoteResult(remoteResult).toJSON();
+						.mapWithRemoteResult(remoteResult);
 					result.type = type;
 
 					results.push(result);
