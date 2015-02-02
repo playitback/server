@@ -32,6 +32,7 @@ function(Backbone, BackboneForm, Settings, _Dropbox, SettingModel) {
 				
 			this.$el.append(this.tabs);
 			this.$el.append(this.container);
+			this.$el.append($('<div></div>', { 'class': 'clearfix' }));
 			
 			var first = true;
 			

@@ -53,13 +53,10 @@ module.exports = Season = function(app) {
 									.then(function() {
 										app.theMovieDb.getSeason(show.remoteId, season.number, function(err, remoteSeason) {
 											app.model.Media.createWithRemoteResults(remoteSeason.episodes, transaction, function(episodes) {
-												console.log('created episodes');
 												season.setEpisodes(episodes, { transaction: transaction }).then(function() {
-													console.log('added episodes to season');
 													callback(null, season);
 												})
 												.catch(function(error) {
-													console.log('failed to add episodes to season', error);
 													callback(error, null);
 												});
 											});

@@ -31,6 +31,12 @@ module.exports = function(app, routes) {
 		if(typeof status === 'undefined') {
 			status = 200;
 		}
+
+		if (typeof data == 'object' && this.rootKey) {
+			var prefixedData = {};
+			prefixedData[this.rootKey] = data;
+			data = prefixedData;
+		}
 						
 		this.res.json(status, data);
 	};
@@ -89,6 +95,7 @@ module.exports = function(app, routes) {
 								
 			router.req = req;
 			router.res = res;
+			router.rootKey = req.body.rootKey || req.query.rootKey || null;
 			
 			var controllerName = parts.length > 0 ? parts[0] : null,
 				actionName		= parts.length > 1 ? parts[1] : 'index';

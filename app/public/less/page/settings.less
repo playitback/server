@@ -3,5 +3,39 @@
 	margin: 89px 0 0 0;
 	padding: 10px;
 	color: #ffffff;
+
+	ul.nav {
+		width: 200px;
+		float: left;
+		margin-right: 10px;
+		border-bottom: none;
+
+		li {
+			width: 100%;
+			display: block;
+
+			a {
+				border-radius: 0;
+				background: rgba(255, 255, 255, 0.05);
+				color: #bebebe;
+
+				&:hover {
+					border: none;
+				}
+			}
+
+			&.active {
+				a {
+					border: none;
+					background: none;
+					color: #ffffff;
+				}
+			}
+		}
+	}
+	
+	.tab-content {
+		float: left;
+	}
 	
 }

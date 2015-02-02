@@ -42,7 +42,7 @@ var App = function() {
 		info: 'green',
 		warn: 'yellow',
 		error: 'red'
-	})
+	});
 	this.log.add(winston.transports.Console, { level: 'debug', colorize:true });
 	
 	// Listen for events
