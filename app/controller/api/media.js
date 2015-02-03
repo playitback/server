@@ -21,7 +21,7 @@ module.exports = {
             return this.errorResponse('Invalid type');
         }
 
-        model.findAll().then(function(media) {
+        model.findAll({ include: [ this.app.model.Poster ] }).then(function(media) {
             self.response(media);
         });
 
@@ -45,7 +45,7 @@ module.exports = {
             return this.errorResponse('Invalid type');
         }
 
-        model.find(this.req.params.id).then(function(media) {
+        model.find(this.req.params.id, { include: [ this.app.model.Poster ] }).then(function(media) {
             if (media) {
                self.response(media);
             }
