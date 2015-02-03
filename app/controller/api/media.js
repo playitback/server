@@ -14,7 +14,7 @@ module.exports = {
     indexAction: function() {
 
         var self = this,
-            model = this.app.model.modelForType(this.req.params.type);
+            model = this.app.model.mediaModelWithType(this.req.params.type);
 
         // Check for a valid model
         if (!model) {
@@ -38,7 +38,7 @@ module.exports = {
     mediaAction: function() {
 
         var self = this;
-        var model = this.app.model.modelForType(this.req.params.type);
+        var model = this.app.model.mediaModelWithType(this.req.params.type);
 
         // Check for a valid model
         if (!model) {
@@ -53,6 +53,7 @@ module.exports = {
                 self.errorResponse('Media not found', 404);
             }
         });
+
     }
 
 };
