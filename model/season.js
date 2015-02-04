@@ -13,22 +13,24 @@ module.exports = Season = function(app) {
 	}, {
 		classMethods: {
 			createWithRemoteResults: function(show, results, transaction, callback) {
-				var self 	= this,
-					seasons = [];
+				var self 			= this,
+					seasons 		= [],
+					totalSeasons 	= results.length;
 
-				console.log('create seasons', results.length);
 				results.forEach(function(result) {
 					self.createWithRemoteResult(show, result, transaction, function(error, season) {
-						console.log('created season', error);
 						if (error) {
 							callback(error, null);
 						}
 						else {
-							seasons.push(season);
+							if (season) {
+								seasons.push(season);
+							}
+							else {
+								totalSeasons--;
+							}
 
-							console.log(seasons.length, results.length);
-
-							if (seasons.length === results.length) {
+							if (seasons.length === totalSeasons) {
 								callback(null, seasons);
 							}
 						}
@@ -37,29 +39,32 @@ module.exports = Season = function(app) {
 			},
 			
 			createWithRemoteResult: function(show, result, transaction, callback) {
-				var self = this;
-
 				// If transaction is a function, it's the callback
 				if(typeof transaction == 'function') {
 					callback = transaction;
 					transaction = null;
 				}
 
-				self.mapWithRemoteResult(result).save({ transaction: transaction })
+				this.mapWithRemoteResult(result).save({ transaction: transaction })
 					.then(function(season) {
 						app.model.Poster.createWithRemoteResult(result, transaction)
-							.success(function(poster) {
+							.then(function(poster) {
 								season.setPoster(poster, { transaction: transaction })
 									.then(function() {
 										app.theMovieDb.getSeason(show.remoteId, season.number, function(err, remoteSeason) {
-											app.model.Media.createWithRemoteResults(remoteSeason.episodes, transaction, function(episodes) {
-												season.setEpisodes(episodes, { transaction: transaction }).then(function() {
-													callback(null, season);
-												})
-												.catch(function(error) {
-													callback(error, null);
+											if (remoteSeason.episodes.length > 0) {
+												app.model.Media.createWithRemoteResults(remoteSeason.episodes, transaction, function (episodes) {
+													season.setEpisodes(episodes, {transaction: transaction}).then(function () {
+														callback(null, season);
+													})
+													.catch(function (error) {
+														callback(error, null);
+													});
 												});
-											});
+											}
+											else {
+												callback(null, null);
+											}
 										});
 									});
 							});
