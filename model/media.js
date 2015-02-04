@@ -18,7 +18,8 @@ module.exports = function(app) {
 		Wanted: 		'wanted',			// Added, but not yet released or downloaded
 		Downloading:	'downloading',		// Currently being downloaded
 		RenameFailed: 	'renameFailed',		// Download finished, but failed to move it to downloaded dir
-		Downloaded:		'downloaded'		// Downloaded and moved to media directory
+		Downloaded:		'downloaded',		// Downloaded and moved to media directory
+		Skipped:		'skipped'			// Don't download
 	};
 	
 	var WatchStatus = {
@@ -67,7 +68,7 @@ module.exports = function(app) {
 			allowNull: 		false
 		},
 		state: {
-			type: 			Sequelize.ENUM(State.Wanted, State.Downloading, State.RenameFailed, State.Downloaded),
+			type: 			Sequelize.ENUM(State.Wanted, State.Downloading, State.RenameFailed, State.Downloaded, State.Skipped),
 			defaultValue:	State.Wanted
 		},
 		watchStatus: {
@@ -126,11 +127,8 @@ module.exports = function(app) {
 			WatchStatus: 	WatchStatus,
 			
 			getMediaForIndex: function(callback) {
-				var self = this;
-			
 				this.findAll({ where: { type: Type.Movie }}).success(function(medias) {
-					var response 		= [],
-						checkedShows 	= 0;
+					var response = [];
 										
 					if(medias.length === 0) {
 						callback(response);
@@ -232,9 +230,9 @@ module.exports = function(app) {
 
 								transaction = null;
 							}
-
-							app.log.error(TAG + 'Failed to create media', error)
 						}
+
+						app.log.error(TAG + 'Failed to create media', error)
 
 						callback(null);
 					});
@@ -256,11 +254,20 @@ module.exports = function(app) {
 
 					// Only set quality on initial creation, not update
 					media.quality = app.settings.get(app.model.Setting.Key.Media.DefaultQuality[type]);
+
+					if (type == Type.Movie) {
+						media.state = State.Wanted; // defaults to wanted, we download them all
+					}
+					else if (type == Type.TV) {
+						// Wanted if in the future, otherwise skip
+						media.state	= (moment(result.air_date).diff(moment()) > 0 ? State.Wanted : State.Skipped);
+					}
 				}
 
 				media.remoteId 	= result.id;
 				media.type		= type;
 
+				// Movie
 				if(type === Type.Movie) {
 					media.title 			= result.title;
 					media.availableDate 	= moment(result.release_date).toDate();
@@ -268,7 +275,7 @@ module.exports = function(app) {
 				
 				// TV - won't have a type as it's an episode
 				else {
-					media.availableDate 	= moment(result.air_date).toDate();
+					media.availableDate 	= moment(result.air_date);
 					media.number			= result.episode_number;
 					media.name				= result.name;
 				}
