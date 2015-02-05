@@ -53,10 +53,21 @@ define('view/media/info', [
 		},
 
 		updateUI: function() {
-			this.model.attributes.status = this.model.__proto__.status.bind(this.model);
+			var displayAttributes = this.model.attributes;
+
+			if (typeof this.model.__proto__.status == 'function') {
+				displayAttributes.status = this.model.__proto__.status.bind(this.model);
+			}
+			else {
+				displayAttributes.status = function() {};
+			}
+
+			if (typeof displayAttributes.firstAired != 'undefined') {
+				displayAttributes.availableDate = displayAttributes.firstAired;
+			}
 
 			this.$el.html('');
-			this.$el.append(this.template(this.model.attributes));
+			this.$el.append(this.template(displayAttributes));
 
 			this.loadPoster();
 		},
@@ -72,7 +83,6 @@ define('view/media/info', [
 			var poster = this.model.get('poster');
 
 			if(poster && typeof poster.url === 'string') {
-				console.log(poster.url);
 				image.src = poster.url;
 			}
 		},

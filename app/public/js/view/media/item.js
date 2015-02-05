@@ -6,8 +6,6 @@ define('view/media/item', ['backbone', 'jquery.unveil', 'spinner'], function(Bac
 		className: 'item col-md-2 col-sm-3 col-xs-6',
 		
 		inititialize: function() {
-			var self = this;
-			
 			this.bindedModelSync 		= this.modelSync.bind(this);
 			this.bindedModelRequest 	= this.modelRequest.bind(this);
 		},
@@ -45,8 +43,6 @@ define('view/media/item', ['backbone', 'jquery.unveil', 'spinner'], function(Bac
 		},
 		
 		createEvents: function() {
-			var self = this;
-		
 			this.model
 				.on('sync', this.modelSync, this);
 			
@@ -87,7 +83,8 @@ define('view/media/item', ['backbone', 'jquery.unveil', 'spinner'], function(Bac
 			this.loadPoster();
 
 			this.$el.off('click').click(function() {
-				window.location = '/#media/' + self.model.get('type') + '/' + self.model.get('id');
+				var type = self.model.get('type') || 'tv';
+				window.location = '/#media/' + type + '/' + self.model.get('id');
 			});
 			
 			this.$el.find('.overlay .status')
