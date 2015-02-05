@@ -10,7 +10,7 @@ module.exports = function(app, routes) {
 	this.app = app;
 	
 	function handle404() {
-		app.res.status(404).render('404');
+		router.res.status(404).render('404');
 	}
 	
 	function ucFirst(string) {
