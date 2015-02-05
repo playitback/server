@@ -108,14 +108,14 @@ module.exports = function(app) {
 		},
 		instanceMethods: {
 			indexInfo: function(callback) {
-				var response 	= this.values,
+				var response 	= this.toJSON(),
 					self		= this;
-							
-				this.getPoster().success(function(poster) {
-					if(poster) {
+
+				this.getPoster().then(function(poster) {
+					if (poster) {
 						response.poster = poster.values;
 					}
-										
+					
 					self.watchedStats(function(stats) {
 						response.stats = stats;
 						

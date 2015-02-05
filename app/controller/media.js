@@ -55,11 +55,11 @@ module.exports = {
 		}
 
 		self.app.model.sequelize.transaction().then(function(transaction) {
-			self.app.model.mediaModelWithType(type).createWithRemoteId(remoteId, transaction, function(error, show) {
-				if (!error && show) {
-					show.indexInfo(function (response) {
-						transaction.commit();
+			self.app.model.mediaModelWithType(type).createWithRemoteId(remoteId, transaction, function(error, media) {
+				if (!error && media) {
+					transaction.commit();
 
+					media.indexInfo(function (response) {
 						var responseObject = {};
 
 						responseObject[type] = response;
