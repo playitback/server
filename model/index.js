@@ -48,6 +48,23 @@ module.exports = function(app) {
 			throw 'invalid_type';
 		}
 	};
+
+	this.mediaUpdateWithTypeAndRemoteId = function(type, remoteId, callback) {
+		var self = this;
+
+		this.sequelize.transaction().then(function(transaction) {
+			self.mediaModelWithType(type).createWithRemoteId(remoteId, transaction, function(error, media) {
+				if (!error && media) {
+					transaction.commit();
+
+					callback(null, media);
+				}
+				else {
+					callback(error, null);
+				}
+			});
+		});
+	};
 	
 	DropboxSync.call(app);
 

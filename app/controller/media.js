@@ -54,23 +54,57 @@ module.exports = {
 			throw 'invalid or missing remoteId';
 		}
 
-		self.app.model.sequelize.transaction().then(function(transaction) {
-			self.app.model.mediaModelWithType(type).createWithRemoteId(remoteId, transaction, function(error, media) {
-				if (!error && media) {
-					transaction.commit();
+		this.processUpdateWithTypeAndRemoteId(type, remoteId);
 
-					media.indexInfo(function (response) {
-						var responseObject = {};
+		this.app.model.mediaUpdateWithTypeAndRemoteId(type, remoteId, function(error, media) {
+			if (error || !media) {
+				self.errorResponse(error);
+			}
+			else {
+				media.indexInfo(function (response) {
+					var responseObject = {};
 
-						responseObject[type] = response;
+					responseObject[type] = response;
 
-						self.response(responseObject);
-					});
-				}
-				else {
-					self.response(error);
-				}
-			});
+					self.response(responseObject);
+				});
+			}
+		});
+	},
+
+	putIndex: function() {
+		var self 		= this,
+			type 		= this.req.params.type,
+			mediaId 	= parseInt(this.req.params.mediaId);
+
+		if(typeof type != 'string') {
+			throw 'invalid or missing type';
+		}
+
+		if(typeof mediaId != 'number') {
+			throw 'invalid or missing mediaId';
+		}
+
+		this.app.model.mediaModelWithType(type).find({ where: { id: mediaId }}).then(function(media) {
+			if (media) {
+				self.app.model.mediaUpdateWithTypeAndRemoteId(type, media.remoteId, function(error, media) {
+					if (error || !media) {
+						self.errorResponse(error);
+					}
+					else {
+						media.indexInfo(function (response) {
+							var responseObject = {};
+
+							responseObject[type] = response;
+
+							self.response(responseObject);
+						});
+					}
+				});
+			}
+			else {
+				self.errorResponse(404);
+			}
 		});
 	},
 

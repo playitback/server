@@ -72,6 +72,7 @@ define('view/media/info', [
 			this.$el.append(this.template(displayAttributes));
 
 			this.loadPoster();
+			this.createEvents();
 		},
 
 		loadPoster: function() {
@@ -116,7 +117,9 @@ define('view/media/info', [
 		},
 
 		handleRefreshClick: function() {
-
+			console.log('handleRefreshClick');
+			// Re-save, will do the same as add, which updates if exists
+			this.model.save();
 		}
 
 	});
