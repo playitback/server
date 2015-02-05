@@ -22,7 +22,7 @@ html(lang="en")
 			script#media-info(type="text/html")
 				div.poster.col-md-3
 					div.img
-					|<span class="status <%= status() %>"></span>
+					|<span class="status <%= status() %>"><%= statusText() %></span>
 				div.info.col-md-9.col-sm
 					div.head.row
 						div.name.col-md-10.col-sm-12.col-xs-12

@@ -55,13 +55,15 @@ define('view/media/info', [
 		updateUI: function() {
 			var displayAttributes = this.model.attributes;
 
+			displayAttributes.status = function() {};
+			displayAttributes.statusText = function() {};
+
 			if (typeof this.model.__proto__.status == 'function') {
 				displayAttributes.status = this.model.__proto__.status.bind(this.model);
 			}
-			else {
-				displayAttributes.status = function() {};
+			if (typeof this.model.__proto__.unWatchedCount == 'function') {
+				displayAttributes.statusText = this.model.__proto__.unWatchedCount.bind(this.model);
 			}
-
 			if (typeof displayAttributes.firstAired != 'undefined') {
 				displayAttributes.availableDate = displayAttributes.firstAired;
 			}
