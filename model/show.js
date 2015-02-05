@@ -65,8 +65,10 @@ module.exports = function(app) {
 				var self = this;
 
 				this.find({ where: { remoteId: String(result.id) } }).then(function(show) {
+					show = self.mapWithRemoteResult(result, show);
+
 					// Create or update show object
-					self.create(self.mapWithRemoteResult(result, show), { transaction: transaction }).then(function (show) {
+					show.save({ transaction: transaction }).then(function (show) {
 						app.model.Poster.createWithRemoteResult(result, transaction).then(function (poster) {
 							show.setPoster(poster, { transaction: transaction }).then(function () {
 								app.model.Season.createWithRemoteResults(show, result.seasons, transaction, function (error, seasons) {
@@ -98,12 +100,12 @@ module.exports = function(app) {
 			},
 			
 			mapWithRemoteResult: function(result) {
-				return {
+				return this.build({
 					remoteId:		result.id,
 					title: 			result.name,
 					firstAired: 	moment(result.first_air_date).toDate(),
 					overview:		result.overview
-				};
+				});
 			}
 		},
 		instanceMethods: {

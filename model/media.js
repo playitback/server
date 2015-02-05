@@ -203,6 +203,8 @@ module.exports = function(app) {
 					// Create or update media object
 					media = self.mapWithRemoteResult(result, media);
 
+					console.log('create media', media);
+
 					media.save({ transaction: transaction }).then(function (media) {
 						if (typeof result.still_path === 'string') {
 							app.model.Poster.createWithRemoteResult(result, transaction).success(function (poster) {
@@ -239,17 +241,17 @@ module.exports = function(app) {
 				});
 			},
 			mapWithRemoteResult: function(result, media) {
+				var type;
+
+				// Search results
+				if(typeof result.media_type === 'string') {
+					type = result.media_type;
+				}
+				else if(typeof result.type === 'string') {
+					type = result.type;
+				}
+
 				if(!media) {
-					var type;
-
-					// Search results
-					if(typeof result.media_type === 'string') {
-						type = result.media_type;
-					}
-					else if(typeof result.type === 'string') {
-						type = result.type;
-					}
-
 					media = this.build();
 
 					// Only set quality on initial creation, not update
