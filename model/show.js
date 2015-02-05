@@ -146,7 +146,10 @@ module.exports = function(app) {
 						'FROM Seasons s ' +
 						'JOIN Media m ON m.SeasonId = s.Id ' +
 						'WHERE s.ShowId = \'' + this.id + '\' AND ' +
-							'm.state = \'' + app.model.Media.State.Downloaded + '\'', null, { plain: true, raw: true })
+							'm.watchStatus != \'' + app.model.Media.WatchStatus.Watched + '\'', null, {
+						plain: true,
+						raw: true
+					})
 					.then(function(rows) {
 						callback(rows.count);
 					});
