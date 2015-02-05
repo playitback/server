@@ -3,7 +3,7 @@ define('view/media/item', ['backbone', 'jquery.unveil', 'spinner'], function(Bac
 	return Backbone.View.extend({
 		
 		tagName: 'div',
-		className: 'item col-md-2 col-sm-3 col-xs-4',
+		className: 'item col-md-2 col-sm-3 col-xs-6',
 		
 		inititialize: function() {
 			var self = this;

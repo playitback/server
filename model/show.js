@@ -115,7 +115,7 @@ module.exports = function(app) {
 					if (poster) {
 						response.poster = poster.values;
 					}
-					
+
 					self.watchedStats(function(stats) {
 						response.stats = stats;
 						
