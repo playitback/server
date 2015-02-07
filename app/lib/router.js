@@ -1,3 +1,5 @@
+var fs = require('fs');
+
 module.exports = function(app, routes) {
 
 	if(typeof routes != 'object') {
@@ -82,7 +84,18 @@ module.exports = function(app, routes) {
 		});
 		
 		subHttpRequests.push(request);
-	}
+	};
+
+	this.outputImage = function(file) {
+		fs.readFile(file, function(err, data) {
+			if (err) {
+				return router.errorResponse(404);
+			}
+
+			router.res.writeHead('200', { 'Content-Type': 'image/png' });
+			router.res.end(data, 'binary');
+		});
+	};
 	
 	for(var uri in routes) {
 		app.server.all(uri, function(req, res) {

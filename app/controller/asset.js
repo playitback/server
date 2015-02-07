@@ -24,15 +24,16 @@ module.exports = {
 
         var urlHash = md5(url);
         var extension = url.split('.').slice(-1)[0];
-        var outputFile = __dirname + '/../../cache/assets/images/' + urlHash + '-' + profileRef + '.' + extension;
+        var outputFile = 'cache/assets/images/' + urlHash + '-' + profileRef + '.' + extension;
+        var outputPath = __dirname + '/../../' + outputFile;
         var self = this;
 
-        fs.exists(outputFile, function(exists) {
+        fs.exists(outputPath, function(exists) {
             if (exists) {
-                self.res.attachment(outputFile);
+                self.outputImage(outputPath);
             }
             else {
-                request(url).pipe(fs.createWriteStream(outputFile)).on('close', function() {
+                request(url).pipe(fs.createWriteStream(outputPath)).on('close', function() {
                     lwip.open(outputFile, function(err, image) {
                         var ratio = (image.width() < image.height() ?
                             (image.height() / image.width()) :
@@ -44,8 +45,8 @@ module.exports = {
 
                         image.batch()
                             .resize(profile.width, profile.height)
-                            .writeFile(outputFile, function(err) {
-                                self.res.attachment(outputFile);
+                            .writeFile(outputPath, function(err) {
+                                self.outputImage(outputPath);
                             });
                     });
                 });
