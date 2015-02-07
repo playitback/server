@@ -34,19 +34,21 @@ module.exports = {
             else {
                 request(url).pipe(fs.createWriteStream(outputFile)).on('close', function() {
                     lwip.open(outputFile, function(err, image) {
-                        var ratio = (image.width() > image.height() ?
+                        var ratio = (image.width() < image.height() ?
                             (image.height() / image.width()) :
                             (image.width() / image.height()));
 
+                        if(typeof profile.height != 'number') {
+                            profile.height = (ratio * profile.width);
+                        }
+
                         image.batch()
-                            .scale(ratio)
+                            .resize(profile.width, profile.height)
                             .writeFile(outputFile, function(err) {
                                 self.res.attachment(outputFile);
                             });
                     });
                 });
-
-
             }
         });
     }
