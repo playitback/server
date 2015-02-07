@@ -108,7 +108,7 @@ define('view/media/item', ['backbone', 'jquery.unveil', 'spinner'], function(Bac
 				self.$el.find('.poster').css('background-image', 'url(' + this.src + ')');
 			};
 			
-			image.src = this.model.get('poster').url;
+			image.src = '/asset/image?url=' + encodeURIComponent(this.model.get('poster').url) + '&profile=grid';
 		}
 		
 	});

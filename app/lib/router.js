@@ -92,7 +92,9 @@ module.exports = function(app, routes) {
 				return router.errorResponse(404);
 			}
 
-			router.res.writeHead('200', { 'Content-Type': 'image/png' });
+			if (!router.res.headersSent) {
+				router.res.writeHead('200', {'Content-Type': 'image/png'});
+			}
 			router.res.end(data, 'binary');
 		});
 	};
