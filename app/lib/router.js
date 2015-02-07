@@ -23,8 +23,8 @@ module.exports = function(app, routes) {
 		}
 	}
 	
-	this.view = function(name) {
-		this.res.render(name);
+	this.view = function(name, data) {
+		this.res.render(name, data);
 	};
 	
 	this.response = function(data, status) {
@@ -47,7 +47,7 @@ module.exports = function(app, routes) {
 		}
 				
 		if(router.req.header('Accept').indexOf('text/html') > -1) {
-			this.view('400');
+			this.view('400', { error: error });
 		}
 		else {
 			this.response({ error: error }, status);
@@ -112,7 +112,7 @@ module.exports = function(app, routes) {
 				controller = require('../controller/' + controllerName);
 			}
 			catch(e) {
-				router.errorResponse(400);
+				router.errorResponse(e.message, 400);
 				
 				return;
 			}

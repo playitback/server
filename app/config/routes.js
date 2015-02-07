@@ -8,6 +8,7 @@ module.exports = {
 	'/media/:type/:mediaId/season/:seasonId':		'media@season',
 	'/settings':									'settings@index',
 	'/setting/:type':								'settings@index',
+	'/asset/image':									'asset@image',
 
 	// API
 	'/api':											'api/index@index',

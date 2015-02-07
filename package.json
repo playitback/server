@@ -26,6 +26,9 @@
 		"xhr2": "0.0.7",
 		"themoviedb": "https://github.com/playitback/themoviedb/tarball/master",
 		"pirateship": "https://github.com/playitback/pirateship/tarball/master",
-	  	"node-prowl": "0.1.7"
+	  	"node-prowl": "0.1.7",
+		"lwip": "0.0.6",
+		"MD5": "1.2.1",
+		"request": "2.53.0"
 	}
 }

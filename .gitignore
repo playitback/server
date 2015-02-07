@@ -3,3 +3,4 @@ playback.log
 .idea
 mediamanager.sqlite-journal
 media
+cache/assets/images
