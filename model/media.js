@@ -320,16 +320,9 @@ module.exports = function(app) {
 				var self = this;
 				
 				if(typeof torrent === 'undefined' || !torrent) {
-					app.model.Torrent.fetchSuitableWithMedia(this, function() {
-						self.getTorrents({ orderBy: 'score', limit: 1 }).then(function(torrent) {
-							if(torrent.length == 0) {
-								app.log.debug(TAG + 'No torrent found with suitable highest score');
-							}
-							else {
-								app.log.debug(TAG + 'Found torrent with suitable highest score');
-								
-								torrent[0].download();
-							}
+					this.loadBestTorrentAndDownload(function() {
+						app.model.Torrent.fetchSuitableWithMedia(self, function() {
+							self.loadBestTorrentAndDownload();
 						});
 					});
 					
@@ -337,6 +330,24 @@ module.exports = function(app) {
 				}
 				
 				torrent.download();
+			},
+
+			loadBestTorrentAndDownload: function(failCallback) {
+				this.getTorrents({ orderBy: 'score', limit: 1 }).then(function(torrent) {
+					if (torrent.length == 0) {
+						if (typeof failCallback == 'function') {
+							failCallback();
+						}
+						else {
+							app.log.debug(TAG + 'No torrent found with suitable highest score');
+						}
+					}
+					else {
+						app.log.debug(TAG + 'Found torrent with suitable highest score');
+
+						torrent[0].download();
+					}
+				});
 			},
 
 			/**
@@ -350,14 +361,16 @@ module.exports = function(app) {
 				else if(this.type === Type.TV) {
 					var episode = this;
 				
-					/*this.getSeason().success(function(season) {
+					this.getSeason().success(function(season) {
 						season.getShow().success(function(show) {
 							var prefixedSeasonNumber = (season.number < 10 ? '0' : '') + season.number,
 								prefixedEpisodeNumber	= (episode.number < 10 ? '0' : '') + episode.number;
 						
-							callback(show.title.replace(' ', '.') + ' ' + 'S' + prefixedSeasonNumber + 'E' + prefixedEpisodeNumber + '|' + season.number + 'x' + prefixedEpisodeNumber + '|' + prefixedSeasonNumber + 'x' + prefixedEpisodeNumber);
+							callback(show.title.replace(' ', '.') + ' ' + 'S' + prefixedSeasonNumber + 'E' +
+								prefixedEpisodeNumber + '|' + season.number + 'x' + prefixedEpisodeNumber + '|' +
+								prefixedSeasonNumber + 'x' + prefixedEpisodeNumber);
 						});
-					});*/
+					});
 				}
 			},
 
