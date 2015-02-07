@@ -1,19 +1,25 @@
+var fs = require('fs');
+
 module.exports = function(app) {
 	
 	var config = {};
-	
-	try {
-		config = require('../config/' + app.env);
-	}
-	catch(e) {
-		throw 'Configuration for environment (' + app.env + ') doesn\'t exist.';
-	}
+
+	var recursivelyLoadConfig = function(directory) {
+		fs.readdirSync(directory).forEach(function(fileName) {
+			if (fileName.indexOf('.js') > -1) {
+				config[fileName.replace('.js', '')] = require(directory + '/' + fileName);
+			}
+		});
+	};
+
+	recursivelyLoadConfig(__dirname + '/../config');
+	recursivelyLoadConfig(__dirname + '/../config/' + app.env);
 
 	this.get = function(key) {
 		var keyParts = key.split('.'),
 			value = null;
 
-		console.log('get config with key', key);
+		app.log.debug('get config with key', key);
 
 		for(var i in keyParts) {
 			if(value && typeof value[keyParts[i]] != 'undefined') {
