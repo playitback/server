@@ -157,13 +157,20 @@ module.exports = function(media, data) {
 	};
 
 	var score = 0;
+	var type = media.type;
+
+	if (type == 'tv') {
+
+	}
+	else if (type == 'movie') {
+		score += nameRatioScore(data.magnet.dn, media.get('title'));
+		score += namePositionScore(data.magnet.dn, media.get('title'), media.get('availableDate').getFullYear());
+		score += duplicateScore(data.magnet.dn, media.get('title'));
+	}
 
 	score += nameScore(data.magnet.dn, data.year);
-	score += nameRatioScore(data.magnet.dn, media.get('title'));
-	score += namePositionScore(data.magnet.dn, media.get('title'), media.get('availableDate').getFullYear());
 	score += sizeScore(data.size);
 	score += providerScore();
-	score += duplicateScore(data.magnet.dn, media.get('title'));
 	score += partialIgnoredScore();
 	score += seederScore(data.seeds, data.leaches);
 
