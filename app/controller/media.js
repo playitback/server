@@ -54,8 +54,6 @@ module.exports = {
 			throw 'invalid or missing remoteId';
 		}
 
-		this.processUpdateWithTypeAndRemoteId(type, remoteId);
-
 		this.app.model.mediaUpdateWithTypeAndRemoteId(type, remoteId, function(error, media) {
 			if (error || !media) {
 				self.errorResponse(error);
