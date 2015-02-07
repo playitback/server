@@ -153,13 +153,13 @@ module.exports = function(app) {
 				
 				app.theMovieDb.getMovie(remoteId, function(err, result) {
 					if(err) {
-						callback(err);
+						callback(err, null);
 						
 						return;
 					}
 
-					self.createWithRemoteResult(result, transaction, function (show) {
-						callback(show);
+					self.createWithRemoteResult(result, transaction, function (media) {
+						callback(null, media);
 					});
 				});
 			},
