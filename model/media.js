@@ -203,8 +203,6 @@ module.exports = function(app) {
 					// Create or update media object
 					media = self.mapWithRemoteResult(result, media);
 
-					console.log('create media', media);
-
 					media.save({ transaction: transaction }).then(function (media) {
 						if (typeof result.still_path === 'string') {
 							app.model.Poster.createWithRemoteResult(result, transaction).success(function (poster) {

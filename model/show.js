@@ -69,18 +69,25 @@ module.exports = function(app) {
 
 					// Create or update show object
 					show.save({ transaction: transaction }).then(function (show) {
-						app.model.Poster.createWithRemoteResult(result, transaction).then(function (poster) {
-							show.setPoster(poster, { transaction: transaction }).then(function () {
-								app.model.Season.createWithRemoteResults(show, result.seasons, transaction, function (error, seasons) {
-									if (error || !seasons) {
-										callback(error, null);
-									}
-									else {
-										show.setSeasons(seasons, {transaction: transaction}).then(function () {
-											console.log('added seasons to show');
-											callback(null, show);
-										});
-									}
+						// Attempt to load the poster and delete it before creating new one.
+						show.getPoster().then(function(poster) {
+							if (poster) {
+								poster.destroy({ force: true });
+							}
+
+							app.model.Poster.createWithRemoteResult(result, transaction).then(function (poster) {
+								show.setPoster(poster, {transaction: transaction}).then(function () {
+									app.model.Season.createWithRemoteResults(show, result.seasons, transaction, function (error, seasons) {
+										if (error || !seasons) {
+											callback(error, null);
+										}
+										else {
+											show.setSeasons(seasons, {transaction: transaction}).then(function () {
+												console.log('added seasons to show');
+												callback(null, show);
+											});
+										}
+									});
 								});
 							});
 						});
@@ -99,8 +106,12 @@ module.exports = function(app) {
 				});
 			},
 			
-			mapWithRemoteResult: function(result) {
-				return this.build({
+			mapWithRemoteResult: function(result, show) {
+				if (!show) {
+					show = this.build();
+				}
+
+				return show.set({
 					remoteId:		result.id,
 					title: 			result.name,
 					firstAired: 	moment(result.first_air_date).toDate(),
