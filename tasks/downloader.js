@@ -35,7 +35,7 @@ module.exports = function(app) {
                 torrentHashMap[transmissionTorrents.torrents[t]['hashString']] = transmissionTorrents.torrents[t];
             }
 
-            app.model.Media.findAll({where: {state: app.model.Media.State.Downloading}})
+            app.model.Media.findAll({ where: { state: app.model.Media.State.Downloading }})
                 .then(function (downloadingMedia) {
                     downloadingMedia.forEach(function (media) {
                         media.getDownloadingTorrent().then(function(torrent) {
@@ -60,13 +60,15 @@ module.exports = function(app) {
                             app.log.debug(TAG + 'Check download for media ' + media.id + ', transmissionId: ' +
                                 transmissionInfo.id + ', percentage: ' + transmissionInfo.percentDone);
 
-                            // If the torrent has finished, start rename process
-                            if (typeof transmissionInfo.percentDone == 'number' && transmissionInfo.percentDone == 100) {
-                                media.moveToMediaDirectory(transmissionInfo);
-                            }
-                            else {
-                                app.log.debug(TAG + 'Media not finished');
-                            }
+                            media.updateAttributes({ downloadProgress: transmissionInfo.percentDone }).then(function() {
+                                // If the torrent has finished, start rename process
+                                if (typeof transmissionInfo.percentDone == 'number' && transmissionInfo.percentDone == 100) {
+                                    media.moveToMediaDirectory(transmissionInfo);
+                                }
+                                else {
+                                    app.log.debug(TAG + 'Media not finished');
+                                }
+                            });
                         });
                     });
                 });

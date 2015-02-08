@@ -2,39 +2,38 @@
     position: absolute;
     right: 7px;
     top: 7px;
-    height: 17px;
+    height: 25px;
     padding: 0 4px;
-    line-height: 17px;
-    min-width: 17px;
-    border-radius: 9px;
-    background-color: #FF992F;
+    line-height: 25px;
+    min-width: 25px;
+    border-radius: 6px;
+    background-color: rgba(181, 181, 181, .7);
     display: block;
     color: white;
     text-transform: uppercase;
     font-size: 10px;
     text-align: center;
+    background-position: center center;
+    font-size: 12px;
 
     /* Not yet available for download. */
     &.wanted {
         display: none;
     }
 
-    /* Snatched and downloaded */
+    /* Snatched and downloading */
     &.downloading {
-        background: #B5B5B5;
+        .at2x('/img/content/media/item/download_arrow.png', 6px, 11px);
+
+        background-position: 5px 50%;
+        padding: 0 5px 0 15px;
     }
 
-    /* Download complete and ready to be watched */
-    &.downloaded {
-        .at2x('/img/content/media/item/seen_icon.png', 13px, 11px);
-
-        background: #B5B5B5;
+    &.unwatched, &.watched {
+        .at2x('/img/content/media/item/status_tick.png', 14px, 10px);
     }
 
-    /* Watched */
     &.watched {
-        .at2x('/img/content/media/item/seen_icon.png', 13px, 11px);
-
-        background-color: #DA7915;
+        background-color: rgba(150, 232, 68, 0.7);
     }
 }

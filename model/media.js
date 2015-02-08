@@ -91,6 +91,10 @@ module.exports = function(app) {
 			type:			qualityType(),
 			allowNull:		false
 		},
+		downloadProgress: {
+			type:			Sequelize.FLOAT,
+			default:		0
+		},
 		
 		// Movie only
 		title: {

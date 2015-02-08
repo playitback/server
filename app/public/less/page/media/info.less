@@ -15,11 +15,22 @@
         .status {
             .status;
 
-            line-height: 24px;
-            height: 24px;
-            border-radius: 12px;
-            min-width: 24px;
-            font-size: 12px;
+            line-height: 35px;
+            height: 35px;
+            min-width: 30px;
+            font-size: 16px;
+            top: 10px;
+            right: 10px;
+            background-position: 10px 50% !important;
+            padding: 0 10px 0 26px !important;
+
+            &.downloading {
+                .at2x('/img/content/media/item/download_arrow_large.png', 10px, 18px);
+            }
+
+            &.unwatched, &.watched {
+                .at2x('/img/content/media/item/status_tick_large.png', 17px, 13px);
+            }
         }
     }
 

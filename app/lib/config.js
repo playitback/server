@@ -18,7 +18,7 @@ module.exports = function(app) {
 	this.get = function(key) {
 		var keyParts = key.split('.'),
 			value = null;
-		
+
 		for(var i in keyParts) {
 			if(value && typeof value[keyParts[i]] != 'undefined') {
 				value = value[keyParts[i]];

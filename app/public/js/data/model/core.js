@@ -35,6 +35,10 @@ define('model/core', ['backbone', 'const/index'], function(Backbone, Const) {
 		},
 		
 		unWatchedCount: function() {
+			if (this.has('downloadProgress')) {
+				return parseFloat(this.get('downloadProgress')).toFixed(2) + '%';
+			}
+
 			if(this.has('stats')) {
 				var stats = this.get('stats');
 				
