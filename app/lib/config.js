@@ -18,9 +18,7 @@ module.exports = function(app) {
 	this.get = function(key) {
 		var keyParts = key.split('.'),
 			value = null;
-
-		app.log.debug('get config with key', key);
-
+		
 		for(var i in keyParts) {
 			if(value && typeof value[keyParts[i]] != 'undefined') {
 				value = value[keyParts[i]];

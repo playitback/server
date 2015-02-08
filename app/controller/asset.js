@@ -30,7 +30,6 @@ module.exports = {
 
         fs.exists(outputPath, function(exists) {
             if (exists) {
-                console.log('image exists', outputPath);
                 self.outputImage(outputPath);
             }
             else {
