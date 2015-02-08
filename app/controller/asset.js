@@ -25,11 +25,12 @@ module.exports = {
         var urlHash = md5(url);
         var extension = url.split('.').slice(-1)[0];
         var outputFile = 'cache/assets/images/' + urlHash + '-' + profileRef + '.' + extension;
-        var outputPath = __dirname + '/../../' + outputFile;
+        var outputPath = __dirname.replace('app/controller', '') + outputFile;
         var self = this;
 
         fs.exists(outputPath, function(exists) {
             if (exists) {
+                console.log('image exists', outputPath);
                 self.outputImage(outputPath);
             }
             else {

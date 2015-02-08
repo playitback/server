@@ -1,18 +1,18 @@
-var fs = require('fs');
+var fs = require('fs'),
+	Request = require('./request');
 
 module.exports = function(app, routes) {
 
 	if(typeof routes != 'object') {
 		throw 'Invalid routes definition. Must be an object.';
 	}
-	
-	var subHttpRequests = [],
-		router = this;
 
-	this.app = app;
-	
-	function handle404() {
-		router.res.status(404).render('404');
+	var router = this;
+
+	this.subHttpRequests = [];
+
+	function handle404(res) {
+		res.status(404).render('404');
 	}
 	
 	function ucFirst(string) {
@@ -20,84 +20,10 @@ module.exports = function(app, routes) {
 	}
 	
 	function cancelSubHttpRequests() {
-		for(var key in subHttpRequests) {
-			subHttpRequests[key].abort();
+		for(var key in router.subHttpRequests) {
+			router.subHttpRequests[key].abort();
 		}
 	}
-	
-	this.view = function(name, data) {
-		this.res.render(name, data);
-	};
-	
-	this.response = function(data, status) {
-		if(typeof status === 'undefined') {
-			status = 200;
-		}
-
-		if (typeof data == 'object' && this.rootKey) {
-			var prefixedData = {};
-			prefixedData[this.rootKey] = data;
-			data = prefixedData;
-		}
-						
-		this.res.json(status, data);
-	};
-	
-	this.errorResponse = function(error, status) {
-		if(typeof status === 'undefined') {
-			status = 400;
-		}
-				
-		if(router.req.header('Accept').indexOf('text/html') > -1) {
-			this.view('400', { error: error });
-		}
-		else {
-			this.response({ error: error }, status);
-		}
-	};
-	
-	this.input = function(key) {
-		var query = this.req.query;
-				
-		if(typeof query[key] != 'undefined') {
-			return query[key];
-		}
-		
-		return null;
-	};
-	
-	this.addSubHttpRequest = function(request) {
-		var self = this;
-		
-		var removeRequest = function() {
-			subHttpRequests.splice(subHttpRequests.indexOf(this), 1);
-		};
-	
-		request.on('abort', function() {
-			removeRequest();
-		});
-		request.on('complete', function() {
-			removeRequest();
-		});
-		request.on('error', function() {
-			removeRequest();
-		});
-		
-		subHttpRequests.push(request);
-	};
-
-	this.outputImage = function(file) {
-		fs.readFile(file, function(err, data) {
-			if (err) {
-				return router.errorResponse(404);
-			}
-
-			if (!router.res.headersSent) {
-				router.res.writeHead('200', {'Content-Type': 'image/png'});
-			}
-			router.res.end(data, 'binary');
-		});
-	};
 	
 	for(var uri in routes) {
 		app.server.all(uri, function(req, res) {
@@ -106,28 +32,26 @@ module.exports = function(app, routes) {
 			});
 		
 			var route = routes[req.route.path],
-				parts = route.split('@');
-								
-			router.req = req;
-			router.res = res;
-			router.rootKey = req.body.rootKey || req.query.rootKey || null;
-			
+				parts = route.split('@'),
+				rootKey = req.body.rootKey || req.query.rootKey || null;
+
 			var controllerName = parts.length > 0 ? parts[0] : null,
 				actionName		= parts.length > 1 ? parts[1] : 'index';
 								
 			if(!controllerName) {
-				handle404();
+				handle404(res);
 				
 				return;
 			}
 			
 			var controller;
-				
+			var request = new Request(app, req, res, rootKey);
+
 			try {
 				controller = require('../controller/' + controllerName);
 			}
 			catch(e) {
-				router.errorResponse(e.message, 400);
+				request.errorResponse(e.message, 400);
 				
 				return;
 			}
@@ -139,19 +63,19 @@ module.exports = function(app, routes) {
 			}
 						
 			if(typeof action != 'function') {
-				handle404();
+				handle404(res);
 				
 				return;
 			}
 			
 			try {
-				action.call(router);
+				action.call(request);
 			}
 			catch(e) {
 				throw e;
 				console.log('error: ' + e);
 			
-				router.errorResponse.call(router, e);
+				request.errorResponse.call(request, e);
 			}
 		});
 	}

@@ -2,7 +2,7 @@ module.exports = {
 
 	getIndex: function() {
 		var self = this;
-	
+
 		this.app.model.Setting.findAll().then(function(settings) {
 			self.response({ settings: settings });
 		});
