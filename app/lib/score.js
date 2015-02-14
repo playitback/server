@@ -93,7 +93,16 @@ module.exports = function(media, data) {
 	 * @param size
 	 * @returns {number}
 	 */
-	var sizeScore = function(size) {
+	var sizeScore = function(size, sizeUnit) {
+		if (typeof size != 'number') {
+			return 0;
+		}
+
+		// Convert GB to MB
+		if (sizeUnit == 'GiB') {
+			size *= 1024;
+		}
+
 		return (typeof size == 'number' && size > 0 ? 0 : -20);
 	};
 
@@ -159,17 +168,22 @@ module.exports = function(media, data) {
 	var score = 0;
 	var type = media.type;
 
-	if (type == 'tv') {
+	var mediaTitle;
 
+	if (type == 'tv') {
+		mediaTitle = media.showName + ' ' + media.showYear + ' ' +
+			'S' + (media.seasonNumber < 10 ? '0' : '') + media.seasonNumber +
+			'E' + (media.number < 10 ? '0' : '') + media.number;
 	}
 	else if (type == 'movie') {
-		score += nameRatioScore(data.magnet.dn, media.get('title'));
-		score += namePositionScore(data.magnet.dn, media.get('title'), media.get('availableDate').getFullYear());
-		score += duplicateScore(data.magnet.dn, media.get('title'));
+		mediaTitle = media.title;
 	}
 
+	score += nameRatioScore(data.magnet.dn, mediaTitle);
+	score += namePositionScore(data.magnet.dn, mediaTitle, media.availableDate.getFullYear());
+	score += duplicateScore(data.magnet.dn, mediaTitle);
 	score += nameScore(data.magnet.dn, data.year);
-	score += sizeScore(data.size);
+	score += sizeScore(data.size, data.sizeUnit);
 	score += providerScore();
 	score += partialIgnoredScore();
 	score += seederScore(data.seeds, data.leaches);

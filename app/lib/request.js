@@ -31,7 +31,7 @@ module.exports = function(app, req, res, rootKey) {
             status = 400;
         }
 
-        if(router.req.header('Accept').indexOf('text/html') > -1) {
+        if(req.header('Accept').indexOf('text/html') > -1) {
             this.view('400', { error: error });
         }
         else {

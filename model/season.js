@@ -67,7 +67,7 @@ module.exports = Season = function(app) {
 										.then(function () {
 											app.theMovieDb.getSeason(show.remoteId, season.number, function (err, remoteSeason) {
 												if (remoteSeason.episodes.length > 0) {
-													app.model.Media.createWithRemoteResults(remoteSeason.episodes, transaction, function (episodes) {
+													app.model.Media.createWithRemoteResults(remoteSeason.episodes, transaction, season, show, function (episodes) {
 														season.setEpisodes(episodes, {transaction: transaction}).then(function () {
 															callback(null, season);
 														})

@@ -122,6 +122,24 @@ module.exports = function(app) {
 			validate: {
 				notNullIfTvShow: notNullIfTvShow
 			}
+		},
+		seasonNumber: {
+			type:			Sequelize.INTEGER,
+			validate: {
+				notNullIfTvShow: notNullIfTvShow
+			}
+		},
+		showName: {
+			type:			Sequelize.STRING,
+			validate: {
+				notNullIfTvShow: notNullIfTvShow
+			}
+		},
+		showYear: {
+			type:		Sequelize.INTEGER,
+			validate: {
+				notNullIfTvShow: notNullIfTvShow
+			}
 		}
 	},
 	{
@@ -168,9 +186,14 @@ module.exports = function(app) {
 				});
 			},
 			
-			createWithRemoteResults: function(results, transaction, callback) {
+			createWithRemoteResults: function(results, transaction, season, show, callback) {
 				if(typeof results != 'object' || typeof results.length != 'number') {
 					throw 'Invalid results array';
+				}
+
+				// Season number / show name not required
+				if (typeof seasonNumber == 'function') {
+					callback = seasonNumber;
 				}
 				
 				if(typeof callback != 'function') {
@@ -181,7 +204,7 @@ module.exports = function(app) {
 					self	= this;
 				
 				results.forEach(function(result) {
-					self.createWithRemoteResult(result, transaction, function(episode) {
+					self.createWithRemoteResult(result, transaction, season, show, function(episode) {
 						media.push(episode);
 
 						if(media.length === results.length) {
@@ -190,8 +213,12 @@ module.exports = function(app) {
 					});
 				});
 			},
-			createWithRemoteResult: function(result, transaction, callback) {
+			createWithRemoteResult: function(result, transaction, season, show, callback) {
 				var self = this;
+
+				if (typeof season == 'function') {
+					callback = season;
+				}
 								
 				result.type = typeof result.episode_number === 'number' ? 
 					Type.TV : 
@@ -205,7 +232,7 @@ module.exports = function(app) {
 
 				this.find({ where: { remoteId: String(result.id) } }).then(function(media) {
 					// Create or update media object
-					media = self.mapWithRemoteResult(result, media);
+					media = self.mapWithRemoteResult(result, media, season, show);
 
 					media.save({ transaction: transaction }).then(function (media) {
 						if (typeof result.still_path === 'string') {
@@ -242,7 +269,7 @@ module.exports = function(app) {
 					});
 				});
 			},
-			mapWithRemoteResult: function(result, media) {
+			mapWithRemoteResult: function(result, media, season, show) {
 				var type;
 
 				// Search results
@@ -282,6 +309,9 @@ module.exports = function(app) {
 					media.availableDate 	= moment(result.air_date);
 					media.number			= result.episode_number;
 					media.name				= result.name;
+					media.seasonNumber		= season.number;
+					media.showName			= show.title;
+					media.showYear			= show.firstAired.getFullYear();
 				}
 
 				media.overview = result.overview;
