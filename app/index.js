@@ -9,6 +9,7 @@ var express 		= require('express'),
 	Bootstrap		= require('./bootstrap'),
 	Router			= require('./lib/router'),
 	Notification 	= require('./lib/notification'),
+	StreamCoder		= require('./lib/streamcoder'),
 	routes 			= require('./config/routes');
 
 var App = function() {
@@ -31,6 +32,7 @@ var App = function() {
 	this.settings 		= new Settings(this);
 	this.tasks			= new Tasks(this);
 	this.notification	= new Notification(this);
+	this.streamCoder	= new StreamCoder(this);
 	//this.broadcast		= require('./lib/broadcast')(this);
 
 	// Initialize API libraries
