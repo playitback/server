@@ -111,7 +111,17 @@ div#media {
 		font-weight: 500;
 	}
 	
-	&.tvshows {
+	&.tv {
+		.items {
+			.item {
+				.status {
+					&.unwatched {
+						background-image: none;
+					}
+				}
+			}
+		}
+
 		.no-items {
 			.at2x('/img/content/media/tv_icon_large.png', 129px, 129px);
 			
