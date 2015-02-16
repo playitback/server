@@ -64,22 +64,30 @@ module.exports = function() {
 			}
 		});
 	};
-	
-	// Updates a model on dropbox
+
+	/**
+	 * Sync a local object with Dropbox
+	 *
+	 * @param object
+	 */
 	var syncModel = function(object) {
+		if (typeof object.type == 'string' && object.type == app.model.Media.Type.TV) {
+			// Ignore episodes. We only want TV shows & movies
+			return;
+		}
+
 		app.log.debug(TAG + 'Syncing model to Dropbox - ' + object.Model.tableName + ' (' + object.id + ')');
 	
-		var table 		= app.datastore.getTable(object.Model.tableName);
-		var remoteModel = table.get(object.remoteId);
+		var table = app.datastore.getTable(object.Model.tableName);
+		var record = table.get(object.dropboxId);
 		
-		if(!remoteModel) {
+		if(!record) {
 			app.log.debug(TAG + 'Object doesn\'t exist on Dropbox. Creating.');
-			
-			remoteModel.createWithRemoteId(object.remoteId, function() {});
+
+			record = table.insert();
 		}
-		else {
-			app.log.debug(TAG + 'Object exists on Dropbox. Ignoring.');
-		}
+
+		record.update(object.dropboxData());
 	};
 
 	/**
@@ -171,7 +179,7 @@ module.exports = function() {
 		});
 	};
 
-	// Listen for the models to succesfully sync with the
+	// Listen for the models to successfully sync with the
 	app.on('model-sync', function() {
 		app.log.debug(TAG + 'Model synced, configuring dropbox sync');
 

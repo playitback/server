@@ -659,6 +659,13 @@ module.exports = function(app) {
 				if (typeof quality == 'string' && typeof qualities[quality] == 'object') {
 					return qualities[quality];
 				}
+			},
+
+			dropboxData: function() {
+				return {
+					remoteId: this.remoteId,
+					downloadProgress: this.downloadProgress
+				};
 			}
 		}
 	});
