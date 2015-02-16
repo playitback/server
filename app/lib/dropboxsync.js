@@ -176,9 +176,9 @@ module.exports = function(app) {
 	};
 
 	// Listen for the models to successfully sync with the
-	app.on('model-sync', function() {
+	/*app.on('model-sync', function() {
 		app.log.debug(TAG + 'Model synced, configuring dropbox sync');
 
 		loadDropboxToken();
-	});
+	});*/
 };

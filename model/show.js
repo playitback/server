@@ -120,6 +120,11 @@ module.exports = function(app) {
 			}
 		},
 		instanceMethods: {
+
+			/**
+			 *
+			 * @param callback
+			 */
 			indexInfo: function(callback) {
 				var response 	= this.toJSON(),
 					self		= this;
@@ -136,6 +141,11 @@ module.exports = function(app) {
 					});
 				});
 			},
+
+			/**
+			 *
+			 * @param callback
+			 */
 			watchedStats: function(callback) {
 				var self = this,
 					stats = {
@@ -153,6 +163,11 @@ module.exports = function(app) {
 					});
 				});
 			},
+
+			/**
+			 *
+			 * @param callback
+			 */
 			totalEpisodeCount: function(callback) {
 				app.model.sequelize
 					.query('SELECT COUNT(m.id) AS count ' +
@@ -167,16 +182,35 @@ module.exports = function(app) {
 						callback(rows.count);
 					});
 			},
+
+			/**
+			 *
+			 * @param callback
+			 */
 			watchedEpisodeCount: function(callback) {
 				app.model.sequelize
-					.query('SELECT COUNT(m.id) AS count ' +
+					.query(
+						'SELECT COUNT(m.id) AS count ' +
 						'FROM Seasons s ' +
 						'JOIN Media m ON m.SeasonId = s.Id ' +
 						'WHERE s.ShowId = \'' + this.id + '\' AND ' +
-							'm.watchStatus = \'' + app.model.Media.WatchStatus.Watched + '\'', null, { plain: true, raw: true })
+							'm.watchStatus = \'' + app.model.Media.WatchStatus.Watched + '\'',
+						null,
+						{
+							plain: true,
+							raw: true
+						}
+					)
 					.then(function(rows) {
 						callback(rows.count);
 					});
+			},
+
+			/**
+			 *
+			 */
+			dropboxData: function() {
+
 			}
 		}
 	});
