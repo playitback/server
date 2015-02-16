@@ -37,3 +37,13 @@ html(lang="en")
 								a.toggle-watched.unwatched
 						span.release.col-md-3.col-sm-3.col-xs-4!='<%= availableDate.format(\'Do MMMM YYYY\') %>'
 					div.description!='<%= overview %>'
+					div.seasons
+			script#media-item(type="text/html")
+				div.poster
+				div.overlay
+					|<i class="status <%= status() %>"><%= statusText() %></i>
+				div.attr
+					label!='<%= title %>'
+					span!='<%= year %>'
+				div.progress-overlay
+					div.spinner

@@ -51,9 +51,10 @@ define('model/core', ['backbone', 'const/index'], function(Backbone, Const) {
 		year: function() {
 			if(this.has('firstAired')) {
 				return this.get('firstAired').format('YYYY');
-			}
-			else if(this.has('year')) {
+			} else if(this.has('year')) {
 				return this.get('year');
+			} else if (this.has('availableDate')) {
+				return this.get('availableDate').format('YYYY');
 			}
 		}
 		

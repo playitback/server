@@ -1,7 +1,8 @@
-define('view/media/item', ['backbone', 'jquery.unveil', 'spinner'], function(Backbone, jqUnveil, Spinner) {
+define('view/media/item', ['backbone', 'jquery.unveil', 'spinner', 'moment'], function(Backbone, jqUnveil, Spinner, moment) {
 	
 	return Backbone.View.extend({
-		
+
+		template: 	_.template($('script#media-item').html()),
 		tagName: 'div',
 		className: 'item col-md-2 col-sm-3 col-xs-6',
 		
@@ -11,31 +12,6 @@ define('view/media/item', ['backbone', 'jquery.unveil', 'spinner'], function(Bac
 		},
 		
 		render: function() {
-			this.$el.append(
-				$('<div></div>', { 'class': 'poster' })
-			)
-			.append(
-				$('<div></div>', { 'class': 'overlay' })
-					.append(
-						$('<i></i>', { 'class': 'status' })
-					)
-			)
-			.append(
-				$('<div></div>', { 'class': 'attr' })
-					.append(
-						$('<label></label>')
-					)
-					.append(
-						$('<span></span>')
-					)
-			)
-			.append(
-				$('<div></div>', { 'class': 'progress-overlay' })
-					.append(
-						$('<div></div>', { 'class': 'spinner' })
-					)
-			);
-		
 			$('div#content #media .row.items').append(this.$el);
 			
 			this.updateUI();
@@ -80,20 +56,25 @@ define('view/media/item', ['backbone', 'jquery.unveil', 'spinner'], function(Bac
 		updateUI: function() {
 			var self = this;
 
+			var displayAttributes = this.model.attributes;
+
+			if (typeof this.model.__proto__.watchedStatusClassName == 'function') {
+				displayAttributes.status = this.model.__proto__.watchedStatusClassName.bind(this.model);
+			}
+			if (typeof this.model.__proto__.unWatchedCount == 'function') {
+				displayAttributes.statusText = this.model.__proto__.unWatchedCount.bind(this.model);
+			}
+			displayAttributes.year = this.model.year();
+
+			this.$el.html('');
+			this.$el.append(this.template(displayAttributes));
+
 			this.loadPoster();
 
 			this.$el.off('click').click(function() {
-				var type = self.model.get('type') || 'tv';
+				var type = self.model.type || 'tv';
 				window.location = '/#media/' + type + '/' + self.model.get('id');
 			});
-			
-			this.$el.find('.overlay .status')
-				.attr('class', 'status') // reset
-				.addClass(this.model.watchedStatusClassName())
-				.text(this.model.unWatchedCount());
-			
-			this.$el.find('.attr label').text(this.model.get('title'));
-			this.$el.find('.attr span').text(this.model.year());
 		},
 		
 		loadPoster: function() {
