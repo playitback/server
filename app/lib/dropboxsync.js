@@ -1,9 +1,8 @@
 var Dropbox = require('dropbox');
 
-module.exports = function() {
+module.exports = function(app) {
 
 	var TAG 		= 'DropboxSync: ',
-		app 		= this,
 		config		= app.config.get('networks.dropbox'),
 		hooks		= ['afterCreate', 'afterDestroy', 'afterUpdate'],
 		models		= ['Show', 'Media'];
@@ -35,7 +34,7 @@ module.exports = function() {
 	var listenForDropboxSetting = function() {
 		app.log.debug(TAG + 'Listen for dropbox setting');
 		
-		app.Setting.afterCreate(function(setting) {
+		app.model.Setting.afterCreate(function(setting) {
 			app.log.debug(TAG + 'Setting created');
 
 			if(setting.key === app.model.Setting.Key.Sync.Dropbox.Token) {
@@ -50,7 +49,7 @@ module.exports = function() {
 	var loadDropboxToken = function() {
 		app.log.debug(TAG + 'Attempt to load Dropbox token');
 	
-		app.Setting.valueForKey(app.Setting.Key.Sync.Dropbox.Token, function(value) {		
+		app.model.Setting.valueForKey(app.model.Setting.Key.Sync.Dropbox.Token, function(value) {
 			if(value) {
 				app.log.debug(TAG + 'Dropbox token found');
 				
@@ -104,18 +103,15 @@ module.exports = function() {
 		app.log.debug(TAG + 'Total remote objects: ' + remoteObjects);
 		
 		remoteObjects.forEach(function(remoteObject) {
-			app.log.debug(TAG + 'Syncing remote object with ID: ' + remoteObject.remoteId);
-			
-			app.model[model.TableName].find({ where: { remoteId: remoteObject.remoteId } }).success(function(localObject) {
-				if(!localObject) {
-					app.log.debug(TAG + 'Remote object doesn\'t exist locally. Creating.');
-					
-					app.model[model.TableName].createWithRemoteId(remoteObject.remoteId, function() {});
-				}
-				else {
-					app.log.debug(TAG + 'Remote object already exists locally. Ignoring.');
-				}
-			});
+			app.log.debug(TAG + 'Syncing remote object with ID: ' + remoteObject.get('remoteId'));
+
+			if (remoteObject.isDeleted()) {
+				app.log.debug(TAG + 'Object deleted. Delete locally');
+				app.model[model.TableName].deleteWithRemoteId(remoteObject.get('remoteId'));
+			} else {
+				// Call create, which updates if exists, or creates
+				app.model[model.TableName].createWithRemoteId(remoteObject.get('remoteId'), function() {});
+			}
 		});
 	};
 
@@ -183,6 +179,6 @@ module.exports = function() {
 	app.on('model-sync', function() {
 		app.log.debug(TAG + 'Model synced, configuring dropbox sync');
 
-		//loadDropboxToken();
+		loadDropboxToken();
 	});
 };

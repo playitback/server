@@ -68,7 +68,7 @@ module.exports = function(app) {
 		});
 	};
 	
-	DropboxSync.call(app);
+	new DropboxSync(app);
 
 	app.log.debug('DB & Models initialized');
 		

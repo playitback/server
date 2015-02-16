@@ -169,6 +169,22 @@ module.exports = function(app) {
 					});
 				});
 			},
+
+			deleteWithRemoteId: function(remoteId, callback) {
+				if (typeof remoteId != 'number') {
+					throw 'Invalid remote id';
+				}
+
+				this.find({ where: { remoteId: remoteId } }).then(function(media) {
+					if (media) {
+						media.destroy().then(function() {
+							if (typeof callback == 'function') {
+								callback();
+							}
+						});
+					}
+				});
+			},
 			
 			createWithRemoteId: function(remoteId, transaction, callback) {
 				var self = this;
