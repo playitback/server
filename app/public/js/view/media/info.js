@@ -87,7 +87,7 @@ define('view/media/info', [
 			var poster = this.model.get('poster');
 
 			if(poster && typeof poster.url === 'string') {
-				image.src = poster.url;
+				image.src = '/asset/image?url=' + encodeURIComponent(poster.url) + '&profile=info';
 			}
 		},
 

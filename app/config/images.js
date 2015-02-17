@@ -6,6 +6,10 @@ module.exports = {
 
     grid: {
         width: 700
+    },
+
+    info: {
+        width: 1000
     }
 
 };
