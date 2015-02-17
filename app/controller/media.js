@@ -16,7 +16,7 @@ module.exports = {
 			var model = this.app.model.mediaModelWithType(type);
 
 			if(typeof mediaId != 'undefined') {
-				model.find(mediaId, { include: model.fullInclude() }).success(function(media) {
+				model.find({ where: { id: mediaId }, include: model.fullInclude() }).success(function(media) {
 					media.indexInfo(function(media) {
 						response[type] = media;
 						

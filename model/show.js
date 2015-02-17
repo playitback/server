@@ -37,7 +37,7 @@ module.exports = function(app) {
 			},
 
 			getMediaForIndex: function(callback) {
-				this.findAll({ include: this.indexInclude() }).then(function(medias) {
+				this.findAll({ include: this.fullInclude() }).then(function(medias) {
 					var response 		= [];
 																
 					if(medias.length === 0) {
@@ -96,7 +96,6 @@ module.exports = function(app) {
 										}
 										else {
 											show.setSeasons(seasons, {transaction: transaction}).then(function () {
-												console.log('added seasons to show');
 												callback(null, show);
 											});
 										}
