@@ -19,31 +19,5 @@ html(lang="en")
 					li.settings
 						a(href="/#settings")
 			div#content.row
-			script#media-info(type="text/html")
-				div.poster.col-md-3
-					div.img
-					|<span class="status <%= status() %>"><%= statusText() %></span>
-				div.info.col-md-9.col-sm
-					div.head.row
-						div.name.col-md-10.col-sm-12.col-xs-12
-							h3!='<%= title %>'
-							span.year!='<%= availableDate.format(\'YYYY\') %>'
-						span.rating.col-md-2.col-sm-12.col-xs-12
-					div.row
-						div.controls.col-md-9.col-sm-9.col-xs-8
-							div.inner
-								a.quality 1080p
-								a.refresh
-								a.toggle-watched.unwatched
-						span.release.col-md-3.col-sm-3.col-xs-4!='<%= availableDate.format(\'Do MMMM YYYY\') %>'
-					div.description!='<%= overview %>'
-					div.seasons
-			script#media-item(type="text/html")
-				div.poster
-				div.overlay
-					|<i class="status <%= status() %>"><%= statusText() %></i>
-				div.attr
-					label!='<%= title %>'
-					span!='<%= year %>'
-				div.progress-overlay
-					div.spinner
+			include ./media/info
+			include ./media/item

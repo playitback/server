@@ -1,0 +1,12 @@
+//
+   Created by nickbabenko on 17/02/15.
+
+script#media-item(type="text/html")
+   div.poster
+   div.overlay
+      |<i class="status <%= status() %>"><%= statusText() %></i>
+   div.attr
+      label!='<%= title %>'
+      span!='<%= year %>'
+   div.progress-overlay
+      div.spinner
