@@ -1,6 +1,6 @@
 define('view/media/info', [
-	'underscore', 'backbone', 'model/movie', 'model/show', 'model/season', 'model/media'
-], function(_, Backbone, MovieModel, ShowModel, SeasonModel, MediaModel) {
+	'underscore', 'backbone', 'model/movie', 'model/show', 'model/season', 'model/media', 'view/media/item'
+], function(_, Backbone, MovieModel, ShowModel, SeasonModel, MediaModel, MediaItemView) {
 	
 	return Backbone.View.extend({
 
@@ -73,6 +73,7 @@ define('view/media/info', [
 
 			this.loadPoster();
 			this.createEvents();
+			this.loadSeasons();
 		},
 
 		loadPoster: function() {
@@ -87,6 +88,22 @@ define('view/media/info', [
 
 			if(poster && typeof poster.url === 'string') {
 				image.src = poster.url;
+			}
+		},
+
+		loadSeasons: function() {
+			var seasonContainer = this.$el.find('.info .seasons');
+
+			seasonContainer.html('');
+
+			if (this.model.has('seasons')) {
+				this.model.get('seasons').forEach(function (season) {
+					new MediaItemView({
+						model: season,
+						container: seasonContainer,
+						className: 'item col-md-3 col-sm-3 col-xs-6'
+					}).render();
+				});
 			}
 		},
 
@@ -117,7 +134,6 @@ define('view/media/info', [
 		},
 
 		handleRefreshClick: function() {
-			console.log('handleRefreshClick');
 			// Re-save, will do the same as add, which updates if exists
 			this.model.save();
 		}

@@ -32,7 +32,23 @@ module.exports = function(app) {
 			fullInclude: function() {
 				return [
 					app.model.Poster,
-					{ model: app.model.Season, as: 'Seasons' }
+					{
+						model: app.model.Season,
+						as: 'Seasons',
+						include: [
+							app.model.Poster,
+							{
+								model: app.model.Media,
+								as: 'Episodes',
+								include: [
+									{
+										model: app.model.Poster,
+										as: 'Still'
+									}
+								]
+							}
+						]
+					}
 				];
 			},
 
