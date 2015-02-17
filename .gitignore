@@ -2,5 +2,5 @@ mediamanager.sqlite
 playback.log
 .idea
 mediamanager.sqlite-journal
-media
+/media
 cache/assets/images
