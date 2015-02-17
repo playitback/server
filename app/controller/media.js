@@ -13,8 +13,10 @@ module.exports = {
 			self		= this;
 	
 		if(typeof type != 'undefined') {
+			var model = this.app.model.mediaModelWithType(type);
+
 			if(typeof mediaId != 'undefined') {
-				this.app.model.mediaModelWithType(type).find(mediaId).success(function(media) {
+				model.find(mediaId, { include: model.fullInclude() }).success(function(media) {
 					media.indexInfo(function(media) {
 						response[type] = media;
 						
@@ -22,8 +24,8 @@ module.exports = {
 					});
 				});
 			}
-			else {			
-				this.app.model.mediaModelWithType(type).getMediaForIndex(function(media) {
+			else {
+				model.getMediaForIndex(function(media) {
 					response[type] = media;
 					
 					self.response(response);
@@ -83,7 +85,9 @@ module.exports = {
 			throw 'invalid or missing mediaId';
 		}
 
-		this.app.model.mediaModelWithType(type).find({ where: { id: mediaId }}).then(function(media) {
+		var model = this.app.model.mediaModelWithType(type);
+
+		model.find({ where: { id: mediaId }, include: model.indexInclude() }).then(function(media) {
 			if (media) {
 				self.app.model.mediaUpdateWithTypeAndRemoteId(type, media.remoteId, function(error, media) {
 					if (error || !media) {

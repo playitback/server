@@ -147,9 +147,28 @@ module.exports = function(app) {
 			Type:			Type,
 			State:			State,
 			WatchStatus: 	WatchStatus,
+
+			/**
+			 *
+			 * @returns {*[]}
+			 */
+			indexInclude: function() {
+				return [
+					{
+						model: app.model.Poster,
+						as: 'poster'
+					}
+				];
+			},
+
+			fullInclude: function() {
+				return [
+					app.model.Poster
+				];
+			},
 			
 			getMediaForIndex: function(callback) {
-				this.findAll({ where: { type: Type.Movie }}).success(function(medias) {
+				this.findAll({ where: { type: Type.Movie }, include: this.indexInclude() }).then(function(medias) {
 					var response = [];
 										
 					if(medias.length === 0) {

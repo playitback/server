@@ -22,9 +22,22 @@ module.exports = function(app) {
 		}
 	}, {
 		classMethods: {
-		
+
+			indexInclude: function() {
+				return [
+					app.model.Poster
+				];
+			},
+
+			fullInclude: function() {
+				return [
+					app.model.Poster,
+					{ model: app.model.Season, as: 'Seasons' }
+				];
+			},
+
 			getMediaForIndex: function(callback) {
-				this.findAll().then(function(medias) {
+				this.findAll({ include: this.indexInclude() }).then(function(medias) {
 					var response 		= [];
 																
 					if(medias.length === 0) {
@@ -126,19 +139,12 @@ module.exports = function(app) {
 			 * @param callback
 			 */
 			indexInfo: function(callback) {
-				var response 	= this.toJSON(),
-					self		= this;
+				var response = this.toJSON();
 
-				this.getPoster().then(function(poster) {
-					if (poster) {
-						response.poster = poster.values;
-					}
+				this.watchedStats(function(stats) {
+					response.stats = stats;
 
-					self.watchedStats(function(stats) {
-						response.stats = stats;
-						
-						callback(response);
-					});
+					callback(response);
 				});
 			},
 

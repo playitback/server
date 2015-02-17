@@ -18,7 +18,7 @@ module.exports = function(app) {
 	this.Show		= require('./show').call(this, app);
 	this.Torrent	= require('./torrent').call(this, app);
 			
-	this.Show.hasMany(this.Season, { onDelete: 'CASCADE' });
+	this.Show.hasMany(this.Season, { onDelete: 'CASCADE', as: 'Seasons' });
 	this.Season.hasMany(this.Media, { as: 'Episodes', onDelete: 'CASCADE' });
 	this.Show.hasOne(this.Poster, { onDelete: 'CASCADE' });
 	this.Season.hasOne(this.Poster, { onDelete: 'CASCADE' });
