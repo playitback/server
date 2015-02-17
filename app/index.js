@@ -39,13 +39,13 @@ var App = function() {
 	this.theMovieDb 	= new TheMovieDB({ apiKey: this.config.get('networks.theMovieDb.apiKey') });
 	
 	this.log.remove(winston.transports.Console);
+	this.log.add(winston.transports.Console, { level: 'debug', colorize: true });
 	this.log.addColors({
 		debug: 'blue',
 		info: 'green',
 		warn: 'yellow',
 		error: 'red'
 	});
-	this.log.add(winston.transports.Console, { level: 'debug', colorize:true });
 	
 	// Listen for events
 	this.server.listen(3030);
