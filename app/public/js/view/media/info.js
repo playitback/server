@@ -64,8 +64,8 @@ define('view/media/info', [
 			if (typeof this.model.__proto__.unWatchedCount == 'function') {
 				displayAttributes.statusText = this.model.__proto__.unWatchedCount.bind(this.model);
 			}
-			if (typeof displayAttributes.firstAired != 'undefined') {
-				displayAttributes.availableDate = displayAttributes.firstAired;
+			if (typeof displayAttributes.first_aired != 'undefined') {
+				displayAttributes.availableDate = displayAttributes.first_aired;
 			}
 
 			this.$el.html('');
