@@ -2,10 +2,10 @@
    Created by nickbabenko on 17/02/15.
 
 script#media-info(type="text/html")
-   div.poster.col-md-3
+   div.poster.col-md-4.col-sm-4.hidden-xs
       div.img
       |<span class="status <%= status() %>"><%= statusText() %></span>
-   div.info.col-md-9.col-sm
+   div.info.col-md-8.col-sm-8.col-xs-12
       div.head.row
          div.name.col-md-10.col-sm-12.col-xs-12
             h3!='<%= title %>'
