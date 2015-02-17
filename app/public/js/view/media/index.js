@@ -118,6 +118,11 @@ define('view/media/index', [
 			media.itemView = new ItemView({ model: media });
 			
 			media.itemView.render();
+			media.itemView.off('click').on('click', function() {
+				var type = this.model.type || 'tv';
+
+				window.location = '/#media/' + type + '/' + this.model.get('id');
+			});
 		},
 		
 		mediaRemoved: function(media) {

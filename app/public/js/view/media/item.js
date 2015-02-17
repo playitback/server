@@ -76,8 +76,7 @@ define('view/media/item', ['backbone', 'jquery.unveil', 'spinner', 'moment'], fu
 			this.loadPoster();
 
 			this.$el.off('click').click(function() {
-				var type = self.model.type || 'tv';
-				window.location = '/#media/' + type + '/' + self.model.get('id');
+				self.trigger('click');
 			});
 		},
 		
