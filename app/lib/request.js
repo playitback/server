@@ -8,6 +8,37 @@ module.exports = function(app, req, res, rootKey) {
     this.req = req;
     this.res = res;
 
+    var ensureKeyCase = function(data) {
+        if (!data || typeof data != 'object') {
+            return data;
+        }
+
+        if (typeof data.length == 'number') {
+            for (var key in data) {
+                data[key] = ensureKeyCase(data[key]);
+            }
+        } else {
+            for (var key in data) {
+                var val = data[key];
+
+                if (typeof val == 'object') {
+                    val = ensureKeyCase(val);
+                }
+
+                var newKey = key
+                    .replace(/\W+/g, '_')
+                    .replace(/([a-z\d])([A-Z])/g, '$1_$2')
+                    .toLowerCase();
+
+                delete data[key];
+
+                data[newKey] = val;
+            }
+        }
+
+        return data;
+    };
+
     this.view = function(name, data) {
         res.render(name, data);
     };
@@ -22,6 +53,8 @@ module.exports = function(app, req, res, rootKey) {
             prefixedData[this.rootKey] = data;
             data = prefixedData;
         }
+
+        data = ensureKeyCase(data);
 
         res.status(status).json(data);
     };
