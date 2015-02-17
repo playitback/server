@@ -9,14 +9,14 @@ define('view/media/info', [
 
 		type: 		null,
 		mediaId: 	null,
-		seasonId: 	null,
-		episodeId: 	null,
+		seasonNumber: 	null,
+		episodeNumber: 	null,
 
 		initialize: function(options) {
-			this.type 		= options && options.type || null;
-			this.mediaId 	= options && parseInt(options.mediaId) || null;
-			this.seasonId 	= options && options.seasonId || null;
-			this.episodeId 	= options && options.episodeId || null;
+			this.type 			= options && options.type || null;
+			this.mediaId 		= options && parseInt(options.mediaId) || null;
+			this.seasonNumber 	= options && options.seasonNumber || null;
+			this.episodeNumber 	= options && options.episodeNumber || null;
 
 			// Check for minimum required params. Send back to media{/type} if either missing.
 			if(typeof this.type != 'string' || typeof this.mediaId != 'number') {
@@ -92,17 +92,55 @@ define('view/media/info', [
 		},
 
 		loadSeasons: function() {
+			var self = this;
+
 			var seasonContainer = this.$el.find('.info .seasons');
+			var season = null;
+			var episode = null;
 
 			seasonContainer.html('');
 
-			if (this.model.has('seasons')) {
+			if (this.seasonNumber) {
+				season = this.model.get('seasons').findWhere({ number: this.seasonNumber });
+			}
+
+			console.log(this.seasonNumber, season);
+
+			if (season) {
+				if (season.has('episodes')) {
+					season.get('episodes').forEach(function(episode) {
+						var episodeView = new MediaItemView({
+							model: episode,
+							container: seasonContainer,
+							className: 'item col-md-3 col-sm-3 col-xs-6'
+						});
+
+						episodeView.render();
+						episodeView.off('click').on('click', function() {
+							var type = self.model.type || 'tv';
+
+							window.location = '/#media/' + type + '/' + self.model.get('id') + '/season/' +
+								season.get('number') + '/episode/' + this.model.get('number');
+						});
+					});
+				}
+			} else if (episode) {
+
+			} else if (this.model.has('seasons')) {
 				this.model.get('seasons').forEach(function (season) {
-					new MediaItemView({
+					var seasonView = new MediaItemView({
 						model: season,
 						container: seasonContainer,
 						className: 'item col-md-3 col-sm-3 col-xs-6'
-					}).render();
+					});
+
+					seasonView.render();
+					seasonView.off('click').on('click', function() {
+						var type = self.model.type || 'tv';
+
+						window.location = '/#media/' + type + '/' + self.model.get('id') + '/season/' +
+							this.model.get('number');
+					});
 				});
 			}
 		},
