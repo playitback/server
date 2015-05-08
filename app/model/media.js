@@ -444,7 +444,8 @@ module.exports = function(app) {
 			},
 
 			/**
-			 *
+			 * Construct the full path to the download directory for this media type
+             *
 			 * @returns {string}
 			 */
 			downloadDirectory: function() {
@@ -452,7 +453,10 @@ module.exports = function(app) {
 			},
 
 			/**
-			 *
+			 * Constructs the full path to the media location for this media type.
+             *
+             * This is where media is moved to when it's download.
+             *
 			 * @returns {string}
 			 */
 			mediaDirectory: function() {
@@ -506,7 +510,7 @@ module.exports = function(app) {
 									var episode = self.get('number');
 									episode = (episode < 10 ? '0' : '') + episode;
 
-									// TODO configure from settings
+									// TODO configure variants from settings
 									callback(show.get('title') + '.S' + season + 'E' + episode + '.' +
 										self.get('title').replace(' ', '.') + '.' + extension);
 								}
@@ -706,5 +710,4 @@ module.exports = function(app) {
 	});
 	
 	return Media;
-	
-}
+};

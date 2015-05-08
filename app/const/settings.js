@@ -11,6 +11,7 @@ module.exports = {
         CheckForUpdates: 			'General.CheckForUpdates'
     },
     Downloader: {
+        Providers:                  'Downloader.Providers',
         transmission: {
             Host:                   'Downloader.Transmission.Host',
             RpcUrl:                 'Downloader.Transmission.RpcUrl',

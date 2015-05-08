@@ -1,7 +1,9 @@
 var Sequelize = require('sequelize'),
-	piratebay = require('pirateship'),
+	Torrent = require('../app/lib/torrent'),
 	score = require('../app/lib/score'),
 	Transmission = require('../app/lib/transmission');
+
+var torrent = new Torrent();
 
 module.exports = function(app) {
 
@@ -57,18 +59,7 @@ module.exports = function(app) {
 				media.torrentQuery(function(query) {
 					app.log.debug(TAG + 'fetchSuitableWithMedia torrent search query: ' + query);
 
-					piratebay.search(0, query, function(results) {
-						app.log.debug(TAG + 'fetchSuitableWithMedia Found ' + results.length + ' results for ' + query);
-						
-						self.buildWithResults(media, results, persist, function(torrents) {
-							callback(torrents);
-						});
-					},
-					function(error) {
-						app.log.debug(TAG + 'fetchSuitableWithMedia Pirate bay error: ' + error);
 
-						callback([]);
-					});
 				});
 			},
 			buildWithResults: function(media, data, persist, callback) {

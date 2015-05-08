@@ -2,9 +2,10 @@
  * Created by nickbabenko on 08/02/15.
  */
 
-module.exports = function(app, req, res, rootKey) {
+module.exports = function(req, res, rootKey) {
 
-    this.app = app;
+    var router = this.get('router');
+
     this.req = req;
     this.res = res;
 
@@ -84,7 +85,7 @@ module.exports = function(app, req, res, rootKey) {
 
     this.addSubHttpRequest = function(request) {
         var removeRequest = function() {
-            app.router.subHttpRequests.splice(app.router.subHttpRequests.indexOf(this), 1);
+            router.subHttpRequests.splice(router.subHttpRequests.indexOf(this), 1);
         };
 
         request.on('abort', function() {
@@ -97,7 +98,7 @@ module.exports = function(app, req, res, rootKey) {
             removeRequest();
         });
 
-        app.router.subHttpRequests.push(request);
+        router.subHttpRequests.push(request);
     };
 
     this.outputImage = function(file) {

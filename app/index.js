@@ -1,70 +1,17 @@
-var express 		= require('express'),
-	TheMovieDB		= require('themoviedb'),
-	winston			= require('winston'),
-	events			= require('events'),
-	Config			= require('./lib/config'),
-	Model			= require('../model'),
-	Settings		= require('./lib/setting'),
-	Tasks			= require('../tasks'),
-	Bootstrap		= require('./bootstrap'),
-	Router			= require('./lib/router'),
-	Notification 	= require('./lib/notification'),
-	StreamCoder		= require('./lib/streamcoder'),
-	routes 			= require('./config/routes');
+// Initialise DI
+var container = new require('./lib/di')();
 
-var App = function() {
-	
-	// Bind to event emitter
-	events.EventEmitter.call(this);
-	
-	// Initialize external parameters
-	this.env			= process.env.ENV || 'dev';	
-	this.server 		= express();
-	this.log			= winston;
-	
-	// Initialize app files
-	new Bootstrap(this);
-	new Router(this, routes);
-	
-	// Initialize libraries and external entities
-	this.config			= new Config(this);
-	this.model 			= new Model(this);
-	this.settings 		= new Settings(this);
-	this.tasks			= new Tasks(this);
-	this.notification	= new Notification(this);
-	this.streamCoder	= new StreamCoder(this);
-	//this.broadcast		= require('./lib/broadcast')(this);
+// Initialize external parameters
+//this.env = process.env.ENV || 'dev';
 
-	// Initialize API libraries
-	this.theMovieDb 	= new TheMovieDB({ apiKey: this.config.get('networks.theMovieDb.apiKey') });
-	
-	this.log.remove(winston.transports.Console);
-	this.log.add(winston.transports.Console, { level: 'debug', colorize: true });
-	this.log.addColors({
-		debug: 'blue',
-		info: 'green',
-		warn: 'yellow',
-		error: 'red'
-	});
-	
-	// Listen for events
-	this.server.listen(3030);
-	this.log.debug('Playback server started and running on port 3030');
-		
-};
+// Initialize required services
+container.get('server').listen(3030);
+container.get('router');
 
-App.super_ = events.EventEmitter;
-App.prototype = Object.create(events.EventEmitter.prototype, {
-	constructor: {
-		value: App,
-		enumerable: false
-	}
-});
-
-var app = new App();
-
+// Check for a test
 if(typeof test != 'undefined') {
-	test.app = app;
+    // Make the test accessible to dependencies
+	container.extend(test);
 	
 	test.run();
 }

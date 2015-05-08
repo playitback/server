@@ -1,4 +1,4 @@
-define('collection/settings', ['backbone', 'model/setting'], function(Backbone, SettingModel) {
+define('collection/settings', ['backbone', '../../../../model/settings'], function(Backbone, SettingModel) {
 	
 	return Backbone.Collection.extend({
 		

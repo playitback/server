@@ -1,13 +1,15 @@
 var fs = require('fs'),
 	Request = require('./request');
 
-module.exports = function(app, routes) {
+module.exports = function() {
 
-	if(typeof routes != 'object') {
-		throw 'Invalid routes definition. Must be an object.';
-	}
+	var router = this,
+        config = this.get('config'),
+        routes = config.get('routes');
 
-	var router = this;
+    if(typeof routes != 'object') {
+        throw 'Invalid routes definition. Must be an object.';
+    }
 
 	this.subHttpRequests = [];
 
@@ -26,7 +28,7 @@ module.exports = function(app, routes) {
 	}
 	
 	for(var uri in routes) {
-		app.server.all(uri, function(req, res) {
+		this.get('server').all(uri, function(req, res) {
 			req.on('aborted', function() {
 				cancelSubHttpRequests();
 			});
@@ -45,10 +47,13 @@ module.exports = function(app, routes) {
 			}
 			
 			var controller;
-			var request = new Request(app, req, res, rootKey);
+			var request = new Request(req, res, rootKey);
 
 			try {
 				controller = require('../controller/' + controllerName);
+
+                // Add DI integration
+                router.get('container').extend(controller);
 			}
 			catch(e) {
 				request.errorResponse(e.message, 400);
@@ -72,14 +77,12 @@ module.exports = function(app, routes) {
 				action.call(request);
 			}
 			catch(e) {
-				throw e;
-				console.log('error: ' + e);
-			
+				//throw e;
+
 				request.errorResponse.call(request, e);
 			}
 		});
 	}
 
 	return this;
-
-}
+};

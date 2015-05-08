@@ -4,7 +4,10 @@
 
 var Prowl = require('node-prowl');
 
-module.exports = function(app) {
+module.exports = function() {
+
+    var settings = this.get('settings'),
+        settingsModel = this.get('model.settings');
 
     var services = [ 'prowl'],
         handlers = {
@@ -13,7 +16,7 @@ module.exports = function(app) {
                 handler: function() {
                     if (!handlers.prowl.handlerStore) {
                         handlers.prowl.handlerStore = new Prowl(
-                            app.settings.get(app.model.Setting.Key.Notification.prowl.ApiKey)
+                            settings.get(settingsModel.Key.Notification.prowl.ApiKey)
                         );
                     }
 
@@ -36,9 +39,9 @@ module.exports = function(app) {
         for (var s in services) {
             var identifier = services[s];
 
-            if (!app.settings.get(app.model.Setting.Key.Notification[identifier].Enabled) ||
-                !app.settings.get(app.model.Setting.Key.Notification[identifier].DownloadStart) ||
-                typeof app.settings.get(app.model.Setting.Key.Notification[identifier].ApiKey) != 'string' ||
+            if (!settings.get(settingsModel.Key.Notification[identifier].Enabled) ||
+                !settings.get(settingsModel.Key.Notification[identifier].DownloadStart) ||
+                typeof settings.get(app.model.Setting.Key.Notification[identifier].ApiKey) != 'string' ||
                 typeof handlers[identifier] != 'object' ||
                 typeof handlers[identifier].downloadStart != 'function') {
                 continue;
@@ -52,9 +55,9 @@ module.exports = function(app) {
         for (var s in services) {
             var identifier = services[s];
 
-            if (!app.settings.get(app.model.Setting.Key.Notification[identifier].Enabled) ||
-                !app.settings.get(app.model.Setting.Key.Notification[identifier].DownloadRenamed) ||
-                typeof app.settings.get(app.model.Setting.Key.Notification[identifier].ApiKey) != 'string' ||
+            if (!settings.get(settingsModel.Key.Notification[identifier].Enabled) ||
+                !settings.get(settingsModel.Key.Notification[identifier].DownloadRenamed) ||
+                typeof settings.get(settingsModel.Key.Notification[identifier].ApiKey) != 'string' ||
                 typeof handlers[identifier] != 'object' ||
                 typeof handlers[identifier].downloadRenamed != 'function') {
                 continue;
