@@ -2,13 +2,22 @@ var Sequelize 	= require('sequelize'),
 	_			= require('underscore'),
 	moment		= require('moment'),
 	fs			= require('fs'),
-	fsUtil 		= require('../app/lib/fs.util'),
-	qualities	= require('../app/const/qualities');
+	fsUtil 		= require(__dirname + '/../lib/fs.util'),
+	qualities	= require(__dirname + '/../const/qualities');
 
-module.exports = function(app) {
+module.exports = function() {
 
-	var TAG = 'model.media ';
+	var TAG = 'model.media ',
+        sequelize = this.get('sequelize'),
+        theMovieDb = this.get('theMovieDb'),
+        log = this.get('log'),
+        notification = this.get('notification'),
+        settings = this.get('settings'),
+        torrentModel = this.get('model.torrent'),
+        posterModel = this.get('model.poster'),
+        settingsModel = this.get('model.settings');
 
+    // Constants
 	var Type = {
 		Movie: 			'movie',			// A movie file
 		TV: 			'tv'				// A TV episode
@@ -62,7 +71,7 @@ module.exports = function(app) {
 	};
 	qualityType.toString = qualityType.valueOf = function() { return 'ENUM'; };
 
-	var Media = this.sequelize.define('Media', {
+	var Media = sequelize.define('Media', {
 		type: {
 			type:			Sequelize.ENUM(Type.Movie, Type.TV),
 			allowNull: 		false
@@ -155,7 +164,7 @@ module.exports = function(app) {
 			indexInclude: function() {
 				return [
 					{
-						model: app.model.Poster,
+						model: posterModel,
 						as: 'poster'
 					}
 				];
@@ -163,7 +172,7 @@ module.exports = function(app) {
 
 			fullInclude: function() {
 				return [
-					app.model.Poster
+                    posterModel
 				];
 			},
 			
@@ -208,7 +217,7 @@ module.exports = function(app) {
 			createWithRemoteId: function(remoteId, transaction, callback) {
 				var self = this;
 				
-				app.theMovieDb.getMovie(remoteId, function(err, result) {
+			    theMovieDb.getMovie(remoteId, function(err, result) {
 					if(err) {
 						callback(err, null);
 						
@@ -271,14 +280,14 @@ module.exports = function(app) {
 
 					media.save({ transaction: transaction }).then(function (media) {
 						if (typeof result.still_path === 'string') {
-							app.model.Poster.createWithRemoteResult(result, transaction).success(function (poster) {
+							posterModel.createWithRemoteResult(result, transaction).success(function (poster) {
 								media.setStill(poster, {transaction: transaction}).success(function () {
 									callback(media);
 								});
 							});
 						}
 						else if (typeof result.poster_path === 'string') {
-							app.model.Poster.createWithRemoteResult(result, transaction).success(function (poster) {
+                            posterModel.createWithRemoteResult(result, transaction).success(function (poster) {
 								media.setPoster(poster, {transaction: transaction}).success(function () {
 									callback(media);
 								});
@@ -298,7 +307,7 @@ module.exports = function(app) {
 							}
 						}
 
-						app.log.error(TAG + 'Failed to create media', error)
+						log.error(TAG + 'Failed to create media', error)
 
 						callback(null);
 					});
@@ -319,7 +328,7 @@ module.exports = function(app) {
 					media = this.build();
 
 					// Only set quality on initial creation, not update
-					media.quality = app.settings.get(app.model.Setting.Key.Media.DefaultQuality[type]);
+					media.quality = settingsModel.get(settingsModel.Key.Media.DefaultQuality[type]);
 
 					if (type == Type.Movie) {
 						media.state = State.Wanted; // defaults to wanted, we download them all
@@ -384,13 +393,13 @@ module.exports = function(app) {
 			 * @param torrent
 			 */
 			download: function(torrent) {
-				app.log.debug(TAG + 'Download torrent for ' + this.title || this.name);
+				log.debug(TAG + 'Download torrent for ' + this.title || this.name);
 				
 				var self = this;
 				
 				if(typeof torrent === 'undefined' || !torrent) {
 					this.loadBestTorrentAndDownload(function() {
-						app.model.Torrent.fetchSuitableWithMedia(self, function() {
+						torrentModel.fetchSuitableWithMedia(self, function() {
 							self.loadBestTorrentAndDownload();
 						});
 					});
@@ -408,11 +417,11 @@ module.exports = function(app) {
 							failCallback();
 						}
 						else {
-							app.log.debug(TAG + 'No torrent found with suitable highest score');
+							log.debug(TAG + 'No torrent found with suitable highest score');
 						}
 					}
 					else {
-						app.log.debug(TAG + 'Found torrent with suitable highest score');
+						log.debug(TAG + 'Found torrent with suitable highest score');
 
 						torrent[0].download();
 					}
@@ -449,7 +458,7 @@ module.exports = function(app) {
 			 * @returns {string}
 			 */
 			downloadDirectory: function() {
-				return app.settings.get(app.model.Setting.Key.General.MediaDirectory) + '/Downloads/' + this.get('type');
+				return settings.get(settingsModel.Key.General.MediaDirectory) + '/Downloads/' + this.get('type');
 			},
 
 			/**
@@ -460,7 +469,7 @@ module.exports = function(app) {
 			 * @returns {string}
 			 */
 			mediaDirectory: function() {
-				return app.settings.get(app.model.Setting.Key.General.MediaDirectory) + '/' + this.get('type');
+				return settings.get(settingsModel.Key.General.MediaDirectory) + '/' + this.get('type');
 			},
 
 			/**
@@ -531,7 +540,7 @@ module.exports = function(app) {
 					var success = !err || (err && err.code == 'EEXIST');
 
 					if (!success) {
-						app.log.warn(TAG + 'Download directory doesn\'t exist and can\'t be created');
+						log.warn(TAG + 'Download directory doesn\'t exist and can\'t be created');
 					}
 
 					callback(success);
@@ -549,7 +558,7 @@ module.exports = function(app) {
 					var success = !err || (err && err.code == 'EEXIST');
 
 					if (!success) {
-						app.log.warn(TAG + 'Media directory doesn\'t exist and can\'t be created');
+						log.warn(TAG + 'Media directory doesn\'t exist and can\'t be created');
 					}
 
 					callback(success);
@@ -569,7 +578,7 @@ module.exports = function(app) {
 					// Make the directory, recursively
 					fsUtil.mkdirParent(folder, function (success) {
 						if (!success) {
-							app.log.warn(TAG + 'Failed to make media directory during move. type: ' + self.get('type'));
+							log.warn(TAG + 'Failed to make media directory during move. type: ' + self.get('type'));
 						}
 
 						callback(success);
@@ -584,13 +593,13 @@ module.exports = function(app) {
 			moveToMediaDirectory: function(remoteTorrent) {
 				if (typeof remoteTorrent != 'object' || typeof remoteTorrent.files != 'object' ||
 					typeof remoteTorrent.files.length != 'number' || typeof remoteTorrent.percentDone != 'number') {
-					app.log.warn(TAG + 'Invalid torrent, failed to copy to media directory');
+					log.warn(TAG + 'Invalid torrent, failed to copy to media directory');
 
 					return;
 				}
 
 				if (remoteTorrent.percentageDone < 100) {
-					app.log.warn(TAG + 'Cannot move an incomplete download');
+					log.warn(TAG + 'Cannot move an incomplete download');
 
 					return;
 				}
@@ -616,7 +625,7 @@ module.exports = function(app) {
 								extension = file.name.split('.');
 
 							if (extension.length < 2) {
-								app.log.warn(TAG + 'Invalid torrent file. No valid extension.');
+								log.warn(TAG + 'Invalid torrent file. No valid extension.');
 
 								_break = true;
 
@@ -629,29 +638,29 @@ module.exports = function(app) {
 
 							// TODO: This isn't working.
 							if (quality.extensions.indexOf(extension) > -1 &&
-								!app.settings.get(app.Setting.Key.Media.Renamer.MoveRemaining)) {
+								!settings.get(settingsModel.Key.Media.Renamer.MoveRemaining)) {
 								return;
 							}
 
 							fs.exists(downloadedFile, function (exists) {
 								if (!exists) {
-									app.log.warn(TAG + 'Torrent file doesn\'t exist, cannot copy to media directory');
+								    log.warn(TAG + 'Torrent file doesn\'t exist, cannot copy to media directory');
 								}
 								else {
 									self.mediaFile(file, function(mediaFile) {
 										var mediaFile = folder + '/' + mediaFile;
 
-										app.log.debug(TAG + 'Moving media file from: ' + downloadedFile + ', to: ' +
+										log.debug(TAG + 'Moving media file from: ' + downloadedFile + ', to: ' +
 											mediaFile);
 
 										var readStream = fs.createReadStream(downloadedFile),
 											writeStream = fs.createWriteStream(mediaFile);
 
 										readStream.on('error', function(error) {
-											app.log.warn(TAG + 'Failed to move media file ' + error);
+											log.warn(TAG + 'Failed to move media file ' + error);
 										});
 										writeStream.on('error', function(error) {
-											app.log.warn(TAG + 'Failed to move media file ' + error);
+											log.warn(TAG + 'Failed to move media file ' + error);
 										});
 										writeStream.on('close', function() {
 											self.copyComplete(remoteTorrent);
@@ -673,16 +682,16 @@ module.exports = function(app) {
 
 				this.updateAttributes({state: State.Downloaded})
 					.then(function () {
-						app.log.debug(TAG + 'Successfully download ' + self.get('type')
+						log.debug(TAG + 'Successfully download ' + self.get('type')
 							+ ' ' + self.get('id'));
 
 						// TODO: Tidy up downloads. Also set a setting to configure to do it
 						// TODO: Notify UI
 
-						app.notification.notifyOnDownladRenamed(self);
+						notification.notifyOnDownladRenamed(self);
 					})
 					.catch(function(error) {
-						app.log.debug(TAG + 'Failed to mark media as downloaded ' +
+						log.debug(TAG + 'Failed to mark media as downloaded ' +
 							self.get('id') + ', error: ' + error);
 					});
 			},

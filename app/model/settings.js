@@ -2,7 +2,9 @@ var Sequelize = require('sequelize');
 
 module.exports = function() {
 
-	return this.sequelize.define('Setting', {
+    var sequelize = this.get('sequelize');
+
+	return sequelize.define('Setting', {
 		key: {
 			type: Sequelize.STRING,
 			allowNull: false,
@@ -13,8 +15,8 @@ module.exports = function() {
 		}
 	}, {
 		classMethods: {
-			Key: require('../app/const/settings'),
-			Defaults: require('../app/const/settings.defaults'),
+			Key: require(__dirname + '/../const/settings'),
+			Defaults: require(__dirname + '/../const/settings.defaults'),
 			
 			valueForKey: function(key, callback) {
 				if(typeof key != 'string') {

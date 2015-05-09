@@ -1,9 +1,15 @@
 var Sequelize 	= require('sequelize'),	
 	moment		= require('moment');
 
-module.exports = Season = function(app) {
+module.exports = function() {
 
-	return this.sequelize.define('Season', {
+    var season = this,
+        sequelize = this.get('sequelize'),
+        theMovieDb = this.get('theMovieDb'),
+        posterModel = this.get('model.poster'),
+        mediaModel = this.get('model.media');
+
+	return sequelize.define('Season', {
 		number: {
 			type: Sequelize.INTEGER
 		},
@@ -61,13 +67,13 @@ module.exports = Season = function(app) {
 								poster.destroy({ force: true });
 							}
 
-							app.model.Poster.createWithRemoteResult(result, transaction)
+							posterModel.createWithRemoteResult(result, transaction)
 								.then(function (poster) {
 									season.setPoster(poster, {transaction: transaction})
 										.then(function () {
-											app.theMovieDb.getSeason(show.remoteId, season.number, function (err, remoteSeason) {
+                                            theMovieDb.getSeason(show.remoteId, season.number, function (err, remoteSeason) {
 												if (remoteSeason.episodes.length > 0) {
-													app.model.Media.createWithRemoteResults(remoteSeason.episodes, transaction, season, show, function (episodes) {
+													mediaModel.createWithRemoteResults(remoteSeason.episodes, transaction, season, show, function (episodes) {
 														season.setEpisodes(episodes, {transaction: transaction}).then(function () {
 															callback(null, season);
 														})

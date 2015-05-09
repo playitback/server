@@ -7,6 +7,7 @@ module.exports = function(app) {
         dialect: 'sqlite',
         storage: 'mediamanager.sqlite'
     });
+    this.set('sequelize', sequelize);
 
     // Instantiate and load models
     var settings = this.get('model.settings'),
@@ -38,11 +39,11 @@ module.exports = function(app) {
     // Helpers
 
     this.mediaModelWithType = function(type) {
-        if(type === this.Media.Type.TV) {
-            return this.Show;
+        if(type === media.Type.TV) {
+            return show;
         }
-        else if(type === this.Media.Type.Movie) {
-            return this.Media;
+        else if(type === media.Type.Movie) {
+            return media;
         }
         else {
             throw 'invalid_type';
@@ -66,7 +67,7 @@ module.exports = function(app) {
         });
     };
 
-    app.log.debug('DB & Models initialized');
+    log.debug('DB & Models initialized');
 
     return this;
 };

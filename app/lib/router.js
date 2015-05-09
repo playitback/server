@@ -26,61 +26,67 @@ module.exports = function() {
 			router.subHttpRequests[key].abort();
 		}
 	}
+
+    // Prepare request for DI
+    Request.prototype = this.container().accessor;
+
+    this.handleRequest = function(req, res) {
+        req.on('aborted', function() {
+            cancelSubHttpRequests();
+        });
+
+        var route = routes[req.route.path],
+            parts = route.split('@'),
+            rootKey = req.body.rootKey || req.query.rootKey || null;
+
+        var controllerName = parts.length > 0 ? parts[0] : null,
+            actionName		= parts.length > 1 ? parts[1] : 'index';
+
+        if(!controllerName) {
+            handle404(res);
+
+            return;
+        }
+
+        var controller;
+        var request = new Request(req, res, rootKey);
+
+        try {
+            controller = require('../controller/' + controllerName);
+        }
+        catch(e) {
+            throw e;
+
+            request.errorResponse(e.message, 400);
+
+            return;
+        }
+
+        var action = controller[actionName + 'Action'];
+
+        if(typeof action != 'function') {
+            action = controller[req.method.toLowerCase() + ucFirst(actionName)];
+        }
+
+        if(typeof action != 'function') {
+            handle404(res);
+
+            return;
+        }
+
+        try {
+            action.call(request);
+        }
+        catch(e) {
+            throw e;
+
+            request.errorResponse.call(request, e);
+        }
+    };
 	
 	for(var uri in routes) {
 		this.get('server').all(uri, function(req, res) {
-			req.on('aborted', function() {
-				cancelSubHttpRequests();
-			});
-		
-			var route = routes[req.route.path],
-				parts = route.split('@'),
-				rootKey = req.body.rootKey || req.query.rootKey || null;
-
-			var controllerName = parts.length > 0 ? parts[0] : null,
-				actionName		= parts.length > 1 ? parts[1] : 'index';
-								
-			if(!controllerName) {
-				handle404(res);
-				
-				return;
-			}
-			
-			var controller;
-			var request = new Request(req, res, rootKey);
-
-			try {
-				controller = require('../controller/' + controllerName);
-
-                // Add DI integration
-                router.get('container').extend(controller);
-			}
-			catch(e) {
-				request.errorResponse(e.message, 400);
-				
-				return;
-			}
-						
-			var action = controller[actionName + 'Action'];
-						
-			if(typeof action != 'function') {
-				action = controller[req.method.toLowerCase() + ucFirst(actionName)];
-			}
-						
-			if(typeof action != 'function') {
-				handle404(res);
-				
-				return;
-			}
-			
-			try {
-				action.call(request);
-			}
-			catch(e) {
-				//throw e;
-
-				request.errorResponse.call(request, e);
-			}
+            router.handleRequest(req, res);
 		});
 	}
 

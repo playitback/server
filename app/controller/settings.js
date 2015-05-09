@@ -1,20 +1,22 @@
 module.exports = {
 
 	getIndex: function() {
-		var self = this;
+		var self = this,
+            settingsModel = this.get('model.settings');
 
-		this.app.model.Setting.findAll().then(function(settings) {
+        settingsModel.findAll().then(function(settings) {
 			self.response({ settings: settings });
 		});
 	},
 
 	postIndex: function() {
 		var type = this.req.params.type,
-			self = this;
+			self = this,
+            settingsModel = this.get('model.settings');
 
-		this.app.model.Setting.find({ where: { key: type }}).then(function(setting) {
+        settingsModel.find({ where: { key: type }}).then(function(setting) {
 			if (!setting) {
-				setting = self.model.Setting.build({ key: type });
+				setting = settingsModel.build({ key: type });
 			}
 
 			setting.set('value', self.req.body.value);

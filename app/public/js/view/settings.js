@@ -3,7 +3,7 @@ define('view/settings', [
 		'backbone.forms',
 		'const/settings',
 		'dropbox',
-		'../../../model/settings'
+		'model/setting'
 ],
 function(Backbone, BackboneForm, Settings, _Dropbox, SettingModel) {
 

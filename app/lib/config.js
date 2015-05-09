@@ -1,6 +1,6 @@
 var fs = require('fs');
 
-module.exports = function(app) {
+module.exports = function() {
 	
 	var config = {};
 
@@ -13,7 +13,7 @@ module.exports = function(app) {
 	};
 
 	recursivelyLoadConfig(__dirname + '/../config');
-	recursivelyLoadConfig(__dirname + '/../config/' + app.env);
+	recursivelyLoadConfig(__dirname + '/../config/' + process.env.NAME);
 
 	this.get = function(key) {
 		var keyParts = key.split('.'),

@@ -2,9 +2,11 @@ var Sequelize = require('sequelize');
 
 module.exports = function(app) {
 
-	var model = this;
+	var self = this,
+        sequelize = this.get('sequelize'),
+        theMovieDb = this.get('theMovieDb');
 	
-	return model.sequelize.define('Poster', {
+	return sequelize.define('Poster', {
 		url: {
 			type: Sequelize.STRING
 		}
@@ -30,7 +32,7 @@ module.exports = function(app) {
 				}
 						
 				return app.model.Poster.build({
-					url: posterUri ? this.cachePosterWithUrl(model.app.theMovieDb.posterUrl(posterUri)) : null
+					url: posterUri ? this.cachePosterWithUrl(theMovieDb.posterUrl(posterUri)) : null
 				});
 			},
 			

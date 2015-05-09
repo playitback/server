@@ -1,15 +1,13 @@
 var Sequelize = require('sequelize'),
-	Torrent = require('../app/lib/torrent'),
-	score = require('../app/lib/score'),
-	Transmission = require('../app/lib/transmission');
+    score = require(__dirname + '/../lib/score');
 
-var torrent = new Torrent();
+module.exports = function() {
 
-module.exports = function(app) {
-
-	var TAG = 'model.torrent ';
+	var TAG = 'model.torrent ',
+        sequelize = this.get('sequelize'),
+        torrentModel = this.get('model.torrent');
 	
-	return this.sequelize.define('Torrent', {
+	return sequelize.define('Torrent', {
 		exactTopic: {
 			type: Sequelize.STRING,
 			allowNull: false,
@@ -78,7 +76,7 @@ module.exports = function(app) {
 						var created = 0;
 
 						for (var i in data) {
-							var torrent = app.model.Torrent.build(data[i]);
+							var torrent = torrentModel.build(data[i]);
 
 							media.addTorrent(torrent).then(function() {
 								created++;

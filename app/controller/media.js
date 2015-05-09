@@ -7,13 +7,14 @@ module.exports = {
 	 * @param	type		The type of media to return.
 	 */
 	getIndex: function() {
-		var mediaId		= this.req.params.mediaId,
-			type		= this.req.params.type,
-			response 	= {},
-			self		= this;
+		var mediaId		    = this.req.params.mediaId,
+			type		    = this.req.params.type,
+			response 	    = {},
+			self		    = this,
+            modelContainer  = this.get('model');
 	
 		if(typeof type != 'undefined') {
-			var model = this.app.model.mediaModelWithType(type);
+			var model = modelContainer.mediaModelWithType(type);
 
 			if(typeof mediaId != 'undefined') {
 				model.find({ where: { id: mediaId }, include: model.fullInclude() }).success(function(media) {

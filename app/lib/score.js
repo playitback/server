@@ -189,5 +189,4 @@ module.exports = function(media, data) {
 	score += seederScore(data.seeds, data.leaches);
 
 	return score;
-	
-}
+};

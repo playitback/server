@@ -1,10 +1,13 @@
+var DI = require('./lib/di');
+
 // Initialise DI
-var container = new require('./lib/di')();
+var container = new DI(__dirname);
 
 // Initialize external parameters
-//this.env = process.env.ENV || 'dev';
+process.env.NAME = process.env.ENV || 'dev';
 
 // Initialize required services
+container.get('model');
 container.get('server').listen(3030);
 container.get('router');
 

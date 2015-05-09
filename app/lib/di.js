@@ -2,13 +2,13 @@
  * Created by nickbabenko on 08/05/15.
  */
 
-module.exports = function() {
+module.exports = function(appRoot) {
 
     var container = {},
         config = {},
-        self = this.
+        self = this;
 
-    self.accessor = {
+    this.accessor = {
         get: function (reference) {
             if (typeof container[reference] == 'undefined') {
                 container[reference] = loadWithReference(reference);
@@ -28,6 +28,9 @@ module.exports = function() {
             } else {
                 throw 'Incorrect usage of DI.set';
             }
+        },
+        container: function() {
+            return self;
         }
     };
 
@@ -39,16 +42,14 @@ module.exports = function() {
 
     var loadWithReference = function(reference) {
         if (typeof config[reference] != 'undefined') {
-            var instance = require(config[reference]);
+            var instance = require(appRoot + '/' + config[reference]);
 
             // Instantiate, if required. Pass an app reference
             if (typeof instance == 'function') {
-                instance = new instance();
-            }
+                // Extend proto, so they're instantly available
+                instance.prototype = self.accessor;
 
-            // If we have a valid object, make it accessible
-            if (typeof instance == 'object') {
-                self.extend(instance);
+                instance = new instance();
             }
 
             return instance;
@@ -62,5 +63,7 @@ module.exports = function() {
     };
 
     loadConfig();
+
+    this.extend(this);
 
 };

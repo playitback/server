@@ -61,6 +61,8 @@ module.exports = function(req, res, rootKey) {
     };
 
     this.errorResponse = function(error, status) {
+        console.trace();
+
         if(typeof status === 'undefined') {
             status = 400;
         }
