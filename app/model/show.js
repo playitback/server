@@ -1,9 +1,15 @@
 var Sequelize 	= require('sequelize'),
 	moment		= require('moment');
 
-module.exports = function(app) {
+module.exports = function() {
+
+    var sequelize = this.get('sequelize'),
+        theMovieDb = this.get('theMovieDb'),
+        posterModel = this.get('model.poster'),
+        seasonModel = this.get('model.season'),
+        mediaModel = this.get('model.media');
 	
-	var Show = this.sequelize.define('Show', {
+	var Show = sequelize.define('Show', {
 		remoteId: {
 			type: Sequelize.INTEGER,
 			allowNull: false
@@ -25,24 +31,24 @@ module.exports = function(app) {
 
 			indexInclude: function() {
 				return [
-					app.model.Poster
+					posterModel
 				];
 			},
 
 			fullInclude: function() {
 				return [
-					app.model.Poster,
+					posterModel,
 					{
-						model: app.model.Season,
+						model: seasonModel,
 						as: 'Seasons',
 						include: [
-							app.model.Poster,
+							posterModel,
 							{
-								model: app.model.Media,
+								model: mediaModel,
 								as: 'Episodes',
 								include: [
 									{
-										model: app.model.Poster,
+										model: posterModel,
 										as: 'Still'
 									}
 								]
@@ -77,7 +83,7 @@ module.exports = function(app) {
 			createWithRemoteId: function(remoteId, transaction, callback) {
 				var self = this;
 
-				app.theMovieDb.getTv(remoteId, function(error, result) {
+				theMovieDb.getTv(remoteId, function(error, result) {
 					if(error) {
 						callback(error, null);
 						
@@ -104,7 +110,7 @@ module.exports = function(app) {
 								poster.destroy({ force: true });
 							}
 
-							app.model.Poster.createWithRemoteResult(result, transaction).then(function (poster) {
+							posterModel.createWithRemoteResult(result, transaction).then(function (poster) {
 								show.setPoster(poster, {transaction: transaction}).then(function () {
 									app.model.Season.createWithRemoteResults(show, result.seasons, transaction, function (error, seasons) {
 										if (error || !seasons) {
@@ -127,7 +133,7 @@ module.exports = function(app) {
 							transaction = null;
 						}
 
-						app.log.error('failed to create show with remoteId', result.id, error);
+						log.error('failed to create show with remoteId', result.id, error);
 
 						callback(error, null);
 					});
@@ -190,12 +196,11 @@ module.exports = function(app) {
 			 * @param callback
 			 */
 			totalEpisodeCount: function(callback) {
-				app.model.sequelize
-					.query('SELECT COUNT(m.id) AS count ' +
+				sequelize.query('SELECT COUNT(m.id) AS count ' +
 						'FROM Seasons s ' +
 						'JOIN Media m ON m.SeasonId = s.Id ' +
 						'WHERE s.ShowId = \'' + this.id + '\' AND ' +
-							'm.watchStatus != \'' + app.model.Media.WatchStatus.Watched + '\'', null, {
+							'm.watchStatus != \'' + mediaModel.WatchStatus.Watched + '\'', null, {
 						plain: true,
 						raw: true
 					})
@@ -209,22 +214,21 @@ module.exports = function(app) {
 			 * @param callback
 			 */
 			watchedEpisodeCount: function(callback) {
-				app.model.sequelize
-					.query(
-						'SELECT COUNT(m.id) AS count ' +
-						'FROM Seasons s ' +
-						'JOIN Media m ON m.SeasonId = s.Id ' +
-						'WHERE s.ShowId = \'' + this.id + '\' AND ' +
-							'm.watchStatus = \'' + app.model.Media.WatchStatus.Watched + '\'',
-						null,
-						{
-							plain: true,
-							raw: true
-						}
-					)
-					.then(function(rows) {
-						callback(rows.count);
-					});
+                sequelize.query(
+                    'SELECT COUNT(m.id) AS count ' +
+                    'FROM Seasons s ' +
+                    'JOIN Media m ON m.SeasonId = s.Id ' +
+                    'WHERE s.ShowId = \'' + this.id + '\' AND ' +
+                        'm.watchStatus = \'' + mediaModel.WatchStatus.Watched + '\'',
+                    null,
+                    {
+                        plain: true,
+                        raw: true
+                    }
+                )
+                .then(function(rows) {
+                    callback(rows.count);
+                });
 			},
 
 			/**
@@ -237,5 +241,4 @@ module.exports = function(app) {
 	});
 	
 	return Show;
-	
-}
+};
