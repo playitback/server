@@ -25,6 +25,7 @@ module.exports = {
     'model.media': 'model/media',
     'model.poster': 'model/poster',
     'model.show': 'model/show',
-    'model.torrent': 'model/torrent'
+    'model.torrent': 'model/torrent',
+    'model.season': 'model/season'
 
 };
