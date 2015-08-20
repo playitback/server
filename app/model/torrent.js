@@ -4,10 +4,9 @@ var Sequelize = require('sequelize'),
 module.exports = function() {
 
 	var TAG = 'model.torrent ',
-        sequelize = this.get('sequelize'),
-        torrentModel = this.get('model.torrent');
+        sequelize = this.get('sequelize');
 	
-	return sequelize.define('Torrent', {
+	var torrentModel = sequelize.define('Torrent', {
 		exactTopic: {
 			type: Sequelize.STRING,
 			allowNull: false,
@@ -188,5 +187,7 @@ module.exports = function() {
 			}
 		}
 	});
+
+    return torrentModel;
 	
 };
