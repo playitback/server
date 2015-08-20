@@ -55,7 +55,7 @@ module.exports = function(req, res, rootKey) {
             data = prefixedData;
         }
 
-        data = ensureKeyCase(data);
+        //data = ensureKeyCase(data);
 
         res.status(status).json(data);
     };
