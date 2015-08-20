@@ -11,7 +11,7 @@
 		"mediamanager": "./bin/mediamanager"
 	},
 	"dependencies": {
-		"sqlite3": "2.2.3",
+		"sqlite3": "3.0.10",
 		"express": "4.11.2",
 		"sequelize": "2.0.0-rc8",
 		"jade": "1.3.1",
