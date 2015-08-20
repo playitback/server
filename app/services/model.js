@@ -9,6 +9,9 @@ module.exports = function(app) {
     });
     this.set('sequelize', sequelize);
 
+    var log = this.get('log'),
+        events = this.get('events');
+
     // Instantiate and load models
     var settings = this.get('model.settings'),
         poster = this.get('model.poster'),
@@ -29,10 +32,10 @@ module.exports = function(app) {
     media.belongsTo(season);
     torrent.belongsTo(media, { as: 'media' });
 
-    this.sequelize.sync({  }).then(function() {
+    sequelize.sync({  }).then(function() {
         //self.Setting.setValueWithKey('pl1DmfdZ2uIAAAAAAAAL4K9qSvlLJXSShdFboHBZ5nZsUsickQ8i64HO2eqX2PQA', self.Setting.Key.DropboxToken, function() {});
 
-        app.emit('model-sync');
+        events.emit('model-sync');
     });
     //this.sequelize.sync({ force: true });
 
