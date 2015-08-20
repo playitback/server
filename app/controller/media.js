@@ -57,7 +57,7 @@ module.exports = {
 			throw 'invalid or missing remoteId';
 		}
 
-		this.app.model.mediaUpdateWithTypeAndRemoteId(type, remoteId, function(error, media) {
+		this.get('model').mediaUpdateWithTypeAndRemoteId(type, remoteId, function(error, media) {
 			if (error || !media) {
 				self.errorResponse(error);
 			}
@@ -119,7 +119,8 @@ module.exports = {
 	 */
 	getSearch: function() {	
 		var query,
-			self = this;
+			self = this,
+            theMovieDb = this.get('themoviedb');
 	
 		if(!(query = this.input('query'))) {
 			throw 'missing_required_param';
@@ -129,21 +130,21 @@ module.exports = {
 			searchFunction;
 				
 		if(!type) {
-			searchFunction = this.app.theMovieDb.searchMulti;
+			searchFunction = theMovieDb.searchMulti;
 		}
 		else {
 			if(type == 'tv') {
-				searchFunction = this.app.theMovieDb.searchTv;
+				searchFunction = theMovieDb.searchTv;
 			}
 			else if(type == 'movie') {
-				searchFunction = this.app.theMovieDb.searchMovie;
+				searchFunction = theMovieDb.searchMovie;
 			}
 			else {
 				throw 'Invalid type specified';
 			}
 		}
 								
-		this.addSubHttpRequest(searchFunction.call(this.app.theMovieDb, query, function(err, remoteResults) {
+		this.addSubHttpRequest(searchFunction.call(theMovieDb, query, function(err, remoteResults) {
 			var results = [];
 						
 			if(err) {
@@ -169,7 +170,7 @@ module.exports = {
 					targetSize--;
 				}
 				else {
-					var result = self.app.model.mediaModelWithType(remoteResult.media_type)
+					var result = self.get('model').mediaModelWithType(remoteResult.media_type)
 						.mapWithRemoteResult(remoteResult);
 					result.type = type;
 

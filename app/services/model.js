@@ -26,7 +26,7 @@ module.exports = function(app) {
     season.hasOne(poster, { onDelete: 'CASCADE' });
     season.belongsTo(show);
     media.hasOne(poster, { as: 'still', onDelete: 'CASCADE' });
-    media.hasOne(poster, { onDelete: 'CASCADE' });
+    media.hasOne(poster, { as: 'poster', onDelete: 'CASCADE' });
     media.hasMany(torrent, { onDelete: 'CASCADE', foreignKey: 'MediaId' });
     media.hasOne(torrent, { as: 'downloadingTorrent', foreignKey: 'DownloadingTorrentId' });
     media.belongsTo(season);
@@ -56,7 +56,7 @@ module.exports = function(app) {
     this.mediaUpdateWithTypeAndRemoteId = function(type, remoteId, callback) {
         var self = this;
 
-        this.sequelize.transaction().then(function(transaction) {
+        sequelize.transaction().then(function(transaction) {
             self.mediaModelWithType(type).createWithRemoteId(remoteId, transaction, function(error, media) {
                 if (!error && media) {
                     transaction.commit();

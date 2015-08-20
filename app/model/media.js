@@ -9,7 +9,7 @@ module.exports = function() {
 
 	var TAG = 'model.media ',
         sequelize = this.get('sequelize'),
-        theMovieDb = this.get('theMovieDb'),
+        theMovieDb = this.get('themoviedb'),
         log = this.get('log'),
         notification = this.get('notification'),
         settings = this.get('settings'),
@@ -328,7 +328,7 @@ module.exports = function() {
 					media = this.build();
 
 					// Only set quality on initial creation, not update
-					media.quality = settingsModel.get(settingsModel.Key.Media.DefaultQuality[type]);
+					media.quality = settings.get(settingsModel.Key.Media.DefaultQuality[type]);
 
 					if (type == Type.Movie) {
 						media.state = State.Wanted; // defaults to wanted, we download them all
