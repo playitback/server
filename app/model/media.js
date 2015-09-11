@@ -376,12 +376,12 @@ module.exports = function() {
 			 * @param callback
 			 */
 			indexInfo: function(callback) {
-				var _response 	= this.values,	
+				var _response 	= this.dataValues,
 					self		= this;
-							
-				this.getPoster().success(function(poster) {
+
+                this.getPoster().then(function(poster) {
 					if(poster) {
-						_response.poster = poster.values;
+						_response.poster = poster.dataValues;
 					}
 					
 					callback(_response);
