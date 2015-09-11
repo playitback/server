@@ -8,23 +8,29 @@ module.exports = {
      * Returns an array of all media in the library
      *
      * @route /api/media/:type
-     * @param type The type of media to return
+     * @param {string} type The type of media to return
      * @returns {*}
      */
     indexAction: function() {
-
         var self = this,
-            model = this.app.model.mediaModelWithType(this.req.params.type);
+            model = this.get('model'),
+            posterModel = this.get('model.poster'),
+            mediaModel;
 
-        // Check for a valid model
-        if (!model) {
+        try {
+            mediaModel = model.mediaModelWithType(this.req.params.type);
+        } catch (e) {
             return this.errorResponse('Invalid type');
         }
 
-        model.findAll({ include: [ this.app.model.Poster ] }).then(function(media) {
+        mediaModel.findAll({ include: [
+            {
+                model: posterModel,
+                as: 'poster'
+            }
+        ] }).then(function(media) {
             self.response(media);
         });
-
     },
 
     /**
@@ -37,15 +43,22 @@ module.exports = {
      */
     mediaAction: function() {
 
-        var self = this;
-        var model = this.app.model.mediaModelWithType(this.req.params.type);
+        var self = this,
+            model = this.get('model'),
+            mediaModel;
 
-        // Check for a valid model
-        if (!model) {
+        try {
+            mediaModel = model.mediaModelWithType(this.req.params.type);
+        } catch (e) {
             return this.errorResponse('Invalid type');
         }
 
-        model.find(this.req.params.id, { include: [ this.app.model.Poster ] }).then(function(media) {
+        mediaModel.findById(this.req.params.id, { include: [
+            {
+                model: this.get('model.poster'),
+                as: 'poster'
+            }
+        ] }).then(function(media) {
             if (media) {
                self.response(media);
             }
