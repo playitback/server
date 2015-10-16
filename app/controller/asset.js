@@ -13,7 +13,7 @@ module.exports = {
     getImage: function() {
         var url = this.req.query.url;
         var profileRef = this.req.query.profile;
-        var profile = this.app.config.get('images.' + profileRef);
+        var profile = this.get('config').get('images.' + profileRef);
 
         if (typeof url != 'string') {
             return this.errorResponse('Invalid image url');
