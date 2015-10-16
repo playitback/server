@@ -1,0 +1,18 @@
+{
+  "name": "fatiherikli/backbone-autocomplete",
+  "description": "An autocomplete view for backbone.js",
+  "main": "src/backbone.autocomplete-min.js",
+  "ignore": [],
+  "dependencies": {},
+  "devDependencies": {},
+  "homepage": "https://github.com/fatiherikli/backbone-autocomplete",
+  "_release": "77f2f0d774",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "77f2f0d7742cdd031ac8963ae2a59b92a568ebab"
+  },
+  "_source": "git://github.com/fatiherikli/backbone-autocomplete.git",
+  "_target": "master",
+  "_originalSource": "backbone-autocomplete"
+}

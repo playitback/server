@@ -1,4 +1,9 @@
-define('model/media', ['model/core', 'const/index'], function(CoreModel, Const) {
+var angular = require('angular'),
+    app = angular.module('playback');
+
+require('./core');
+
+module.exports = app.factory('MediaModel', ['CoreModel', function(CoreModel) {
 	
 	/**
 	 * Doesn't make perfect sense as Show will subclass this, but this represents visible media
@@ -11,5 +16,5 @@ define('model/media', ['model/core', 'const/index'], function(CoreModel, Const) 
 		}
 			
 	});
-	
-});
+
+}]);

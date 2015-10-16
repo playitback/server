@@ -1,0 +1,30 @@
+{
+  "name": "ng-backbone",
+  "version": "0.1.1",
+  "description": "Backbone data model and collection for AngularJS",
+  "main": "ng-backbone.js",
+  "scripts": {
+    "test": "grunt karma:ci"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:adrianlee44/ng-backbone.git"
+  },
+  "author": "Adrian Lee",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/adrianlee44/ng-backbone/issues"
+  },
+  "homepage": "https://github.com/adrianlee44/ng-backbone",
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-chalkboard": "~0.2.3",
+    "grunt-contrib-jshint": "~0.10.0",
+    "grunt-contrib-uglify": "^0.5.1",
+    "grunt-karma": "~0.8.3",
+    "karma-jasmine": "~0.2.0",
+    "karma-phantomjs-launcher": "~0.1.4",
+    "load-grunt-tasks": "~0.4.0",
+    "time-grunt": "~0.3.1"
+  }
+}

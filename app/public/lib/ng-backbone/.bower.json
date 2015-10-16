@@ -1,0 +1,40 @@
+{
+  "name": "ng-backbone",
+  "version": "0.1.1",
+  "authors": [
+    "Adrian Lee <adrianlee44@gmail.com>"
+  ],
+  "description": "Backbone data model and collection for AngularJS",
+  "main": "ng-backbone.js",
+  "keywords": [
+    "Backbone",
+    "AngularJS",
+    "data",
+    "model",
+    "collection"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/adrianlee44/ng-backbone",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test"
+  ],
+  "dependencies": {
+    "angular": "~1.2.0",
+    "backbone": "~1.1.2"
+  },
+  "devDependencies": {
+    "angular-mocks": "~1.2.0"
+  },
+  "_release": "0.1.1",
+  "_resolution": {
+    "type": "version",
+    "tag": "v0.1.1",
+    "commit": "6c12506cdb0b99efc5446c4a4bb7408835bd2389"
+  },
+  "_source": "git://github.com/adrianlee44/ng-backbone.git",
+  "_target": "0.1.1",
+  "_originalSource": "ng-backbone"
+}

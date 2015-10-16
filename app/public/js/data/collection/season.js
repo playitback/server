@@ -1,9 +1,8 @@
-define('collection/season', ['backbone', 'model/season'], function(Backbone, SeasonModel) {
-	
-	return Backbone.Collection.extend({
-		
-		model: SeasonModel
-		
-	});
-	
-});
+var angular = require('angular');
+
+module.exports =  angular.module('collection.season', ['model.season'])
+    .factory('SeasonCollection', ['NgBackboneCollection', 'SeasonModel', function(NgBackboneCollection, SeasonModel) {
+        return NgBackboneCollection.extend({
+            model: SeasonModel
+        });
+    }]);

@@ -1,6 +1,4 @@
-define('const/type', [], {
-	
-	TV: 'tv',
-	Movie: 'movie'
-	
-});
+module.exports = {
+    TV: 'tv',
+    Movie: 'movie'
+};

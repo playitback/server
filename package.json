@@ -32,6 +32,15 @@
 		"request": "2.53.0",
 		"stream-transcoder": "0.0.5",
 		"binaryjs": "0.2.1",
-        "node-torrent": "0.2.2"
+        "node-torrent": "0.2.1",
+        "webpack": "1.12.2",
+        "gulp-concat": "2.3.4",
+        "gulp-uglify": "1.2.0",
+        "gulp-ng-annotate": "1.1.0",
+        "less-loader": "2.2.1",
+        "gulp": "^3.8.8",
+        "ng-annotate-webpack-plugin": "0.1.2",
+        "gutil": "1.6.4",
+        "exports-loader": "0.6.2"
 	}
 }

@@ -1,4 +1,10 @@
-define('model/movie', ['model/media', 'moment'], function(MediaModel, moment) {
+var angular = require('angular'),
+    app = angular.module('playback');
+
+require('./media');
+
+module.exports = app.factory('MovieModel',
+    ['MediaModel', function(MediaModel) {
 	
 	return MediaModel.extend({
 	
@@ -22,4 +28,4 @@ define('model/movie', ['model/media', 'moment'], function(MediaModel, moment) {
 		
 	});
 	
-});
+}]);

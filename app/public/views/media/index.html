@@ -1,0 +1,26 @@
+<div id="media" ng-class="type">
+    <div class="row controls">
+        <div class="col-md-10 left filter">
+
+        </div>
+        <div class="col-md-2 right">
+            <a class="button add" ng-click=""></a>
+        </div>
+    </div>
+    <div class="row items" ng-if="media && media.length > 0">
+        <div class="item col-md-2 col-sm-3 col-xs-6" ng-repeat="item in media.models">
+            <div class="poster"></div>
+            <div class="overlay">
+                <i class="status" ng-class="item.status">{{item.statusText()}}</i>
+            </div>
+            <div class="attr">
+                <label>{{item.title}}</label>
+                <span>{{item.year}}</span>
+            </div>
+        </div>
+    </div>
+    <div class="no-items" ng-if="media && media.length == 0">
+        <p>You have not items {{typeTitle}}.</p>
+        <p>Add one by searching above.</p>
+    </div>
+</div>
