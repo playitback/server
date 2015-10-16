@@ -1,10 +1,11 @@
+// Initialize global parameters
+process.env.NAME = process.env.ENV || 'dev';
+
+// Libraries
 var DI = require('./lib/di');
 
 // Initialise DI
 var container = new DI(__dirname);
-
-// Initialize external parameters
-process.env.NAME = process.env.ENV || 'dev';
 
 // Initialize required services
 container.get('model');
