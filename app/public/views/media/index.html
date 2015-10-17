@@ -8,14 +8,18 @@
         </div>
     </div>
     <div class="row items" ng-if="media && media.length > 0">
-        <div class="item col-md-2 col-sm-3 col-xs-6" ng-repeat="item in media.models">
-            <div class="poster"></div>
+        <div class="item col-md-2 col-sm-3 col-xs-6"
+             ng-repeat="item in media.models"
+             ui-sref="mediaInfo({type: type, mediaId: item.get('id')})">
+            <div class="poster"
+                afkl-lazy-image="{{item.get('poster').url}}"
+                 afkl-lazy-image-options="{'background': true}"></div>
             <div class="overlay">
-                <i class="status" ng-class="item.status">{{item.statusText()}}</i>
+                <i class="status" ng-class="item.status()">{{item.statusText()}}</i>
             </div>
             <div class="attr">
-                <label>{{item.title}}</label>
-                <span>{{item.year}}</span>
+                <label>{{item.get('title')}}</label>
+                <span>{{item.year()}}</span>
             </div>
         </div>
     </div>

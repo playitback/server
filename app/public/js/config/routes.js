@@ -13,17 +13,17 @@ module.exports = function($stateProvider) {
             templateUrl: 'views/media/index.html'
         })
         .state('mediaInfo', {
-            url: 'media/:type/:mediaId',
+            url: '/media/:type/:mediaId',
             controller: mediaInfoController,
             templateUrl: 'views/media/info.html'
         })
-        .state('mediaViewSeason', {
-            url: 'media/:type/:mediaId/season/:seasonNumber',
+        .state('mediaInfoSeason', {
+            url: '/media/:type/:mediaId/season/:seasonNumber',
             controller: mediaInfoController,
             templateUrl: 'views/media/season.html'
         })
         .state('settings', {
-            url: 'settings/:type?',
+            url: '/settings/:type?',
             controller: require('../controller/settings'),
             templateUrl: 'views/settings.html'
         })

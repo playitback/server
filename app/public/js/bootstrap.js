@@ -4,11 +4,12 @@ require('angularRoute');
 require('backbone');
 require('angularBackbone');
 require('angularUiRouter');
+require('angularLazyImage')
 
 // Register sub-modules
 require('./data');
 
-var app = angular.module('playback', ['ui.router', 'ngRoute', 'playback.data']);
+var app = angular.module('playback', ['ui.router', 'ngRoute', 'playback.data', 'afkl.lazyImage']);
 
 app.filter('sanitize', ['$sce', function($sce) {
     return function(htmlCode) {

@@ -1,4 +1,5 @@
-var angular = require('angular');
+var angular = require('angular'),
+    Const = require('../const');
 
 module.exports = angular.module('playback.data')
     .factory('CoreModel', ['NgBackboneModel', function(NgBackboneModel) {

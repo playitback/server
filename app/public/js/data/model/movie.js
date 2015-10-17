@@ -1,8 +1,6 @@
 var angular = require('angular'),
     moment = require('moment');
 
-require('./media');
-
 module.exports = angular.module('playback.data')
     .factory('MovieModel', ['MediaModel', function(MediaModel) {
         return MediaModel.extend({

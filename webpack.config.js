@@ -50,6 +50,7 @@ module.exports = {
             angularBackbone: 'ng-backbone/ng-backbone',
             angularSanitize: 'angular-sanitize/angular-sanitize',
             angularUiRouter: 'angular-ui-router/release/angular-ui-router',
+            angularLazyImage: 'ng-directive-lazy-image/release/lazy-image',
             backbone: 'backbone/backbone',
             ionic: 'ionic/js/ionic',
             ionicAngular: __dirname + '/public/assets/lib/ionic/js/ionic-angular',
