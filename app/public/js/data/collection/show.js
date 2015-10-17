@@ -1,6 +1,6 @@
 var angular = require('angular');
 
-module.exports =  angular.module('collection.season', ['model.show'])
+module.exports = angular.module('playback.data')
     .factory('ShowCollection', ['NgBackboneCollection', 'ShowModel', function(NgBackboneCollection, ShowModel) {
         return NgBackboneCollection.extend({
 

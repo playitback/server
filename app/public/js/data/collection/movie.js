@@ -1,10 +1,7 @@
-var angular = require('angular'),
-    app = angular.module('playback');
+var angular = require('angular');
 
-require('../model/movie');
-
-module.exports = app.factory('MovieCollection',
-    ['NgBackboneCollection', 'MovieModel', function(NgBackboneCollection, MovieModel) {
+module.exports = angular.module('playback.data')
+    .factory('MovieCollection', ['NgBackboneCollection', 'MovieModel', function(NgBackboneCollection, MovieModel) {
         return NgBackboneCollection.extend({
             searchMode: false,
             model: MovieModel,

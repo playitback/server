@@ -1,8 +1,5 @@
 'use strict';
 
-require('../../data/collection/movie');
-require('../../data/collection/show');
-
 var Const = require('../../data/const');
 
 var MediaController = function($scope, $stateParams, MovieCollection, ShowCollection) {

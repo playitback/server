@@ -1,7 +1,7 @@
-var angular = require('angular'),
-    app = angular.module('playback');
+var angular = require('angular');
 
-module.exports = app.factory('MediaCollection', ['NgBackboneCollection', 'MediaModel', function(NgBackboneCollection, MediaModel) {
+module.exports = angular.module('playback.data')
+    .factory('MediaCollection', ['NgBackboneCollection', 'MediaModel', function(NgBackboneCollection, MediaModel) {
         return NgBackboneCollection.Collection.extend({
             model: MediaModel,
             season: null,

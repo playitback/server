@@ -1,6 +1,6 @@
 var angular = require('angular');
 
-module.exports =  angular.module('model.core', [])
+module.exports = angular.module('playback.data')
     .factory('CoreModel', ['NgBackboneModel', function(NgBackboneModel) {
         return NgBackboneModel.extend({
 

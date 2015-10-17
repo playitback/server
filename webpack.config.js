@@ -55,7 +55,8 @@ module.exports = {
             ionicAngular: __dirname + '/public/assets/lib/ionic/js/ionic-angular',
             ionicTinderCards: 'ionic-contrib-tinder-cards/ionic.tdcards',
             collide: 'collide/collide',
-            lodash: 'lodash/lodash'
+            lodash: 'lodash/lodash',
+            moment: 'moment/moment'
         }
     }
 };
