@@ -23,11 +23,13 @@ module.exports = function(app) {
 
     show.hasMany(season, { as: 'seasons', onDelete: 'CASCADE' });
     show.hasOne(poster, { onDelete: 'CASCADE' });
+    show.hasOne(poster, { as: 'backdrop', onDelete: 'CASCADE' });
     season.hasMany(media, { as: 'episodes', onDelete: 'CASCADE' });
     season.hasOne(poster, { onDelete: 'CASCADE' });
     season.belongsTo(show);
-    media.hasOne(poster, { as: 'still', onDelete: 'CASCADE' });
-    media.hasOne(poster, { as: 'poster', onDelete: 'CASCADE' });
+    media.hasOne(poster, { as: 'still', onDelete: 'CASCADE', foreignKey: 'StillId' });
+    media.hasOne(poster, { as: 'poster', onDelete: 'CASCADE', foreignKey: 'PosterId' });
+    media.hasOne(poster, { as: 'backdrop', onDelete: 'CASCADE', foreignKey: 'BackdropId' });
     media.hasMany(torrent, { onDelete: 'CASCADE', foreignKey: 'MediaId' });
     media.hasOne(torrent, { as: 'downloadingTorrent', foreignKey: 'DownloadingTorrentId' });
     media.belongsTo(season);

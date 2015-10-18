@@ -12,8 +12,8 @@ module.exports = function(app) {
 		}
 	}, {
 		classMethods: {
-			createWithRemoteResult: function(result, transaction) {
-				return this.mapWithRemoteResult(result).save({ transaction: transaction });
+			createWithRemoteResult: function(result, transaction, key) {
+				return this.mapWithRemoteResult(result, key).save({ transaction: transaction });
 			},
 			
 			mapWithRemoteResult: function(result, key) {

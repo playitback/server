@@ -73,6 +73,9 @@ module.exports = {
 		});
 	},
 
+    /**
+     *
+     */
 	putIndex: function() {
 		var self 		= this,
 			type 		= this.req.params.type,

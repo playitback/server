@@ -1,3 +1,20 @@
 <div id="media-info">
-    {{media.get('title')}}
+    <div class="backdrop">
+        <div class="image"></div>
+        <div class="overlay"></div>
+    </div>
+    <div class="info">
+        <h2>{{media.get('title')}}</h2>
+        <div class="attr">
+            <span class="year">{{media.year()}}</span>
+            <div class="tags">
+                <span>Science Fiction</span>
+            </div>
+            <a class="options">Manage {{type}}</a>
+        </div>
+        <div class="rating four"></div>
+        <div class="overview">
+            <p>{{media.get('overview')}}</p>
+        </div>
+    </div>
 </div>

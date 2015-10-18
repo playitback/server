@@ -175,6 +175,10 @@ module.exports = function() {
                     {
                         model: posterModel,
                         as: 'poster'
+                    },
+                    {
+                        model: posterModel,
+                        as: 'backdrop'
                     }
                 ];
 			},
@@ -282,23 +286,7 @@ module.exports = function() {
 					media = self.mapWithRemoteResult(result, media, season, show);
 
 					media.save({ transaction: transaction }).then(function (media) {
-						if (typeof result.still_path === 'string') {
-							posterModel.createWithRemoteResult(result, transaction).success(function (poster) {
-								media.setStill(poster, {transaction: transaction}).success(function () {
-									callback(media);
-								});
-							});
-						}
-						else if (typeof result.poster_path === 'string') {
-                            posterModel.createWithRemoteResult(result, transaction).success(function (poster) {
-								media.setPoster(poster, {transaction: transaction}).success(function () {
-									callback(media);
-								});
-							});
-						}
-						else {
-							callback(media);
-						}
+						self.createPosterWithRemoteResult(media, result, transaction, callback);
 					})
 					.catch(function(error) {
 						// Handle for movies, TV shows leave to show model
@@ -316,6 +304,37 @@ module.exports = function() {
 					});
 				});
 			},
+
+            createPosterWithRemoteResult: function(media, result, transaction, callback) {
+                var self = this;
+
+                if (typeof result.still_path === 'string') {
+                    posterModel.createWithRemoteResult(result, transaction).success(function (poster) {
+                        media.setStill(poster, { transaction: transaction }).success(function () {
+                            self.createBackdropWithRemoteResult(media, result, transaction, callback);
+                        });
+                    });
+                }
+                else if (typeof result.poster_path === 'string') {
+                    posterModel.createWithRemoteResult(result, transaction).success(function (poster) {
+                        media.setPoster(poster, { transaction: transaction }).success(function () {
+                            self.createBackdropWithRemoteResult(media, result, transaction, callback);
+                        });
+                    });
+                }
+                else {
+                    this.createBackdropWithRemoteResult(media, result, transaction, callback);
+                }
+            },
+
+            createBackdropWithRemoteResult: function(media, result, transaction, callback) {
+                posterModel.createWithRemoteResult(result, transaction).success(function (poster) {
+                    media.setBackdrop(poster, { transaction: transaction }).success(function () {
+                        callback(media);
+                    });
+                });
+            },
+
 			mapWithRemoteResult: function(result, media, season, show) {
 				var type;
 

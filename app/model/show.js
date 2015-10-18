@@ -38,6 +38,10 @@ module.exports = function() {
 			fullInclude: function() {
 				return [
 					posterModel,
+                    {
+                        model: posterModel,
+                        as: 'backdrop'
+                    },
 					{
 						model: seasonModel,
 						as: 'Seasons',
@@ -104,27 +108,7 @@ module.exports = function() {
 
 					// Create or update show object
 					show.save({ transaction: transaction }).then(function (show) {
-						// Attempt to load the poster and delete it before creating new one.
-						show.getPoster().then(function(poster) {
-							if (poster) {
-								poster.destroy({ force: true });
-							}
-
-							posterModel.createWithRemoteResult(result, transaction).then(function (poster) {
-								show.setPoster(poster, {transaction: transaction}).then(function () {
-									app.model.Season.createWithRemoteResults(show, result.seasons, transaction, function (error, seasons) {
-										if (error || !seasons) {
-											callback(error, null);
-										}
-										else {
-											show.setSeasons(seasons, {transaction: transaction}).then(function () {
-												callback(null, show);
-											});
-										}
-									});
-								});
-							});
-						});
+						self.createPosterWithRemoteResult(show, result, transaction, callback);
 					})
 					.catch(function(error) {
 						if (transaction) {
@@ -139,6 +123,53 @@ module.exports = function() {
 					});
 				});
 			},
+
+            createPosterWithRemoteResult: function(show, result, transaction, callback) {
+                var self = this;
+
+                // Attempt to load the poster and delete it before creating new one.
+                show.getPoster().then(function(poster) {
+                    if (poster) {
+                        poster.destroy({ force: true });
+                    }
+
+                    posterModel.createWithRemoteResult(result, transaction, 'backdrop_path').then(function (poster) {
+                        show.setPoster(poster, {transaction: transaction}).then(function () {
+                            self.createBackdropWithRemoteResult(show, result, transaction, callback);
+                        });
+                    });
+                });
+            },
+
+            createBackdropWithRemoteResult: function(show, result, transaction, callback) {
+                var self = this;
+
+                // Attempt to load the poster and delete it before creating new one.
+                show.getBackdrop().then(function(backdrop) {
+                    if (backdrop) {
+                        backdrop.destroy({ force: true });
+                    }
+
+                    posterModel.createWithRemoteResult(result, transaction).then(function (backdrop) {
+                        show.setBackdrop(backdrop, { transaction: transaction }).then(function () {
+                            self.createSeasonsWithRemoteResult(show, result, transaction, callback);
+                        });
+                    });
+                });
+            },
+
+            createSeasonsWithRemoteResult: function(show, result, transaction, callback) {
+                app.model.Season.createWithRemoteResults(show, result.seasons, transaction, function (error, seasons) {
+                    if (error || !seasons) {
+                        callback(error, null);
+                    }
+                    else {
+                        show.setSeasons(seasons, {transaction: transaction}).then(function () {
+                            callback(null, show);
+                        });
+                    }
+                });
+            },
 			
 			mapWithRemoteResult: function(result, show) {
 				if (!show) {
