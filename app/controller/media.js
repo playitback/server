@@ -89,11 +89,12 @@ module.exports = {
 			throw 'invalid or missing mediaId';
 		}
 
-		var model = this.app.model.mediaModelWithType(type);
+        var model = this.get('model'),
+            mediaModel = model.mediaModelWithType(type);
 
-		model.find({ where: { id: mediaId }, include: model.indexInclude() }).then(function(media) {
+        mediaModel.find({ where: { id: mediaId }, include: mediaModel.indexInclude() }).then(function(media) {
 			if (media) {
-				self.app.model.mediaUpdateWithTypeAndRemoteId(type, media.remoteId, function(error, media) {
+                model.mediaUpdateWithTypeAndRemoteId(type, media.remoteId, function(error, media) {
 					if (error || !media) {
 						self.errorResponse(error);
 					}

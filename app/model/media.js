@@ -222,7 +222,8 @@ module.exports = function() {
 			},
 			
 			createWithRemoteId: function(remoteId, transaction, callback) {
-				var self = this;
+				var self = this,
+                    remoteId = parseInt(remoteId);
 				
 			    theMovieDb.getMovie(remoteId, function(err, result) {
 					if(err) {
@@ -298,7 +299,7 @@ module.exports = function() {
 							}
 						}
 
-						log.error(TAG + 'Failed to create media', error)
+						log.error(TAG + 'Failed to create media: ' + error);
 
 						callback(null);
 					});
@@ -309,27 +310,25 @@ module.exports = function() {
                 var self = this;
 
                 if (typeof result.still_path === 'string') {
-                    posterModel.createWithRemoteResult(result, transaction).success(function (poster) {
-                        media.setStill(poster, { transaction: transaction }).success(function () {
+                    posterModel.createWithRemoteResult(result, transaction).then(function (poster) {
+                        media.setStill(poster, { transaction: transaction }).then(function () {
                             self.createBackdropWithRemoteResult(media, result, transaction, callback);
                         });
                     });
-                }
-                else if (typeof result.poster_path === 'string') {
-                    posterModel.createWithRemoteResult(result, transaction).success(function (poster) {
-                        media.setPoster(poster, { transaction: transaction }).success(function () {
+                } else if (typeof result.poster_path === 'string') {
+                    posterModel.createWithRemoteResult(result, transaction).then(function (poster) {
+                        media.setPoster(poster, { transaction: transaction }).then(function () {
                             self.createBackdropWithRemoteResult(media, result, transaction, callback);
                         });
                     });
-                }
-                else {
+                } else {
                     this.createBackdropWithRemoteResult(media, result, transaction, callback);
                 }
             },
 
             createBackdropWithRemoteResult: function(media, result, transaction, callback) {
-                posterModel.createWithRemoteResult(result, transaction).success(function (poster) {
-                    media.setBackdrop(poster, { transaction: transaction }).success(function () {
+                posterModel.createWithRemoteResult(result, transaction, 'backdrop_path').then(function (poster) {
+                    media.setBackdrop(poster, { transaction: transaction }).then(function () {
                         callback(media);
                     });
                 });
@@ -361,7 +360,7 @@ module.exports = function() {
 					}
 				}
 
-				media.remoteId 	= result.id;
+				media.remoteId 	= String(result.id);
 				media.type		= type;
 
 				// Movie

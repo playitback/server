@@ -71,7 +71,7 @@ module.exports = function() {
 				var data = this.buildWithRemoteData(media, data);
 
 				if (data.length > 0) {
-					app.model.sequelize.transaction().then(function(transaction) {
+                    sequelize.transaction().then(function(transaction) {
 						var created = 0;
 
 						for (var i in data) {
@@ -160,7 +160,7 @@ module.exports = function() {
 								app.log.debug(TAG + 'Torrent added successfully', torrent.id);
 
 								media.updateAttributes({
-									state: app.model.Media.State.Downloading,
+									state: mediaModel.Media.State.Downloading,
 									transmissionId: torrent.id
 								}).then(function () {
 									media.setDownloadingTorrent(self).then(function() {

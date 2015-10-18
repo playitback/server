@@ -4,7 +4,7 @@ module.exports = function(app) {
 
 	var self = this,
         sequelize = this.get('sequelize'),
-        theMovieDb = this.get('theMovieDb');
+        theMovieDb = this.get('themoviedb');
 	
 	return sequelize.define('Poster', {
 		url: {
@@ -23,16 +23,16 @@ module.exports = function(app) {
 					if(typeof result[key] === 'string') {
 						posterUri = result[key];
 					}
-				}
-				else if(typeof result.still_path === 'string') {
+				} else if(typeof result.still_path === 'string') {
 					posterUri = result.still_path;
-				}
-				else if(typeof result.poster_path === 'string') {
+				} else if(typeof result.poster_path === 'string') {
 					posterUri = result.poster_path;
 				}
 						
-				return app.model.Poster.build({
-					url: posterUri ? this.cachePosterWithUrl(theMovieDb.posterUrl(posterUri)) : null
+				return this.build({
+					url: posterUri
+                        ? this.cachePosterWithUrl(theMovieDb.posterUrl(posterUri))
+                        : null
 				});
 			},
 			

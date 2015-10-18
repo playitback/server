@@ -159,7 +159,7 @@ module.exports = function() {
             },
 
             createSeasonsWithRemoteResult: function(show, result, transaction, callback) {
-                app.model.Season.createWithRemoteResults(show, result.seasons, transaction, function (error, seasons) {
+                seasonModel.createWithRemoteResults(show, result.seasons, transaction, function (error, seasons) {
                     if (error || !seasons) {
                         callback(error, null);
                     }
