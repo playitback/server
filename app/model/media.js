@@ -171,9 +171,12 @@ module.exports = function() {
 			},
 
 			fullInclude: function() {
-				return [
-                    posterModel
-				];
+                return [
+                    {
+                        model: posterModel,
+                        as: 'poster'
+                    }
+                ];
 			},
 			
 			getMediaForIndex: function(callback) {

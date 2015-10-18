@@ -7,6 +7,7 @@ module.exports = function(app) {
         dialect: 'sqlite',
         storage: 'mediamanager.sqlite'
     });
+    // Register in DI container
     this.set('sequelize', sequelize);
 
     var log = this.get('log'),
@@ -44,11 +45,9 @@ module.exports = function(app) {
     this.mediaModelWithType = function(type) {
         if(type === media.Type.TV) {
             return show;
-        }
-        else if(type === media.Type.Movie) {
+        } else if(type === media.Type.Movie) {
             return media;
-        }
-        else {
+        } else {
             throw 'invalid_type';
         }
     };
