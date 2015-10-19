@@ -1,8 +1,51 @@
 #media-info {
-    margin: 119px 15px 30px;
+    margin: 89px 0 0 0;
+    height: 100%;
+    min-height: 300px;
 
     .backdrop {
+        position: absolute;
+        left: 0;
+        top: 89px;
+        right: 0;
+        bottom: 0;
+        max-height: 500px;
 
+        .image {
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .overlay {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            top: 0;
+
+            .background-image(linear-gradient(215deg, rgba(60,60,60,0.00) 15%, rgba(60,60,60,0.68) 57%, #3C3C3C 76%));
+
+            .inner {
+                position: absolute;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                top: 0;
+
+                .background-image(linear-gradient(-180deg, rgba(60,60,60,0.34) 27%, #3C3C3C 76%));
+            }
+        }
+    }
+
+    .info {
+        position: relative;
+        height: 100%;
+        padding: 130px 30px 30px;
     }
 
     .poster {

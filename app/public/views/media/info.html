@@ -1,7 +1,11 @@
 <div id="media-info">
     <div class="backdrop">
-        <div class="image"></div>
-        <div class="overlay"></div>
+        <div class="image"
+             afkl-lazy-image="{{media.get('backdrop').url}}"
+             afkl-lazy-image-options="{'background': true}"></div>
+        <div class="overlay">
+            <div class="inner"></div>
+        </div>
     </div>
     <div class="info">
         <h2>{{media.get('title')}}</h2>
